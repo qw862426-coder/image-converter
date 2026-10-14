@@ -5,17 +5,20 @@
   var LANGS = { en: 'English', ko: '한국어', ja: '日本語', zh: '中文（简体）', es: 'Español', pt: 'Português', fr: 'Français', de: 'Deutsch' };
   var KEY = 'imgconv-lang';
   var T = {
-    en: { bg: 'Remove background', scan: 'Photo to scan', img: 'Image converter', doc: 'Documents to PDF', guide: 'How to use', about: 'About', privacy: 'Privacy policy', contact: 'Contact', lang: 'Language', menu: 'Menu', note: 'Files are converted on your device and never uploaded.' },
-    ko: { bg: '배경 지우기', scan: '사진 → 스캔본', img: '이미지 변환', doc: '문서 → PDF', guide: '사용 방법', about: '사이트 소개', privacy: '개인정보처리방침', contact: '문의하기', lang: '언어', menu: '메뉴', note: '파일은 내 기기에서 변환되며 어디에도 업로드되지 않습니다.' },
-    ja: { bg: '背景を削除', scan: '写真をスキャンに', img: '画像変換', doc: '文書をPDFに', guide: '使い方', about: 'このサイトについて', privacy: 'プライバシーポリシー', contact: 'お問い合わせ', lang: '言語', menu: 'メニュー', note: 'ファイルは端末内で変換され、アップロードされることはありません。' },
-    zh: { bg: '去除背景', scan: '照片转扫描件', img: '图片转换', doc: '文档转 PDF', guide: '使用方法', about: '关于本站', privacy: '隐私政策', contact: '联系我们', lang: '语言', menu: '菜单', note: '文件在你的设备上转换，不会上传到任何地方。' },
-    es: { bg: 'Quitar fondo', scan: 'Foto a escaneo', img: 'Convertir imágenes', doc: 'Documentos a PDF', guide: 'Cómo usarlo', about: 'Acerca de', privacy: 'Privacidad', contact: 'Contacto', lang: 'Idioma', menu: 'Menú', note: 'Los archivos se convierten en tu dispositivo y nunca se suben.' },
-    pt: { bg: 'Remover fundo', scan: 'Foto para digitalização', img: 'Converter imagens', doc: 'Documentos para PDF', guide: 'Como usar', about: 'Sobre', privacy: 'Privacidade', contact: 'Contato', lang: 'Idioma', menu: 'Menu', note: 'Os arquivos são convertidos no seu dispositivo e nunca são enviados.' },
-    fr: { bg: 'Supprimer le fond', scan: 'Photo en scan', img: 'Convertir des images', doc: 'Documents en PDF', guide: 'Mode d’emploi', about: 'À propos', privacy: 'Confidentialité', contact: 'Contact', lang: 'Langue', menu: 'Menu', note: 'Les fichiers sont convertis sur votre appareil et ne sont jamais envoyés.' },
-    de: { bg: 'Hintergrund entfernen', scan: 'Foto zu Scan', img: 'Bilder umwandeln', doc: 'Dokumente zu PDF', guide: 'Anleitung', about: 'Über uns', privacy: 'Datenschutz', contact: 'Kontakt', lang: 'Sprache', menu: 'Menü', note: 'Dateien werden auf deinem Gerät umgewandelt und nie hochgeladen.' }
+    en: { compress: 'Compress images', popular: 'Popular', bg: 'Remove background', scan: 'Photo to scan', img: 'Image converter', doc: 'Documents to PDF', guide: 'How to use', about: 'About', privacy: 'Privacy policy', contact: 'Contact', lang: 'Language', menu: 'Menu', note: 'Files are converted on your device and never uploaded.' },
+    ko: { compress: '사진 용량 줄이기', popular: '인기 변환', bg: '배경 지우기', scan: '사진 → 스캔본', img: '이미지 변환', doc: '문서 → PDF', guide: '사용 방법', about: '사이트 소개', privacy: '개인정보처리방침', contact: '문의하기', lang: '언어', menu: '메뉴', note: '파일은 내 기기에서 변환되며 어디에도 업로드되지 않습니다.' },
+    ja: { compress: '画像を圧縮', popular: '人気の変換', bg: '背景を削除', scan: '写真をスキャンに', img: '画像変換', doc: '文書をPDFに', guide: '使い方', about: 'このサイトについて', privacy: 'プライバシーポリシー', contact: 'お問い合わせ', lang: '言語', menu: 'メニュー', note: 'ファイルは端末内で変換され、アップロードされることはありません。' },
+    zh: { compress: '压缩图片', popular: '常用转换', bg: '去除背景', scan: '照片转扫描件', img: '图片转换', doc: '文档转 PDF', guide: '使用方法', about: '关于本站', privacy: '隐私政策', contact: '联系我们', lang: '语言', menu: '菜单', note: '文件在你的设备上转换，不会上传到任何地方。' },
+    es: { compress: 'Comprimir imágenes', popular: 'Populares', bg: 'Quitar fondo', scan: 'Foto a escaneo', img: 'Convertir imágenes', doc: 'Documentos a PDF', guide: 'Cómo usarlo', about: 'Acerca de', privacy: 'Privacidad', contact: 'Contacto', lang: 'Idioma', menu: 'Menú', note: 'Los archivos se convierten en tu dispositivo y nunca se suben.' },
+    pt: { compress: 'Comprimir imagens', popular: 'Populares', bg: 'Remover fundo', scan: 'Foto para digitalização', img: 'Converter imagens', doc: 'Documentos para PDF', guide: 'Como usar', about: 'Sobre', privacy: 'Privacidade', contact: 'Contato', lang: 'Idioma', menu: 'Menu', note: 'Os arquivos são convertidos no seu dispositivo e nunca são enviados.' },
+    fr: { compress: 'Compresser des images', popular: 'Populaires', bg: 'Supprimer le fond', scan: 'Photo en scan', img: 'Convertir des images', doc: 'Documents en PDF', guide: 'Mode d’emploi', about: 'À propos', privacy: 'Confidentialité', contact: 'Contact', lang: 'Langue', menu: 'Menu', note: 'Les fichiers sont convertis sur votre appareil et ne sont jamais envoyés.' },
+    de: { compress: 'Bilder komprimieren', popular: 'Beliebt', bg: 'Hintergrund entfernen', scan: 'Foto zu Scan', img: 'Bilder umwandeln', doc: 'Dokumente zu PDF', guide: 'Anleitung', about: 'Über uns', privacy: 'Datenschutz', contact: 'Kontakt', lang: 'Sprache', menu: 'Menü', note: 'Dateien werden auf deinem Gerät umgewandelt und nie hochgeladen.' }
   };
   var LINKS = [['img', '/'], ['doc', '/document-to-pdf/'], ['scan', '/scan/'], ['bg', '/remove-background/'], ['guide', '/guide/']];
   var FOOT = [['about', '/about/'], ['privacy', '/privacy/'], ['contact', '/contact/']];
+  var POPULAR = [['HEIC → JPG', '/heic-to-jpg/'], ['PNG → JPG', '/png-to-jpg/'], ['JPG → PNG', '/jpg-to-png/'], ['WebP → JPG', '/webp-to-jpg/'],
+    ['JPG → PDF', '/jpg-to-pdf/'], ['PDF → JPG', '/pdf-to-jpg/'], ['PNG → ICO', '/png-to-ico/'], ['Word → PDF', '/word-to-pdf/'],
+    ['Excel → PDF', '/excel-to-pdf/'], ['PPT → PDF', '/ppt-to-pdf/'], ['HWP → PDF', '/hwp-to-pdf/'], ['@compress', '/compress-image/']];
 
   function pick() {
     try { var u = new URLSearchParams(location.search).get('lang'); if (u && LANGS[u]) return u; } catch (e) {}
@@ -43,7 +46,8 @@
     '.sitelang{display:flex;align-items:center;gap:6px}.sitelang label{font-size:.8rem;color:var(--muted)}' +
     '.sitelang select{font:inherit;font-size:.85rem;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:5px 8px}' +
     '.sitefoot{max-width:960px;margin:0 auto;padding-inline:16px;padding-block:24px 40px;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:.8rem;color:var(--muted);text-align:center}' +
-    '.sitefoot nav{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}.sitefoot a{color:var(--muted)}' +
+    '.sitefoot nav{display:flex;gap:8px 16px;flex-wrap:wrap;justify-content:center}.sitefoot a{color:var(--muted)}' +
+    '.sitefoot .popular{display:flex;flex-direction:column;align-items:center;gap:6px;padding-bottom:10px;border-bottom:1px solid var(--line);width:100%}.sitefoot .popular b{font-weight:600;color:var(--fg)}' +
     '@media (max-width:560px){.sitenav{order:3;flex-basis:100%}.sitelang{margin-left:auto}}';
   document.head.appendChild(css);
 
@@ -55,7 +59,7 @@
   Object.keys(LANGS).forEach(function (k) { var o = document.createElement('option'); o.value = k; o.textContent = LANGS[k]; sel.appendChild(o); });
 
   var foot = document.createElement('footer'); foot.className = 'sitefoot';
-  foot.innerHTML = '<nav></nav><p></p><p>© ' + new Date().getFullYear() + ' PicShifter</p>';
+  foot.innerHTML = '<div class="popular"><b></b><nav></nav></div><nav class="legal"></nav><p></p><p>© ' + new Date().getFullYear() + ' PicShifter</p>';
   document.body.appendChild(foot);
 
   function paint() {
@@ -63,7 +67,9 @@
     sel.value = lang; bar.querySelector('label').textContent = t('lang');
     var nav = bar.querySelector('.sitenav'); nav.innerHTML = '';
     LINKS.forEach(function (l) { var a = document.createElement('a'); a.href = l[1]; a.textContent = t(l[0]); if (here(l[1])) a.setAttribute('aria-current', 'page'); nav.appendChild(a); });
-    var fn = foot.querySelector('nav'); fn.innerHTML = '';
+    var pn = foot.querySelector('.popular nav'); pn.innerHTML = ''; foot.querySelector('.popular b').textContent = t('popular');
+    POPULAR.forEach(function (l) { var a = document.createElement('a'); a.href = l[1]; a.textContent = l[0].charAt(0) === '@' ? t(l[0].slice(1)) : l[0]; pn.appendChild(a); });
+    var fn = foot.querySelector('nav.legal'); fn.innerHTML = '';
     FOOT.forEach(function (l) { var a = document.createElement('a'); a.href = l[1]; a.textContent = t(l[0]); fn.appendChild(a); });
     foot.querySelector('p').textContent = t('note');
   }

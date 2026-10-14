@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /render/
+Disallow: /_build/
 
 Sitemap: https://picshifter.pages.dev/sitemap.xml

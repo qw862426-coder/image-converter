@@ -70,7 +70,8 @@
   const ERR = new Set(['eType','eOld','eHwpx','eEmpty','eTimeout','eGeneric']);
   const MAP = { E_HWPX:'eHwpx', E_EMPTY:'eEmpty', E_TIMEOUT:'eTimeout' };
 
-  function t(k,v){ let s=(DOC_I18N[lang]&&DOC_I18N[lang][k])||DOC_I18N.en[k]||k; if(v) s=s.replace(/\{(\w+)\}/g,(m,x)=>x in v?v[x]:m); return s; }
+  const PRESET=window.PRESET||{}, PAGE=window.PAGE_I18N||{};
+  function t(k,v){ let s=(PAGE[lang]&&PAGE[lang][k])||(DOC_I18N[lang]&&DOC_I18N[lang][k])||(PAGE.en&&PAGE.en[k])||DOC_I18N.en[k]||k; if(v) s=s.replace(/\{(\w+)\}/g,(m,x)=>x in v?v[x]:m); return s; }
   const kb = n => n<1024*1024 ? Math.max(1,Math.round(n/1024))+' KB' : (n/1024/1024).toFixed(2)+' MB';
   const extOf = n => (n.match(/\.([^.]+)$/)||[,''])[1].toLowerCase();
   const baseOf = n => n.replace(/\.[^.]+$/,'');
@@ -171,6 +172,7 @@
     for(const it of items){ if(!it.out) continue; const a=document.createElement('a'); a.href=it.out.url; a.download=it.out.name; document.body.append(a); a.click(); a.remove(); await new Promise(r=>setTimeout(r,400)); }
   });
 
+  if(PRESET.accept) file.setAttribute('accept',PRESET.accept);
   Site.onChange(l=>{ lang=l; applyLang(); });
 })();
 </script>
