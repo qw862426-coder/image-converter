@@ -1,0 +1,29 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="robots" content="noindex">
+<style>html,body{margin:0;background:#fff}#out{width:max-content}.docx-wrapper{background:#fff!important;padding:0!important;display:block!important}.docx-wrapper>section.docx{box-shadow:none!important;margin:0 0 0 0!important}</style>
+<script src="../vendor/jszip3.min.js"></script>
+<script src="../vendor/docx-preview.min.js"></script>
+<script src="../vendor/html2canvas.min.js"></script>
+<script src="common.js"></script>
+</head><body><div id="styles"></div><div id="out"></div>
+<script>
+window.renderDocument = async function (buf) {
+  var out = document.getElementById('out');
+  await docx.renderAsync(buf, out, document.getElementById('styles'), {
+    inWrapper: true, breakPages: true, ignoreLastRenderedPageBreak: false, ignoreWidth: false, ignoreHeight: false,
+    renderHeaders: true, renderFooters: true, renderFootnotes: true, experimental: true, useBase64URL: true
+  });
+  await RenderKit.settle(out);
+  var pages = [];
+  var sections = out.querySelectorAll('section.docx');
+  for (var i = 0; i < sections.length; i++) {
+    var s = sections[i];
+    var w = s.offsetWidth, h = s.offsetHeight;
+    var ratio = parseFloat(s.style.minHeight) && parseFloat(s.style.width) ? parseFloat(s.style.minHeight) / parseFloat(s.style.width) : RenderKit.A4.h / RenderKit.A4.w;
+    var c = await RenderKit.snap(s, { width: w, height: h });
+    pages = pages.concat(RenderKit.slice(c, ratio));
+  }
+  if (!pages.length) throw new Error('E_EMPTY');
+  return pages;
+};
+</script></body></html>

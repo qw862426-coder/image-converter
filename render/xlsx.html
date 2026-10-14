@@ -1,0 +1,41 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="robots" content="noindex">
+<style>
+html,body{margin:0;background:#fff;font-family:"Apple SD Gothic Neo","Malgun Gothic","Noto Sans CJK KR","Hiragino Sans","PingFang SC",Arial,sans-serif}
+.sheet{width:max-content;min-width:714px;padding:40px;background:#fff;color:#000}
+.sheet h2{font-size:15px;margin:0 0 10px;font-weight:600}
+table{border-collapse:collapse;font-size:12px}
+td,th{border:1px solid #b7bec6;padding:3px 6px;white-space:nowrap;vertical-align:top}
+tr:first-child td{background:#eef2f6;font-weight:600}
+</style>
+<script src="../vendor/xlsx.full.min.js"></script>
+<script src="../vendor/html2canvas.min.js"></script>
+<script src="common.js"></script>
+</head><body><div id="out"></div>
+<script>
+window.renderDocument = async function (buf) {
+  var wb = XLSX.read(new Uint8Array(buf), { type: 'array', cellStyles: true });
+  var out = document.getElementById('out'), pages = [];
+  for (var i = 0; i < wb.SheetNames.length; i++) {
+    var name = wb.SheetNames[i], ws = wb.Sheets[name];
+    if (!ws || !ws['!ref']) continue;
+    var div = document.createElement('div'); div.className = 'sheet';
+    var h = document.createElement('h2'); h.textContent = name; div.appendChild(h);
+    var wrap = document.createElement('div');
+    wrap.innerHTML = XLSX.utils.sheet_to_html(ws, { header: '', footer: '' });
+    var table = wrap.querySelector('table'); if (!table) continue;
+    div.appendChild(table); out.innerHTML = ''; out.appendChild(div);
+    await RenderKit.settle(div);
+    var landscape = div.offsetWidth > RenderKit.A4.w * 1.15;
+    var c = await RenderKit.snap(div, { width: div.offsetWidth, height: div.offsetHeight });
+    var ratio = landscape ? RenderKit.A4.w / RenderKit.A4.h : RenderKit.A4.h / RenderKit.A4.w;
+    if (c.width < RenderKit.A4.w * 2) { // keep narrow sheets at A4 width so text is not blown up
+      var wide = document.createElement('canvas'); wide.width = RenderKit.A4.w * 2; wide.height = c.height;
+      var x = wide.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, wide.width, wide.height); x.drawImage(c, 0, 0); c = wide;
+    }
+    pages = pages.concat(RenderKit.slice(c, ratio));
+  }
+  if (!pages.length) throw new Error('E_EMPTY');
+  return pages;
+};
+</script></body></html>

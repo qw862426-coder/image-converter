@@ -1,0 +1,25 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="robots" content="noindex">
+<style>html,body{margin:0;background:#fff}#out{width:max-content}</style>
+<script src="../vendor/hwp.bundle.js"></script>
+<script src="../vendor/html2canvas.min.js"></script>
+<script src="common.js"></script>
+</head><body><div id="out"></div>
+<script>
+window.renderDocument = async function (buf) {
+  var bytes = new Uint8Array(buf);
+  if (bytes[0] === 0x50 && bytes[1] === 0x4B) throw new Error('E_HWPX');
+  var out = document.getElementById('out');
+  var bin = ''; for (var i = 0; i < bytes.length; i += 32768) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 32768));
+  new HWPViewer(out, bin, { type: 'binary' });
+  await RenderKit.settle(out);
+  var pages = [], list = out.querySelectorAll('[data-page-number]:not(.hwpjs-observer)');
+  for (var j = 0; j < list.length; j++) {
+    var p = list[j];
+    p.style.boxShadow = 'none'; p.style.margin = '0'; p.style.boxSizing = 'border-box'; p.style.overflow = 'hidden';
+    pages.push(await RenderKit.snap(p, { width: p.offsetWidth, height: p.offsetHeight }));
+  }
+  if (!pages.length) throw new Error('E_EMPTY');
+  return pages;
+};
+</script></body></html>
