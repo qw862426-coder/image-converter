@@ -1,0 +1,1429 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Image Converter – Free JPG, PNG, WebP, HEIC & PDF Converter</title>
+<meta name="description" id="metaDesc" content="Convert JPG, PNG, WebP, HEIC, PDF, TIFF, PSD, ICO and more for free. Files never leave your device.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* Layout: one centered workbench — upload → pick format → results → supported formats */
+:root{
+  --bg:#f3f5f7; --panel:#ffffff; --fg:#17202a; --muted:#5d6b78;
+  --line:#d9e0e6; --accent:#1f6feb; --accent-fg:#ffffff; --ok:#1a7f4b; --err:#c0392b;
+  --font:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Hiragino Sans","Yu Gothic","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root{ --bg:#11161c; --panel:#1a2129; --fg:#e8edf2; --muted:#9aa8b5;
+    --line:#2c3743; --accent:#5b9dff; --accent-fg:#0b1220; --ok:#4cc98a; --err:#ff7b6b; color-scheme:dark; }
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);font-size:15px;line-height:1.6}
+.wrap{max-width:720px;margin:0 auto;padding-inline:16px;padding-block:32px 48px;display:flex;flex-direction:column;gap:20px}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;justify-content:space-between}
+header>div{min-width:0;flex:1 1 280px}
+.langbox{display:flex;align-items:center;gap:8px}
+.langbox select{padding:6px 10px;font-size:.9rem}
+header h1{margin:0;font-size:1.7rem;font-weight:700;letter-spacing:-.01em;text-wrap:balance}
+header p{margin:4px 0 0;color:var(--muted)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:16px}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:32px 16px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s}
+.drop:hover,.drop.over{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 6%,transparent)}
+.drop strong{display:block;font-size:1.05rem;text-wrap:balance;word-break:auto-phrase}
+.drop span{display:block;text-wrap:balance;word-break:auto-phrase}
+.drop span{color:var(--muted);font-size:.9rem}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.label{font-size:.85rem;color:var(--muted);font-weight:500;min-width:56px}
+select{font:inherit;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px;min-width:0;max-width:100%}
+input[type=range]{flex:1;min-width:140px;accent-color:var(--accent)}
+.q{font-variant-numeric:tabular-nums;min-width:40px;text-align:right}
+.check{display:flex;gap:8px;align-items:center;font-size:.95rem}
+.check input{width:18px;height:18px;accent-color:var(--accent)}
+.btn{border:0;border-radius:8px;background:var(--accent);color:var(--accent-fg);font:inherit;font-weight:500;padding:12px 20px;cursor:pointer;text-decoration:none;display:inline-block;text-align:center}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent);padding:8px 14px}
+button:focus-visible,a:focus-visible,select:focus-visible,.drop:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.list{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none}
+.item{display:flex;gap:12px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:10px}
+.thumb{width:56px;height:56px;object-fit:contain;border-radius:6px;background:var(--bg);flex-shrink:0;display:grid;place-items:center;font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase}
+.meta{flex:1;min-width:0}
+.name{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.size{font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.size b{color:var(--ok);font-weight:500}
+.size.err{color:var(--err)}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+.empty{color:var(--muted);text-align:center;margin:0;font-size:.9rem}
+.note{font-size:.85rem;color:var(--muted);margin:0}
+.info h2{margin:0;font-size:1.05rem}
+.info h3{margin:0 0 4px;font-size:.9rem;color:var(--muted);font-weight:500}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips span{font-size:.8rem;padding:2px 8px;border-radius:999px;border:1px solid var(--line);font-variant-numeric:tabular-nums}
+.chips.no span{color:var(--muted);text-decoration:line-through}
+footer{font-size:.8rem;color:var(--muted);text-align:center}
+@media (max-width:480px){ .item{flex-wrap:wrap} .acts{width:100%} .acts .btn{flex:1} }
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <div>
+      <h1 data-i18n="h1">Image Converter</h1>
+      <p data-i18n="sub">Change image file formats for free. Your files are processed only on your device.</p>
+    </div>
+    <div class="langbox">
+      <label class="label" for="lang" data-i18n="lang">Language</label>
+      <select id="lang"></select>
+    </div>
+  </header>
+
+  <section class="panel">
+    <div class="drop" id="drop" tabindex="0" role="button" aria-label="Choose files" data-i18n-aria="dropAria">
+      <strong data-i18n="dropTitle">Click to choose files, or drag them here</strong>
+      <span data-i18n="dropSub">Many files at once · iPhone photos (HEIC), PDF, Photoshop (PSD) and fonts too</span>
+    </div>
+    <input type="file" id="file" multiple hidden>
+
+    <div class="row">
+      <label class="label" for="fmt" data-i18n="fmt">Convert to</label>
+      <select id="fmt">
+        <optgroup label="Common formats" data-i18n-label="grpCommon">
+          <option value="jpg">JPG</option>
+          <option value="png">PNG</option>
+          <option value="webp">WebP</option>
+          <option value="pdf">PDF</option>
+        </optgroup>
+        <optgroup label="Other images" data-i18n-label="grpOther">
+          <option value="gif">GIF</option>
+          <option value="bmp">BMP</option>
+          <option value="tiff">TIFF</option>
+          <option value="avif" id="avifOpt">AVIF</option>
+          <option value="ico" data-i18n="optIco">ICO (icon)</option>
+          <option value="cur" data-i18n="optCur">CUR (mouse cursor)</option>
+          <option value="svg">SVG</option>
+          <option value="psd" data-i18n="optPsd">PSD (Photoshop)</option>
+          <option value="tga">TGA</option>
+          <option value="dds">DDS</option>
+          <option value="rgb">RGB (SGI)</option>
+          <option value="xpm">XPM</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="row" id="qrow">
+      <label class="label" for="quality" data-i18n="quality">Quality</label>
+      <input type="range" id="quality" min="40" max="100" value="90">
+      <span class="q" id="qval">90%</span>
+    </div>
+
+    <label class="check" id="mergeRow" hidden><input type="checkbox" id="merge" checked> <span data-i18n="merge">Combine everything into one PDF file</span></label>
+
+    <div class="row">
+      <button class="btn" id="convert" disabled data-i18n="convert">Convert</button>
+      <button class="btn ghost" id="all" hidden data-i18n="saveAll">Save all</button>
+    </div>
+    <p class="note" id="hint"></p>
+  </section>
+
+  <section class="panel">
+    <ul class="list" id="list"></ul>
+    <p class="empty" id="empty" data-i18n="empty">No files selected yet.</p>
+  </section>
+
+  <section class="panel info">
+    <h2 data-i18n="infoTitle">Supported formats</h2>
+    <div>
+      <h3 data-i18n="canOpen">Files you can open</h3>
+      <div class="chips"><span>JPG</span><span>PNG</span><span>WebP</span><span>HEIC</span><span>AVIF</span><span>GIF</span><span>BMP</span><span>TIFF</span><span>PDF</span><span>SVG</span><span>PSD</span><span>ICO</span><span>CUR</span><span>TGA</span><span>DDS</span><span>RGB</span><span>XPM</span></div>
+    </div>
+    <div>
+      <h3 data-i18n="vecTitle">Drawing &amp; embroidery files (converted to a preview image)</h3>
+      <div class="chips"><span>DXF</span><span>PLT</span><span>DST</span><span>EXP</span><span>PES</span><span>PCS</span></div>
+    </div>
+    <div>
+      <h3 data-i18n="fontTitle">Fonts (converted automatically)</h3>
+      <div class="chips"><span>TTF → WOFF</span><span>OTF → WOFF</span><span>WOFF → TTF/OTF</span></div>
+    </div>
+    <p class="note" data-i18n="note">Lower quality means smaller files.</p>
+  </section>
+  <footer data-i18n="footer">Your files are never uploaded anywhere.</footer>
+</main>
+
+<script>
+/* Image & font codecs. Pixels are {width, height, data: RGBA Uint8ClampedArray}. Errors: E_BAD, E_VARIANT, E_WOFF2 */
+(function (root) {
+'use strict';
+
+/* ---------- 공통 도우미 ---------- */
+class Writer {
+  constructor(size = 1024) { this.buf = new Uint8Array(size); this.pos = 0; }
+  ensure(n) { if (this.pos + n > this.buf.length) { let s = this.buf.length * 2; while (s < this.pos + n) s *= 2; const b = new Uint8Array(s); b.set(this.buf); this.buf = b; } }
+  u8(v) { this.ensure(1); this.buf[this.pos++] = v & 255; }
+  u16le(v) { this.u8(v); this.u8(v >> 8); }
+  u32le(v) { this.u16le(v & 0xffff); this.u16le(v >>> 16); }
+  u16be(v) { this.u8(v >> 8); this.u8(v); }
+  u32be(v) { this.u16be(v >>> 16); this.u16be(v & 0xffff); }
+  bytes(a) { this.ensure(a.length); this.buf.set(a, this.pos); this.pos += a.length; }
+  str(s) { for (let i = 0; i < s.length; i++) this.u8(s.charCodeAt(i)); }
+  zeros(n) { this.ensure(n); this.pos += n; }
+  result() { return this.buf.slice(0, this.pos); }
+}
+const ascii = s => { const a = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) a[i] = s.charCodeAt(i) & 255; return a; };
+const latin1 = (b, s = 0, e = b.length) => { let r = ''; for (let i = s; i < e; i++) r += String.fromCharCode(b[i]); return r; };
+const newImage = (w, h) => ({ width: w, height: h, data: new Uint8ClampedArray(w * h * 4) });
+function dv(b) { return new DataView(b.buffer, b.byteOffset, b.byteLength); }
+
+/* 흰 배경에 합성 (투명을 지원하지 않는 형식용) */
+function flatten(img, bg = [255, 255, 255]) {
+  const out = newImage(img.width, img.height), s = img.data, d = out.data;
+  for (let i = 0; i < s.length; i += 4) {
+    const a = s[i + 3] / 255;
+    d[i] = s[i] * a + bg[0] * (1 - a); d[i + 1] = s[i + 1] * a + bg[1] * (1 - a); d[i + 2] = s[i + 2] * a + bg[2] * (1 - a); d[i + 3] = 255;
+  }
+  return out;
+}
+
+/* ---------- 색 줄이기 (GIF·XPM용, 메디안 컷) ---------- */
+function quantize(img, maxColors = 256) {
+  const d = img.data, n = img.width * img.height;
+  const hist = new Uint32Array(32768);
+  let hasAlpha = false;
+  for (let i = 0; i < n; i++) {
+    const p = i * 4;
+    if (d[p + 3] < 128) { hasAlpha = true; continue; }
+    hist[((d[p] >> 3) << 10) | ((d[p + 1] >> 3) << 5) | (d[p + 2] >> 3)]++;
+  }
+  const limit = maxColors - (hasAlpha ? 1 : 0);
+  const bins = []; for (let i = 0; i < 32768; i++) if (hist[i]) bins.push(i);
+  const comp = (b, c) => c === 0 ? b >> 10 : c === 1 ? (b >> 5) & 31 : b & 31;
+  let boxes = [bins];
+  while (boxes.length < limit) {
+    let best = -1, bestRange = 0, bestC = 0;
+    boxes.forEach((box, bi) => {
+      if (box.length < 2) return;
+      for (let c = 0; c < 3; c++) {
+        let lo = 31, hi = 0;
+        for (const b of box) { const v = comp(b, c); if (v < lo) lo = v; if (v > hi) hi = v; }
+        const r = (hi - lo) * Math.log2(box.length + 1);
+        if (r > bestRange) { bestRange = r; best = bi; bestC = c; }
+      }
+    });
+    if (best < 0) break;
+    const box = boxes[best].sort((a, b) => comp(a, bestC) - comp(b, bestC));
+    let total = 0; for (const b of box) total += hist[b];
+    let acc = 0, cut = 1;
+    for (let i = 0; i < box.length - 1; i++) { acc += hist[box[i]]; if (acc >= total / 2) { cut = i + 1; break; } cut = i + 1; }
+    boxes.splice(best, 1, box.slice(0, cut), box.slice(cut));
+  }
+  const palette = [], binIndex = new Int16Array(32768).fill(-1);
+  boxes.forEach(box => {
+    if (!box.length) return;
+    let r = 0, g = 0, b = 0, t = 0;
+    for (const x of box) { const w = hist[x]; t += w; r += ((x >> 10) * 8 + 4) * w; g += (((x >> 5) & 31) * 8 + 4) * w; b += ((x & 31) * 8 + 4) * w; }
+    const idx = palette.length; palette.push([Math.round(r / t), Math.round(g / t), Math.round(b / t)]);
+    for (const x of box) binIndex[x] = idx;
+  });
+  let transparentIndex = -1;
+  if (hasAlpha) { transparentIndex = palette.length; palette.push([0, 0, 0]); }
+  if (!palette.length) palette.push([0, 0, 0]);
+  const indices = new Uint8Array(n);
+  for (let i = 0; i < n; i++) {
+    const p = i * 4;
+    indices[i] = d[p + 3] < 128 ? transparentIndex : binIndex[((d[p] >> 3) << 10) | ((d[p + 1] >> 3) << 5) | (d[p + 2] >> 3)];
+  }
+  return { palette, indices, transparentIndex };
+}
+
+/* ---------- GIF ---------- */
+function encodeGIF(img) {
+  const { palette, indices, transparentIndex } = quantize(img, 256);
+  let bits = 1; while ((1 << bits) < palette.length) bits++;
+  const tableBits = Math.max(bits, 1), minCode = Math.max(2, bits);
+  const w = new Writer(img.width * img.height + 1024);
+  w.str('GIF89a'); w.u16le(img.width); w.u16le(img.height);
+  w.u8(0x80 | 0x70 | (tableBits - 1)); w.u8(0); w.u8(0);
+  for (let i = 0; i < (1 << tableBits); i++) { const c = palette[i] || [0, 0, 0]; w.u8(c[0]); w.u8(c[1]); w.u8(c[2]); }
+  if (transparentIndex >= 0) { w.bytes([0x21, 0xF9, 4, 1, 0, 0, transparentIndex, 0]); }
+  w.u8(0x2C); w.u16le(0); w.u16le(0); w.u16le(img.width); w.u16le(img.height); w.u8(0);
+  w.u8(minCode);
+  const data = lzwGIF(indices, minCode);
+  for (let i = 0; i < data.length; i += 255) { const c = data.subarray(i, i + 255); w.u8(c.length); w.bytes(c); }
+  w.u8(0); w.u8(0x3B);
+  return w.result();
+}
+function lzwGIF(idx, minCode) {
+  const clear = 1 << minCode, eoi = clear + 1;
+  let size = minCode + 1, next = eoi + 1;
+  const dict = new Map();
+  const out = new Writer(idx.length + 16);
+  let acc = 0, nb = 0;
+  const emit = c => { acc |= c << nb; nb += size; while (nb >= 8) { out.u8(acc & 255); acc >>>= 8; nb -= 8; } };
+  emit(clear);
+  let prefix = idx[0];
+  for (let i = 1; i < idx.length; i++) {
+    const k = idx[i], key = (prefix << 8) | k;
+    const v = dict.get(key);
+    if (v !== undefined) { prefix = v; continue; }
+    emit(prefix);
+    if (next < 4096) { dict.set(key, next++); if (next > (1 << size) && size < 12) size++; }
+    else { emit(clear); dict.clear(); size = minCode + 1; next = eoi + 1; }
+    prefix = k;
+  }
+  emit(prefix); emit(eoi);
+  if (nb > 0) out.u8(acc & 255);
+  return out.result();
+}
+
+/* ---------- BMP (24비트) ---------- */
+function encodeBMP(img) {
+  const f = flatten(img), W = img.width, H = img.height, row = Math.ceil(W * 3 / 4) * 4, size = 54 + row * H;
+  const w = new Writer(size);
+  w.str('BM'); w.u32le(size); w.u32le(0); w.u32le(54);
+  w.u32le(40); w.u32le(W); w.u32le(H); w.u16le(1); w.u16le(24); w.u32le(0); w.u32le(row * H); w.u32le(2835); w.u32le(2835); w.u32le(0); w.u32le(0);
+  for (let y = H - 1; y >= 0; y--) {
+    for (let x = 0; x < W; x++) { const p = (y * W + x) * 4; w.u8(f.data[p + 2]); w.u8(f.data[p + 1]); w.u8(f.data[p]); }
+    w.zeros(row - W * 3);
+  }
+  return w.result();
+}
+
+/* ---------- ICO / CUR (PNG를 담는 방식) ---------- */
+function encodeICO(entries, cursor = false) {
+  const w = new Writer();
+  w.u16le(0); w.u16le(cursor ? 2 : 1); w.u16le(entries.length);
+  let off = 6 + 16 * entries.length;
+  entries = entries.map(e => e.png ? e : Object.assign({}, e, { png: dibIcon(e.pixels) }));
+  for (const e of entries) {
+    w.u8(e.width >= 256 ? 0 : e.width); w.u8(e.height >= 256 ? 0 : e.height); w.u8(0); w.u8(0);
+    if (cursor) { w.u16le(e.hotX || 0); w.u16le(e.hotY || 0); } else { w.u16le(1); w.u16le(32); }
+    w.u32le(e.png.length); w.u32le(off); off += e.png.length;
+  }
+  for (const e of entries) w.bytes(e.png);
+  return w.result();
+}
+/* 아이콘·커서 안에 들어가는 BMP 방식 그림 (오래된 프로그램도 읽을 수 있음) */
+function dibIcon(img) {
+  const W = img.width, H = img.height, maskRow = Math.ceil(W / 32) * 4;
+  const w = new Writer(40 + W * H * 4 + maskRow * H);
+  w.u32le(40); w.u32le(W); w.u32le(H * 2); w.u16le(1); w.u16le(32); w.u32le(0); w.u32le(W * H * 4 + maskRow * H); w.u32le(0); w.u32le(0); w.u32le(0); w.u32le(0);
+  for (let y = H - 1; y >= 0; y--) for (let x = 0; x < W; x++) { const p = (y * W + x) * 4; w.u8(img.data[p + 2]); w.u8(img.data[p + 1]); w.u8(img.data[p]); w.u8(img.data[p + 3]); }
+  for (let y = H - 1; y >= 0; y--) { const row = new Uint8Array(maskRow); for (let x = 0; x < W; x++) if (img.data[(y * W + x) * 4 + 3] < 128) row[x >> 3] |= 0x80 >> (x & 7); w.bytes(row); }
+  return w.result();
+}
+/* CUR을 브라우저가 읽을 수 있는 ICO로 바꿈 */
+function curToIco(b) {
+  const c = b.slice(); const v = dv(c);
+  v.setUint16(2, 1, true);
+  const n = v.getUint16(4, true);
+  for (let i = 0; i < n; i++) { v.setUint16(6 + i * 16 + 4, 1, true); v.setUint16(6 + i * 16 + 6, 32, true); }
+  return c;
+}
+
+/* ---------- TIFF ---------- */
+function encodeTIFF(img) {
+  const W = img.width, H = img.height, n = W * H * 4;
+  const tags = [[256, 4, 1, W], [257, 4, 1, H], [258, 3, 4, 'bps'], [259, 3, 1, 1], [262, 3, 1, 2], [273, 4, 1, 'data'],
+    [277, 3, 1, 4], [278, 4, 1, H], [279, 4, 1, n], [282, 5, 1, 'xres'], [283, 5, 1, 'yres'], [284, 3, 1, 1], [296, 3, 1, 2], [338, 3, 1, 2]];
+  const ifdSize = 2 + tags.length * 12 + 4, extra = 8 + ifdSize;
+  const off = { bps: extra, xres: extra + 8, yres: extra + 16, data: extra + 24 };
+  const w = new Writer(off.data + n);
+  w.str('II'); w.u16le(42); w.u32le(8);
+  w.u16le(tags.length);
+  for (const [tag, type, count, val] of tags) {
+    w.u16le(tag); w.u16le(type); w.u32le(count);
+    const v = typeof val === 'string' ? off[val] : val;
+    if (type === 3 && count === 1) { w.u16le(v); w.u16le(0); } else w.u32le(v);
+  }
+  w.u32le(0);
+  w.u16le(8); w.u16le(8); w.u16le(8); w.u16le(8);
+  w.u32le(72); w.u32le(1); w.u32le(72); w.u32le(1);
+  w.bytes(img.data);
+  return w.result();
+}
+async function inflateZlib(bytes) {
+  const ds = new DecompressionStream('deflate');
+  const stream = new Blob([bytes]).stream().pipeThrough(ds);
+  return new Uint8Array(await new Response(stream).arrayBuffer());
+}
+async function deflateZlib(bytes) {
+  const cs = new CompressionStream('deflate');
+  const stream = new Blob([bytes]).stream().pipeThrough(cs);
+  return new Uint8Array(await new Response(stream).arrayBuffer());
+}
+function unpackBits(src, expected) {
+  const out = new Uint8Array(expected); let i = 0, o = 0;
+  while (i < src.length && o < expected) {
+    let n = src[i++]; if (n > 127) n -= 256;
+    if (n >= 0) { for (let k = 0; k <= n && o < expected; k++) out[o++] = src[i++]; }
+    else if (n !== -128) { const v = src[i++]; for (let k = 0; k < 1 - n && o < expected; k++) out[o++] = v; }
+  }
+  return out;
+}
+function lzwTIFF(src, expected) {
+  const out = new Uint8Array(expected); let o = 0;
+  const prefix = new Int32Array(4096), suffix = new Uint8Array(4096), len = new Uint16Array(4096), first = new Uint8Array(4096);
+  for (let i = 0; i < 256; i++) { prefix[i] = -1; suffix[i] = i; len[i] = 1; first[i] = i; }
+  let next = 258, size = 9, bitPos = 0, old = -1;
+  const total = src.length * 8;
+  const read = () => {
+    if (bitPos + size > total) return 257;
+    let v = 0; for (let i = 0; i < size; i++) { const b = bitPos + i; v = (v << 1) | ((src[b >> 3] >> (7 - (b & 7))) & 1); }
+    bitPos += size; return v;
+  };
+  const write = c => { const l = len[c]; let p = o + l - 1; let x = c; while (x >= 0) { if (p < expected) out[p] = suffix[x]; p--; x = prefix[x]; } o += l; };
+  while (o < expected) {
+    const code = read();
+    if (code === 257) break;
+    if (code === 256) { next = 258; size = 9; old = -1; continue; }
+    if (old < 0) { write(code); old = code; continue; }
+    if (code < next) {
+      write(code);
+      prefix[next] = old; suffix[next] = first[code]; len[next] = len[old] + 1; first[next] = first[old]; next++;
+    } else {
+      prefix[next] = old; suffix[next] = first[old]; len[next] = len[old] + 1; first[next] = first[old]; next++;
+      write(next - 1);
+    }
+    old = code;
+    if (next + 1 >= (1 << size) && size < 12) size++;
+  }
+  return out;
+}
+async function decodeTIFF(b) {
+  const v = dv(b);
+  const le = b[0] === 0x49;
+  const u16 = o => v.getUint16(o, le), u32 = o => v.getUint32(o, le);
+  if (u16(2) !== 42) throw new Error('E_BAD');
+  const ifd = u32(4), count = u16(ifd), T = {};
+  const sizes = { 1: 1, 2: 1, 3: 2, 4: 4, 5: 8, 6: 1, 7: 1, 8: 2, 9: 4, 10: 8, 11: 4, 12: 8, 16: 8 };
+  for (let i = 0; i < count; i++) {
+    const e = ifd + 2 + i * 12, tag = u16(e), type = u16(e + 2), n = u32(e + 4);
+    const bytes = (sizes[type] || 1) * n, at = bytes <= 4 ? e + 8 : u32(e + 8);
+    const vals = [];
+    for (let k = 0; k < n; k++) {
+      if (type === 3) vals.push(u16(at + k * 2));
+      else if (type === 4) vals.push(u32(at + k * 4));
+      else if (type === 5) vals.push(u32(at + k * 8) / (u32(at + k * 8 + 4) || 1));
+      else vals.push(b[at + k]);
+    }
+    T[tag] = vals;
+  }
+  const W = T[256][0], H = T[257][0], spp = (T[277] || [1])[0], bps = (T[258] || [1])[0];
+  const comp = (T[259] || [1])[0], photo = (T[262] || [1])[0], pred = (T[317] || [1])[0];
+  if ((T[284] || [1])[0] !== 1) throw new Error('E_VARIANT');
+  if (T[322]) throw new Error('E_VARIANT');
+  if (![1, 4, 8, 16].includes(bps)) throw new Error('E_VARIANT');
+  const offs = T[273], cnts = T[279] || [b.length - offs[0]], rps = (T[278] || [H])[0];
+  const rowBytes = Math.ceil(W * spp * bps / 8);
+  const raw = new Uint8Array(rowBytes * H);
+  for (let s = 0; s < offs.length; s++) {
+    const rows = Math.min(rps, H - s * rps); if (rows <= 0) break;
+    const exp = rows * rowBytes, src = b.subarray(offs[s], offs[s] + cnts[s]);
+    let d;
+    if (comp === 1) d = src;
+    else if (comp === 5) d = lzwTIFF(src, exp);
+    else if (comp === 32773) d = unpackBits(src, exp);
+    else if (comp === 8 || comp === 32946) d = await inflateZlib(src);
+    else throw new Error('E_VARIANT');
+    raw.set(d.subarray(0, exp), s * rps * rowBytes);
+  }
+  if (pred === 2 && bps === 8) {
+    for (let y = 0; y < H; y++) { const r = y * rowBytes; for (let i = spp; i < W * spp; i++) raw[r + i] = (raw[r + i] + raw[r + i - spp]) & 255; }
+  }
+  const sample = (y, i) => {
+    const r = y * rowBytes;
+    if (bps === 8) return raw[r + i];
+    if (bps === 16) return raw[r + i * 2 + (le ? 1 : 0)];
+    if (bps === 4) return ((raw[r + (i >> 1)] >> ((i & 1) ? 0 : 4)) & 15) * 17;
+    return ((raw[r + (i >> 3)] >> (7 - (i & 7))) & 1) * 255;
+  };
+  const img = newImage(W, H), d = img.data, cmap = T[320];
+  const extra = T[338] ? T[338][0] : (spp === 4 && photo === 2 ? 2 : spp === 2 ? 2 : 0);
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const p = (y * W + x) * 4, s0 = x * spp;
+    let r, g, bl, a = 255;
+    if (photo === 2) { r = sample(y, s0); g = sample(y, s0 + 1); bl = sample(y, s0 + 2); if (spp > 3 && extra) a = sample(y, s0 + 3); if (extra === 1 && a) { r = Math.min(255, r * 255 / a); g = Math.min(255, g * 255 / a); bl = Math.min(255, bl * 255 / a); } }
+    else if (photo === 3 && cmap) { const ix = bps === 8 ? raw[y * rowBytes + s0] : bps === 4 ? sample(y, s0) / 17 : sample(y, s0) / 255; const nC = 1 << bps; r = cmap[ix] >> 8; g = cmap[nC + ix] >> 8; bl = cmap[2 * nC + ix] >> 8; }
+    else if (photo === 5) { const c = sample(y, s0), m = sample(y, s0 + 1), yy = sample(y, s0 + 2), k = sample(y, s0 + 3); r = 255 - Math.min(255, c + k); g = 255 - Math.min(255, m + k); bl = 255 - Math.min(255, yy + k); }
+    else { let gr = sample(y, s0); if (photo === 0) gr = 255 - gr; r = g = bl = gr; if (spp > 1 && extra) a = sample(y, s0 + 1); }
+    d[p] = r; d[p + 1] = g; d[p + 2] = bl; d[p + 3] = a;
+  }
+  return img;
+}
+
+/* ---------- TGA ---------- */
+function encodeTGA(img) {
+  const w = new Writer(18 + img.data.length + 26);
+  w.bytes([0, 0, 2, 0, 0, 0, 0, 0]); w.u16le(0); w.u16le(0); w.u16le(img.width); w.u16le(img.height); w.u8(32); w.u8(0x28);
+  const d = img.data;
+  for (let i = 0; i < d.length; i += 4) { w.u8(d[i + 2]); w.u8(d[i + 1]); w.u8(d[i]); w.u8(d[i + 3]); }
+  w.u32le(0); w.u32le(0); w.str('TRUEVISION-XFILE.'); w.u8(0);
+  return w.result();
+}
+function decodeTGA(b) {
+  const v = dv(b);
+  const idLen = b[0], cmType = b[1], type = b[2], cmStart = v.getUint16(3, true), cmLen = v.getUint16(5, true), cmDepth = b[7];
+  const W = v.getUint16(12, true), H = v.getUint16(14, true), bpp = b[16], desc = b[17];
+  const base = type & 7, rle = type & 8;
+  if (![1, 2, 3].includes(base) || !W || !H) throw new Error('E_BAD');
+  let pos = 18 + idLen;
+  const readColor = (depth, at) => {
+    if (depth === 32) return [b[at + 2], b[at + 1], b[at], b[at + 3]];
+    if (depth === 24) return [b[at + 2], b[at + 1], b[at], 255];
+    if (depth === 15 || depth === 16) { const c = b[at] | (b[at + 1] << 8); return [((c >> 10) & 31) * 255 / 31, ((c >> 5) & 31) * 255 / 31, (c & 31) * 255 / 31, 255]; }
+    return [b[at], b[at], b[at], 255];
+  };
+  let pal = null;
+  if (cmType === 1) {
+    const step = Math.ceil(cmDepth / 8); pal = [];
+    for (let i = 0; i < cmLen; i++) pal[cmStart + i] = readColor(cmDepth, pos + i * step);
+    pos += cmLen * step;
+  }
+  const step = Math.ceil(bpp / 8);
+  const px = base === 1 ? (at => pal[b[at] | (step === 2 ? b[at + 1] << 8 : 0)] || [0, 0, 0, 255])
+    : base === 3 ? (at => [b[at], b[at], b[at], bpp === 16 ? b[at + 1] : 255])
+    : (at => readColor(bpp, at));
+  const n = W * H, list = new Array(n);
+  let i = 0;
+  if (!rle) { for (; i < n; i++, pos += step) list[i] = px(pos); }
+  else {
+    while (i < n && pos < b.length) {
+      const h = b[pos++], c = (h & 127) + 1;
+      if (h & 128) { const col = px(pos); pos += step; for (let k = 0; k < c && i < n; k++) list[i++] = col; }
+      else for (let k = 0; k < c && i < n; k++, pos += step) list[i++] = px(pos);
+    }
+  }
+  const img = newImage(W, H), top = desc & 0x20, rtl = desc & 0x10;
+  for (let k = 0; k < n; k++) {
+    let x = k % W, y = Math.floor(k / W);
+    if (!top) y = H - 1 - y; if (rtl) x = W - 1 - x;
+    const c = list[k] || [0, 0, 0, 255], p = (y * W + x) * 4;
+    img.data[p] = c[0]; img.data[p + 1] = c[1]; img.data[p + 2] = c[2]; img.data[p + 3] = c[3];
+  }
+  return img;
+}
+
+/* ---------- PSD ---------- */
+function encodePSD(img) {
+  const W = img.width, H = img.height, n = W * H;
+  const w = new Writer(26 + 14 + n * 4);
+  w.str('8BPS'); w.u16be(1); w.zeros(6); w.u16be(4); w.u32be(H); w.u32be(W); w.u16be(8); w.u16be(3);
+  w.u32be(0); w.u32be(0); w.u32be(0); w.u16be(0);
+  for (let c = 0; c < 4; c++) for (let i = 0; i < n; i++) w.u8(img.data[i * 4 + c]);
+  return w.result();
+}
+function decodePSD(b) {
+  const v = dv(b);
+  if (latin1(b, 0, 4) !== '8BPS') throw new Error('E_BAD');
+  if (v.getUint16(4) !== 1) throw new Error('E_VARIANT');
+  const ch = v.getUint16(12), H = v.getUint32(14), W = v.getUint32(18), depth = v.getUint16(22), mode = v.getUint16(24);
+  if (depth !== 8 && depth !== 16) throw new Error('E_VARIANT');
+  let pos = 26;
+  const cmLen = v.getUint32(pos), cmAt = pos + 4; pos += 4 + cmLen;
+  pos += 4 + v.getUint32(pos);
+  pos += 4 + v.getUint32(pos);
+  const comp = v.getUint16(pos); pos += 2;
+  const bpc = depth / 8, rowBytes = W * bpc, planes = [];
+  if (comp === 0) { for (let c = 0; c < ch; c++) { planes.push(b.subarray(pos, pos + rowBytes * H)); pos += rowBytes * H; } }
+  else if (comp === 1) {
+    const counts = []; for (let i = 0; i < ch * H; i++) { counts.push(v.getUint16(pos)); pos += 2; }
+    for (let c = 0; c < ch; c++) {
+      const pl = new Uint8Array(rowBytes * H);
+      for (let y = 0; y < H; y++) { const len = counts[c * H + y]; pl.set(unpackBits(b.subarray(pos, pos + len), rowBytes), y * rowBytes); pos += len; }
+      planes.push(pl);
+    }
+  } else throw new Error('E_VARIANT');
+  const g = (c, i) => planes[c][i * bpc];
+  const img = newImage(W, H), d = img.data;
+  for (let i = 0; i < W * H; i++) {
+    const p = i * 4; let r, gg, bl, a = 255;
+    if (mode === 3) { r = g(0, i); gg = g(1, i); bl = g(2, i); if (ch > 3) a = g(3, i); }
+    else if (mode === 4) { const C = 255 - g(0, i), M = 255 - g(1, i), Y = 255 - g(2, i), K = 255 - g(3, i); r = 255 - Math.min(255, C + K); gg = 255 - Math.min(255, M + K); bl = 255 - Math.min(255, Y + K); if (ch > 4) a = g(4, i); }
+    else if (mode === 2) { const ix = g(0, i); r = b[cmAt + ix]; gg = b[cmAt + 256 + ix]; bl = b[cmAt + 512 + ix]; }
+    else { r = gg = bl = g(0, i); if (ch > 1) a = g(1, i); }
+    d[p] = r; d[p + 1] = gg; d[p + 2] = bl; d[p + 3] = a;
+  }
+  return img;
+}
+
+/* ---------- DDS ---------- */
+function encodeDDS(img) {
+  const w = new Writer(128 + img.data.length);
+  w.str('DDS '); w.u32le(124); w.u32le(0x100F); w.u32le(img.height); w.u32le(img.width); w.u32le(img.width * 4); w.u32le(0); w.u32le(0); w.zeros(44);
+  w.u32le(32); w.u32le(0x41); w.u32le(0); w.u32le(32); w.u32le(0x00ff0000); w.u32le(0x0000ff00); w.u32le(0x000000ff); w.u32le(0xff000000);
+  w.u32le(0x1000); w.u32le(0); w.u32le(0); w.u32le(0); w.u32le(0);
+  const d = img.data; for (let i = 0; i < d.length; i += 4) { w.u8(d[i + 2]); w.u8(d[i + 1]); w.u8(d[i]); w.u8(d[i + 3]); }
+  return w.result();
+}
+function decodeDDS(b) {
+  const v = dv(b);
+  if (latin1(b, 0, 4) !== 'DDS ') throw new Error('E_BAD');
+  const H = v.getUint32(12, true), W = v.getUint32(16, true), pf = v.getUint32(80, true);
+  let four = latin1(b, 84, 88), pos = 128;
+  if (four === 'DX10') {
+    const f = v.getUint32(128, true); pos = 148;
+    four = { 71: 'DXT1', 72: 'DXT1', 74: 'DXT3', 75: 'DXT3', 77: 'DXT5', 78: 'DXT5', 28: 'RGBA', 29: 'RGBA', 87: 'BGRA', 91: 'BGRA' }[f];
+    if (!four) throw new Error('E_VARIANT');
+  }
+  const img = newImage(W, H), d = img.data;
+  if (four === 'RGBA' || four === 'BGRA') {
+    for (let i = 0; i < W * H; i++) { const s = pos + i * 4, p = i * 4; d[p] = b[s + (four === 'RGBA' ? 0 : 2)]; d[p + 1] = b[s + 1]; d[p + 2] = b[s + (four === 'RGBA' ? 2 : 0)]; d[p + 3] = b[s + 3]; }
+    return img;
+  }
+  if (pf & 0x4) {
+    if (!['DXT1', 'DXT3', 'DXT5'].includes(four)) throw new Error('E_VARIANT');
+    const bw = Math.ceil(W / 4), bh = Math.ceil(H / 4), bs = four === 'DXT1' ? 8 : 16;
+    for (let by = 0; by < bh; by++) for (let bx = 0; bx < bw; bx++) {
+      const at = pos + (by * bw + bx) * bs, cAt = four === 'DXT1' ? at : at + 8;
+      const c0 = v.getUint16(cAt, true), c1 = v.getUint16(cAt + 2, true);
+      const rgb = c => [((c >> 11) & 31) * 255 / 31, ((c >> 5) & 63) * 255 / 63, (c & 31) * 255 / 31];
+      const a = rgb(c0), bb = rgb(c1), cols = [[...a, 255], [...bb, 255]];
+      if (c0 > c1 || four !== 'DXT1') { cols.push([(2 * a[0] + bb[0]) / 3, (2 * a[1] + bb[1]) / 3, (2 * a[2] + bb[2]) / 3, 255], [(a[0] + 2 * bb[0]) / 3, (a[1] + 2 * bb[1]) / 3, (a[2] + 2 * bb[2]) / 3, 255]); }
+      else cols.push([(a[0] + bb[0]) / 2, (a[1] + bb[1]) / 2, (a[2] + bb[2]) / 2, 255], [0, 0, 0, 0]);
+      const bits = v.getUint32(cAt + 4, true);
+      let alphas = null;
+      if (four === 'DXT5') {
+        const a0 = b[at], a1 = b[at + 1], t = [a0, a1];
+        if (a0 > a1) for (let k = 1; k < 7; k++) t.push(((7 - k) * a0 + k * a1) / 7);
+        else { for (let k = 1; k < 5; k++) t.push(((5 - k) * a0 + k * a1) / 5); t.push(0, 255); }
+        let ab = 0n; for (let k = 0; k < 6; k++) ab |= BigInt(b[at + 2 + k]) << BigInt(8 * k);
+        alphas = []; for (let k = 0; k < 16; k++) alphas.push(t[Number((ab >> BigInt(3 * k)) & 7n)]);
+      }
+      for (let k = 0; k < 16; k++) {
+        const x = bx * 4 + (k & 3), y = by * 4 + (k >> 2); if (x >= W || y >= H) continue;
+        const c = cols[(bits >> (2 * k)) & 3], p = (y * W + x) * 4;
+        d[p] = c[0]; d[p + 1] = c[1]; d[p + 2] = c[2];
+        d[p + 3] = four === 'DXT1' ? c[3] : four === 'DXT3' ? ((b[at + (k >> 1)] >> ((k & 1) * 4)) & 15) * 17 : alphas[k];
+      }
+    }
+    return img;
+  }
+  const bits = v.getUint32(88, true), bpp = bits / 8, masks = [92, 96, 100, 104].map(o => v.getUint32(o, true));
+  const ext = m => { if (!m) return null; let s = 0; while (!((m >>> s) & 1)) s++; let w = 0; while ((m >>> (s + w)) & 1) w++; return [s, (1 << w) - 1]; };
+  const ch = masks.map(ext), lum = pf & 0x20000, alphaOnly = (pf & 0x2) && !(pf & 0x40) && !lum;
+  for (let i = 0; i < W * H; i++) {
+    const s = pos + i * bpp; let val = 0; for (let k = 0; k < bpp; k++) val |= b[s + k] << (8 * k); val >>>= 0;
+    const get = c => ch[c] ? Math.round(((val >>> ch[c][0]) & ch[c][1]) * 255 / ch[c][1]) : null;
+    const p = i * 4;
+    if (alphaOnly) { d[p] = d[p + 1] = d[p + 2] = 0; d[p + 3] = get(3) ?? val; continue; }
+    if (lum) { d[p] = d[p + 1] = d[p + 2] = get(0); }
+    else { d[p] = get(0); d[p + 1] = get(1); d[p + 2] = get(2); }
+    d[p + 3] = (pf & 0x1) && ch[3] ? get(3) : 255;
+  }
+  return img;
+}
+
+/* ---------- SGI (.rgb) ---------- */
+function encodeSGI(img) {
+  const W = img.width, H = img.height, w = new Writer(512 + W * H * 4);
+  w.u16be(474); w.u8(0); w.u8(1); w.u16be(3); w.u16be(W); w.u16be(H); w.u16be(4); w.u32be(0); w.u32be(255); w.zeros(4);
+  const name = 'converted'; w.str(name); w.zeros(80 - name.length); w.u32be(0); w.zeros(404);
+  for (let c = 0; c < 4; c++) for (let y = H - 1; y >= 0; y--) for (let x = 0; x < W; x++) w.u8(img.data[(y * W + x) * 4 + c]);
+  return w.result();
+}
+function decodeSGI(b) {
+  const v = dv(b);
+  if (v.getUint16(0) !== 474) throw new Error('E_BAD');
+  const rle = b[2], bpc = b[3], W = v.getUint16(6), H = v.getUint16(8), Z = v.getUint16(10) || 1;
+  const chans = [];
+  for (let z = 0; z < Z; z++) {
+    const pl = new Uint8Array(W * H);
+    for (let y = 0; y < H; y++) {
+      let row;
+      if (!rle) { const at = 512 + (z * H + y) * W * bpc; row = new Uint8Array(W); for (let x = 0; x < W; x++) row[x] = b[at + x * bpc]; }
+      else {
+        const start = v.getUint32(512 + (z * H + y) * 4); row = new Uint8Array(W);
+        let p = start, o = 0;
+        const rd = () => { const r = bpc === 2 ? b[p] : b[p]; p += bpc; return r; };
+        while (o < W) { const c = rd(), n = c & 127; if (!n) break; if (c & 128) for (let k = 0; k < n && o < W; k++) row[o++] = rd(); else { const val = rd(); for (let k = 0; k < n && o < W; k++) row[o++] = val; } }
+      }
+      pl.set(row, (H - 1 - y) * W);
+    }
+    chans.push(pl);
+  }
+  const img = newImage(W, H), d = img.data;
+  for (let i = 0; i < W * H; i++) {
+    const p = i * 4;
+    if (Z >= 3) { d[p] = chans[0][i]; d[p + 1] = chans[1][i]; d[p + 2] = chans[2][i]; d[p + 3] = Z > 3 ? chans[3][i] : 255; }
+    else { d[p] = d[p + 1] = d[p + 2] = chans[0][i]; d[p + 3] = Z === 2 ? chans[1][i] : 255; }
+  }
+  return img;
+}
+
+/* ---------- XPM ---------- */
+const XPM_CHARS = '.XoO+@#$%&*=-;:>,<1234567890qwertyuipasdfghjklzxcvbnmMNBVCZASDFGHJKLPIUYTREWQ!~^/()_`\'][{}|';
+function encodeXPM(img) {
+  const { palette, indices, transparentIndex } = quantize(img, 256);
+  const cpp = palette.length > XPM_CHARS.length ? 2 : 1;
+  const key = i => cpp === 1 ? XPM_CHARS[i] : XPM_CHARS[i % XPM_CHARS.length] + XPM_CHARS[Math.floor(i / XPM_CHARS.length)];
+  const hex = n => n.toString(16).padStart(2, '0').toUpperCase();
+  const lines = ['/* XPM */', 'static char *image[] = {', `"${img.width} ${img.height} ${palette.length} ${cpp}",`];
+  palette.forEach((c, i) => lines.push(`"${key(i)} c ${i === transparentIndex ? 'None' : '#' + hex(c[0]) + hex(c[1]) + hex(c[2])}",`));
+  for (let y = 0; y < img.height; y++) {
+    let s = ''; for (let x = 0; x < img.width; x++) s += key(indices[y * img.width + x]);
+    lines.push(`"${s}"${y === img.height - 1 ? '' : ','}`);
+  }
+  lines.push('};', '');
+  return ascii(lines.join('\n'));
+}
+const NAMED = { black: '000000', white: 'ffffff', red: 'ff0000', green: '00ff00', blue: '0000ff', yellow: 'ffff00', cyan: '00ffff', magenta: 'ff00ff', gray: 'bebebe', grey: 'bebebe', orange: 'ffa500', purple: 'a020f0', brown: 'a52a2a' };
+function decodeXPM(b, resolveName) {
+  const text = latin1(b);
+  const strs = []; const re = /"((?:[^"\\]|\\.)*)"/g; let m; while ((m = re.exec(text))) strs.push(m[1]);
+  if (!strs.length) throw new Error('E_BAD');
+  const [W, H, N, cpp] = strs[0].trim().split(/\s+/).map(Number);
+  const colors = new Map();
+  for (let i = 1; i <= N; i++) {
+    const s = strs[i], k = s.slice(0, cpp), toks = s.slice(cpp).trim().split(/\s+/);
+    let val = null;
+    for (let t = 0; t < toks.length; t++) if (['c', 'g', 'g4', 'm', 's'].includes(toks[t])) {
+      let j = t + 1, vv = []; while (j < toks.length && !['c', 'g', 'g4', 'm', 's'].includes(toks[j])) vv.push(toks[j++]);
+      if (toks[t] === 'c' || val === null) val = vv.join(' ');
+    }
+    let rgba = [0, 0, 0, 255];
+    if (!val || /^none$/i.test(val)) rgba = [0, 0, 0, 0];
+    else if (val[0] === '#') {
+      const h = val.slice(1), n = h.length / 3;
+      rgba = [0, 1, 2].map(c => parseInt(h.substr(c * n, Math.min(n, 2)), 16) * (n === 1 ? 17 : 1)).concat(255);
+    } else {
+      const r = resolveName ? resolveName(val) : null;
+      const hx = r || NAMED[val.toLowerCase()] || 'bebebe';
+      rgba = [parseInt(hx.slice(0, 2), 16), parseInt(hx.slice(2, 4), 16), parseInt(hx.slice(4, 6), 16), 255];
+    }
+    colors.set(k, rgba);
+  }
+  const img = newImage(W, H);
+  for (let y = 0; y < H; y++) {
+    const row = strs[1 + N + y] || '';
+    for (let x = 0; x < W; x++) { const c = colors.get(row.substr(x * cpp, cpp)) || [0, 0, 0, 0]; img.data.set(c, (y * W + x) * 4); }
+  }
+  return img;
+}
+
+/* ---------- PDF (JPEG 이미지를 페이지로) ---------- */
+function encodePDF(pages) {
+  const chunks = [], offs = []; let len = 0;
+  const add = x => { const a = typeof x === 'string' ? ascii(x) : x; chunks.push(a); len += a.length; };
+  const obj = (n, body) => { offs[n] = len; add(`${n} 0 obj\n`); body(); add('\nendobj\n'); };
+  add('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n');
+  const kids = pages.map((_, i) => `${3 + i * 3} 0 R`).join(' ');
+  obj(1, () => add('<< /Type /Catalog /Pages 2 0 R >>'));
+  obj(2, () => add(`<< /Type /Pages /Kids [${kids}] /Count ${pages.length} >>`));
+  pages.forEach((p, i) => {
+    const n = 3 + i * 3, pw = +(p.width * 0.75).toFixed(2), ph = +(p.height * 0.75).toFixed(2);
+    obj(n, () => add(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pw} ${ph}] /Resources << /XObject << /Im${i} ${n + 1} 0 R >> >> /Contents ${n + 2} 0 R >>`));
+    obj(n + 1, () => { add(`<< /Type /XObject /Subtype /Image /Width ${p.width} /Height ${p.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${p.jpeg.length} >>\nstream\n`); add(p.jpeg); add('\nendstream'); });
+    const content = `q ${pw} 0 0 ${ph} 0 0 cm /Im${i} Do Q`;
+    obj(n + 2, () => add(`<< /Length ${content.length} >>\nstream\n${content}\nendstream`));
+  });
+  const total = 3 + pages.length * 3, xref = len;
+  add(`xref\n0 ${total}\n0000000000 65535 f \n`);
+  for (let i = 1; i < total; i++) add(String(offs[i]).padStart(10, '0') + ' 00000 n \n');
+  add(`trailer\n<< /Size ${total} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF\n`);
+  const out = new Uint8Array(len); let o = 0; for (const c of chunks) { out.set(c, o); o += c.length; }
+  return out;
+}
+
+/* ---------- SVG (그림을 담은 SVG) ---------- */
+function encodeSVG(width, height, pngBase64) {
+  return ascii(`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><image width="${width}" height="${height}" xlink:href="data:image/png;base64,${pngBase64}"/></svg>`);
+}
+
+/* ---------- 선 그림 → SVG (CAD·자수 미리보기용) ---------- */
+const STITCH_COLORS = ['#1b1b1b', '#d7263d', '#1b6ec2', '#2e9e44', '#f29e0c', '#8e44ad', '#16a2b8', '#e05297', '#7a5230', '#6c7a89'];
+function pathsToSVG(paths, { flipY = false, lineWidth = 1.2, maxSide = 1600 } = {}) {
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  for (const p of paths) for (const [x, y] of p.pts) { if (x < minX) minX = x; if (x > maxX) maxX = x; if (y < minY) minY = y; if (y > maxY) maxY = y; }
+  if (!isFinite(minX)) throw new Error('E_BAD');
+  const bw = Math.max(maxX - minX, 1e-6), bh = Math.max(maxY - minY, 1e-6);
+  const s = (maxSide - 40) / Math.max(bw, bh), W = Math.round(bw * s + 40), H = Math.round(bh * s + 40);
+  const tx = x => (20 + (x - minX) * s).toFixed(1), ty = y => (flipY ? 20 + (maxY - y) * s : 20 + (y - minY) * s).toFixed(1);
+  let body = '';
+  for (const p of paths) {
+    if (p.pts.length < 2) continue;
+    body += `<polyline fill="none" stroke="${p.color || '#111'}" stroke-width="${lineWidth}" stroke-linecap="round" stroke-linejoin="round" points="${p.pts.map(([x, y]) => tx(x) + ',' + ty(y)).join(' ')}"/>`;
+  }
+  return { svg: `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="100%" height="100%" fill="#fff"/>${body}</svg>`, width: W, height: H };
+}
+function stitchesToPaths(stitches) {
+  const paths = []; let cur = null, color = 0;
+  for (const s of stitches) {
+    if (s.type === 'color') { color++; cur = null; continue; }
+    if (s.type === 'jump') { cur = null; continue; }
+    if (!cur) { cur = { color: STITCH_COLORS[color % STITCH_COLORS.length], pts: s.from ? [s.from] : [] }; paths.push(cur); }
+    cur.pts.push([s.x, s.y]);
+  }
+  return paths;
+}
+
+/* DST (타지마) */
+function decodeDST(b) {
+  let x = 0, y = 0; const out = [];
+  for (let i = 512; i + 2 < b.length; i += 3) {
+    const b0 = b[i], b1 = b[i + 1], b2 = b[i + 2];
+    if ((b2 & 0xF3) === 0xF3) break;
+    let dx = 0, dy = 0;
+    if (b2 & 0x04) dx += 81; if (b2 & 0x08) dx -= 81; if (b1 & 0x04) dx += 27; if (b1 & 0x08) dx -= 27;
+    if (b0 & 0x04) dx += 9; if (b0 & 0x08) dx -= 9; if (b1 & 0x01) dx += 3; if (b1 & 0x02) dx -= 3; if (b0 & 0x01) dx += 1; if (b0 & 0x02) dx -= 1;
+    if (b2 & 0x20) dy += 81; if (b2 & 0x10) dy -= 81; if (b1 & 0x20) dy += 27; if (b1 & 0x10) dy -= 27;
+    if (b0 & 0x20) dy += 9; if (b0 & 0x10) dy -= 9; if (b1 & 0x80) dy += 3; if (b1 & 0x40) dy -= 3; if (b0 & 0x80) dy += 1; if (b0 & 0x40) dy -= 1;
+    const from = [x, -y]; x += dx; y += dy;
+    if ((b2 & 0xC3) === 0xC3) out.push({ type: 'color' });
+    else if (b2 & 0x80) out.push({ type: 'jump' });
+    else out.push({ type: 'stitch', x, y: -y, from });
+  }
+  return stitchesToPaths(out);
+}
+/* EXP (멜코) */
+function decodeEXP(b) {
+  const s8 = v => v > 127 ? v - 256 : v;
+  let x = 0, y = 0; const out = [];
+  for (let i = 0; i + 1 < b.length;) {
+    let b0 = b[i], b1 = b[i + 1]; i += 2;
+    if (b0 !== 0x80) { const from = [x, y]; x += s8(b0); y -= s8(b1); out.push({ type: 'stitch', x, y, from }); continue; }
+    const ctl = b1; if (i + 1 >= b.length) break;
+    b0 = b[i]; b1 = b[i + 1]; i += 2;
+    const from = [x, y]; x += s8(b0); y -= s8(b1);
+    if (ctl & 0x01) { out.push({ type: 'color' }); out.push({ type: 'jump' }); }
+    else if (ctl === 0x02) out.push({ type: 'stitch', x, y, from });
+    else out.push({ type: 'jump' });
+  }
+  return stitchesToPaths(out);
+}
+/* PES (브라더) — 안쪽 PEC 바늘 데이터를 읽음 */
+function decodePES(b) {
+  const v = dv(b);
+  let pec;
+  if (latin1(b, 0, 4) === '#PES') pec = v.getUint32(8, true);
+  else if (latin1(b, 0, 4) === '#PEC') pec = 8;
+  else throw new Error('E_BAD');
+  const cc = b[pec + 48];
+  let i = pec + 49 + (cc + 1) + (0x1D0 - cc) + 3 + 0x0B;
+  let x = 0, y = 0; const out = [];
+  while (i + 1 < b.length) {
+    let v1 = b[i++], v2 = b[i++];
+    if (v1 === 0xFF && v2 === 0x00) break;
+    if (v1 === 0xFE && v2 === 0xB0) { i++; out.push({ type: 'color' }); continue; }
+    let jump = false, dx, dy;
+    if (v1 & 0x80) { if (v1 & 0x30) jump = true; dx = ((v1 & 0x0F) << 8) + v2; if (dx > 0x7FF) dx -= 0x1000; v2 = b[i++]; }
+    else dx = v1 > 0x3F ? v1 - 0x80 : v1;
+    if (v2 & 0x80) { if (v2 & 0x30) jump = true; dy = ((v2 & 0x0F) << 8) + b[i++]; if (dy > 0x7FF) dy -= 0x1000; }
+    else dy = v2 > 0x3F ? v2 - 0x80 : v2;
+    const from = [x, y]; x += dx; y += dy;
+    out.push(jump ? { type: 'jump' } : { type: 'stitch', x, y, from });
+  }
+  return stitchesToPaths(out);
+}
+/* PCS (파프 디자인) */
+function decodePCS(b) {
+  const v = dv(b);
+  const nColors = v.getUint16(2, true);
+  let i = 4 + nColors * 4 + 2;
+  const s24 = (a, c, d) => { let n = a | (c << 8) | (d << 16); if (n & 0x800000) n -= 0x1000000; return n; };
+  const out = []; let last = null;
+  for (; i + 8 < b.length + 0; i += 9) {
+    if (i + 9 > b.length) break;
+    const x = s24(b[i + 1], b[i + 2], b[i + 3]) * 0.6, y = -s24(b[i + 5], b[i + 6], b[i + 7]) * 0.6, c = b[i + 8];
+    if (c & 0x01) { out.push({ type: 'color' }); continue; }
+    if (c & 0x04) { out.push({ type: 'jump' }); last = [x, y]; continue; }
+    out.push({ type: 'stitch', x, y, from: last }); last = [x, y];
+  }
+  return stitchesToPaths(out);
+}
+
+/* HPGL (.plt) */
+function decodePLT(b) {
+  const text = latin1(b).replace(/\x1b[^;]*;?/g, '');
+  const paths = []; let x = 0, y = 0, down = false, rel = false, cur = null;
+  const pens = ['#111', '#111', '#d7263d', '#2e9e44', '#1b6ec2', '#f29e0c', '#8e44ad', '#16a2b8'];
+  let color = '#111';
+  const moveTo = (nx, ny) => {
+    if (down) { if (!cur) { cur = { color, pts: [[x, y]] }; paths.push(cur); } cur.pts.push([nx, ny]); }
+    else cur = null;
+    x = nx; y = ny;
+  };
+  const re = /([A-Z]{2})([^A-Z;]*)/gi; let m;
+  while ((m = re.exec(text))) {
+    const cmd = m[1].toUpperCase(), nums = (m[2].match(/-?\d+(\.\d+)?/g) || []).map(Number);
+    if (cmd === 'PU' || cmd === 'PD') { down = cmd === 'PD'; if (!down) cur = null; }
+    else if (cmd === 'PA') rel = false;
+    else if (cmd === 'PR') rel = true;
+    else if (cmd === 'SP') { color = pens[nums[0] || 1] || '#111'; cur = null; continue; }
+    else if (cmd === 'CI' && nums.length) {
+      const r = nums[0], pts = []; for (let k = 0; k <= 72; k++) { const a = k / 72 * Math.PI * 2; pts.push([x + r * Math.cos(a), y + r * Math.sin(a)]); }
+      paths.push({ color, pts }); continue;
+    } else if (cmd === 'IN') { x = y = 0; down = false; rel = false; cur = null; continue; }
+    else continue;
+    for (let k = 0; k + 1 < nums.length; k += 2) moveTo(rel ? x + nums[k] : nums[k], rel ? y + nums[k + 1] : nums[k + 1]);
+  }
+  return paths;
+}
+
+/* DXF (오토캐드 도면, 기본 도형만) */
+function decodeDXF(b) {
+  const lines = latin1(b).split(/\r?\n/);
+  const pairs = []; for (let i = 0; i + 1 < lines.length; i += 2) pairs.push([parseInt(lines[i].trim(), 10), lines[i + 1].trim()]);
+  let i = pairs.findIndex((p, k) => p[0] === 2 && p[1] === 'ENTITIES' && pairs[k - 1] && pairs[k - 1][1] === 'SECTION');
+  if (i < 0) throw new Error('E_BAD');
+  const paths = []; i++;
+  const arc = (cx, cy, r, a0, a1) => { if (a1 < a0) a1 += 360; const n = Math.max(8, Math.ceil((a1 - a0) / 5)), pts = []; for (let k = 0; k <= n; k++) { const a = (a0 + (a1 - a0) * k / n) * Math.PI / 180; pts.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]); } return pts; };
+  let poly = null;
+  while (i < pairs.length) {
+    const [code, val] = pairs[i];
+    if (code !== 0) { i++; continue; }
+    if (val === 'ENDSEC') break;
+    const type = val, g = {}; const list = []; i++;
+    while (i < pairs.length && pairs[i][0] !== 0) { const [c, vv] = pairs[i]; list.push([c, vv]); if (!(c in g)) g[c] = parseFloat(vv); i++; }
+    if (type === 'LINE') paths.push({ pts: [[g[10], g[20]], [g[11], g[21]]] });
+    else if (type === 'CIRCLE') paths.push({ pts: arc(g[10], g[20], g[40], 0, 360) });
+    else if (type === 'ARC') paths.push({ pts: arc(g[10], g[20], g[40], g[50], g[51]) });
+    else if (type === 'LWPOLYLINE' || type === 'SPLINE') {
+      const pts = []; let px = null;
+      for (const [c, vv] of list) { if (c === 10) px = parseFloat(vv); else if (c === 20 && px !== null) { pts.push([px, parseFloat(vv)]); px = null; } }
+      if (type === 'LWPOLYLINE' && (g[70] & 1) && pts.length) pts.push(pts[0]);
+      paths.push({ pts });
+    }
+    else if (type === 'POLYLINE') { poly = { pts: [], closed: g[70] & 1 }; paths.push(poly); }
+    else if (type === 'VERTEX' && poly) poly.pts.push([g[10], g[20]]);
+    else if (type === 'SEQEND' && poly) { if (poly.closed && poly.pts.length) poly.pts.push(poly.pts[0]); poly = null; }
+    else if (type === 'POINT') paths.push({ pts: arc(g[10], g[20], 0.5, 0, 360) });
+  }
+  return paths;
+}
+
+/* ---------- 폰트: TTF/OTF ↔ WOFF ---------- */
+async function sfntToWoff(b) {
+  const v = dv(b), flavor = v.getUint32(0), n = v.getUint16(4);
+  if (flavor !== 0x00010000 && flavor !== 0x4F54544F && flavor !== 0x74727565) throw new Error('E_BAD');
+  const tables = [];
+  let sfntSize = 12 + 16 * n;
+  for (let i = 0; i < n; i++) {
+    const e = 12 + i * 16, off = v.getUint32(e + 8), len = v.getUint32(e + 12);
+    const data = b.subarray(off, off + len), comp = await deflateZlib(data);
+    tables.push({ tag: v.getUint32(e), sum: v.getUint32(e + 4), len, data: comp.length < len ? comp : data });
+    sfntSize += (len + 3) & ~3;
+  }
+  let off = 44 + 20 * n; tables.forEach(t => { t.off = off; off += (t.data.length + 3) & ~3; });
+  const w = new Writer(off);
+  w.str('wOFF'); w.u32be(flavor); w.u32be(off); w.u16be(n); w.u16be(0); w.u32be(sfntSize); w.u16be(1); w.u16be(0);
+  w.u32be(0); w.u32be(0); w.u32be(0); w.u32be(0); w.u32be(0);
+  for (const t of tables) { w.u32be(t.tag); w.u32be(t.off); w.u32be(t.data.length); w.u32be(t.len); w.u32be(t.sum); }
+  for (const t of tables) { w.bytes(t.data); w.zeros(((t.data.length + 3) & ~3) - t.data.length); }
+  return w.result();
+}
+async function woffToSfnt(b) {
+  const v = dv(b);
+  if (latin1(b, 0, 4) === 'wOF2') throw new Error('E_WOFF2');
+  if (latin1(b, 0, 4) !== 'wOFF') throw new Error('E_BAD');
+  const flavor = v.getUint32(4), n = v.getUint16(12), tables = [];
+  for (let i = 0; i < n; i++) {
+    const e = 44 + i * 20, off = v.getUint32(e + 4), clen = v.getUint32(e + 8), olen = v.getUint32(e + 12);
+    const src = b.subarray(off, off + clen);
+    tables.push({ tag: v.getUint32(e), sum: v.getUint32(e + 16), data: clen < olen ? await inflateZlib(src) : src });
+  }
+  let es = 0; while ((1 << (es + 1)) <= n) es++;
+  const sr = (1 << es) * 16;
+  let off = 12 + 16 * n; tables.forEach(t => { t.off = off; off += (t.data.length + 3) & ~3; });
+  const w = new Writer(off);
+  w.u32be(flavor); w.u16be(n); w.u16be(sr); w.u16be(es); w.u16be(n * 16 - sr);
+  for (const t of tables) { w.u32be(t.tag); w.u32be(t.sum); w.u32be(t.off); w.u32be(t.data.length); }
+  for (const t of tables) { w.bytes(t.data); w.zeros(((t.data.length + 3) & ~3) - t.data.length); }
+  return { bytes: w.result(), ext: flavor === 0x4F54544F ? 'otf' : 'ttf' };
+}
+
+const Codecs = { flatten, quantize, encodeGIF, encodeBMP, encodeICO, curToIco, encodeTIFF, decodeTIFF, encodeTGA, decodeTGA,
+  encodePSD, decodePSD, encodeDDS, decodeDDS, encodeSGI, decodeSGI, encodeXPM, decodeXPM, encodePDF, encodeSVG,
+  pathsToSVG, decodeDST, decodeEXP, decodePES, decodePCS, decodePLT, decodeDXF, sfntToWoff, woffToSfnt };
+if (typeof module !== 'undefined' && module.exports) module.exports = Codecs; else root.Codecs = Codecs;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* UI text in 8 languages. {x} placeholders are filled in by t(). */
+const I18N = {
+en: { _name:'English',
+  title:'Image Converter – Free JPG, PNG, WebP, HEIC & PDF Converter',
+  desc:'Convert JPG, PNG, WebP, HEIC, PDF, TIFF, PSD, ICO and more for free. Files never leave your device.',
+  h1:'Image Converter', sub:'Change image file formats for free. Your files are processed only on your device.',
+  lang:'Language', dropAria:'Choose files', dropTitle:'Click to choose files, or drag them here',
+  dropSub:'Many files at once · iPhone photos (HEIC), PDF, Photoshop (PSD) and fonts too',
+  fmt:'Convert to', grpCommon:'Common formats', grpOther:'Other images',
+  optIco:'ICO (icon)', optCur:'CUR (mouse cursor)', optPsd:'PSD (Photoshop)', avifNo:'AVIF (this browser can’t save it)',
+  quality:'Quality', merge:'Combine everything into one PDF file',
+  convert:'Convert', converting:'Converting… ({n}/{total})', saveAll:'Save all', save:'Save', remove:'Remove',
+  empty:'No files selected yet.',
+  hintSvg:'SVG output places your picture inside an SVG file. It does not turn it into vector lines.',
+  hintIco:'The icon holds 16, 32, 48, 64, 128 and 256 px sizes in one file.',
+  hintCur:'The cursor is made in 32, 48 and 64 px sizes, with the click point at the top left.',
+  infoTitle:'Supported formats', canOpen:'Files you can open', vecTitle:'Drawing & embroidery files (converted to a preview image)',
+  fontTitle:'Fonts (converted automatically)', notTitle:'Not supported',
+  note:'Lower quality means smaller files. JPG, BMP and PDF turn transparent areas white. GIF and XPM use at most 256 colors, so photos may look slightly rough.',
+  footer:'Your files are never uploaded anywhere.',
+  smaller:'{p}% smaller', pages:'{n} pages', mergedInto:'Combined into the PDF above', mergedName:'combined',
+  eLib:'Couldn’t load the converter tool. Please check your internet connection.',
+  eOpen:'This file can’t be opened as an image.', eWebp:'This browser can’t save WebP.',
+  eAvif:'This browser can’t save AVIF. Try the latest Chrome.', eGeneric:'Couldn’t convert this file. It may be damaged or in an unsupported format.',
+  E_BAD:'This file seems damaged, or it isn’t really a {fmt} file.', E_VARIANT:'This {fmt} file uses a version or compression we can’t read yet.',
+  E_WOFF2:'WOFF2 isn’t supported (WOFF only).',
+  noEps:'EPS and PS are printer programming languages, so browsers can’t read them.', noEmf:'EMF and WMF (Windows drawing files) aren’t supported yet.',
+  noCorel:'This is a CorelDRAW-only format with no public way to convert it.', noDoc:'Documents aren’t handled by this image converter.',
+  noOther:'{fmt} files aren’t supported.' },
+
+ko: { _name:'한국어',
+  title:'이미지 변환기 - JPG PNG WebP HEIC PDF 무료 변환',
+  desc:'JPG, PNG, WebP, HEIC, PDF, TIFF, PSD, ICO 등 이미지를 무료로 변환하세요. 파일이 서버로 전송되지 않아 안전합니다.',
+  h1:'이미지 변환기', sub:'사진·그림 파일 형식을 무료로 바꿔요. 파일은 내 기기 안에서만 처리돼요.',
+  lang:'언어', dropAria:'파일 선택', dropTitle:'여기를 눌러 파일을 고르거나 끌어다 놓으세요',
+  dropSub:'여러 개 한 번에 가능 · 아이폰 사진(HEIC), PDF, 포토샵(PSD), 폰트도 가능',
+  fmt:'바꿀 형식', grpCommon:'자주 쓰는 형식', grpOther:'그 밖의 이미지',
+  optIco:'ICO (아이콘)', optCur:'CUR (마우스 커서)', optPsd:'PSD (포토샵)', avifNo:'AVIF (이 브라우저는 저장 미지원)',
+  quality:'화질', merge:'여러 장을 PDF 파일 하나로 합치기',
+  convert:'변환하기', converting:'변환 중… ({n}/{total})', saveAll:'전체 저장', save:'저장', remove:'삭제',
+  empty:'아직 고른 파일이 없어요.',
+  hintSvg:'SVG로 바꾸면 그림을 SVG 파일 안에 넣어 저장해요. 선으로 된 벡터 그림으로 바뀌지는 않아요.',
+  hintIco:'아이콘은 16·32·48·64·128·256 크기를 한 파일에 담아요.',
+  hintCur:'커서는 32·48·64 크기로 만들고, 클릭 위치는 왼쪽 위예요.',
+  infoTitle:'지원하는 형식', canOpen:'열 수 있는 파일', vecTitle:'도면·자수 파일 (그림으로 미리보기 변환)',
+  fontTitle:'폰트 (자동 변환)', notTitle:'지원하지 않는 형식',
+  note:'화질을 낮추면 용량이 줄어요. JPG·BMP·PDF로 바꾸면 투명한 배경은 흰색이 돼요. GIF·XPM은 최대 256색이라 사진은 색이 조금 거칠어질 수 있어요.',
+  footer:'파일은 어디에도 업로드되지 않습니다.',
+  smaller:'{p}% 줄어듦', pages:'{n}쪽', mergedInto:'위 PDF에 합쳐졌어요', mergedName:'합친파일',
+  eLib:'변환 도구를 불러오지 못했어요. 인터넷 연결을 확인해 주세요.',
+  eOpen:'이 파일을 그림으로 열 수 없어요.', eWebp:'이 브라우저는 WebP 저장을 지원하지 않아요.',
+  eAvif:'이 브라우저는 AVIF 저장을 지원하지 않아요. 크롬 최신 버전에서 시도해 보세요.', eGeneric:'변환하지 못했어요. 파일이 손상됐거나 지원하지 않는 형식일 수 있어요.',
+  E_BAD:'파일이 손상됐거나 실제 {fmt} 파일이 아니에요.', E_VARIANT:'이 {fmt} 파일은 아직 읽을 수 없는 버전이나 압축 방식을 써요.',
+  E_WOFF2:'WOFF2는 지원하지 않아요 (WOFF만 가능).',
+  noEps:'EPS·PS는 인쇄용 프로그램 언어라 브라우저에서 해석할 수 없어요.', noEmf:'EMF·WMF(윈도우 그림 파일)는 아직 지원하지 않아요.',
+  noCorel:'코렐드로우 전용 형식이라 공개된 변환 방법이 없어요.', noDoc:'문서 파일은 이미지 변환기에서 다루지 않아요.',
+  noOther:'{fmt} 파일은 지원하지 않아요.' },
+
+ja: { _name:'日本語',
+  title:'画像変換ツール – JPG・PNG・WebP・HEIC・PDFを無料で変換',
+  desc:'JPG、PNG、WebP、HEIC、PDF、TIFF、PSD、ICOなどを無料で変換。ファイルは端末の外に送信されません。',
+  h1:'画像変換ツール', sub:'画像ファイルの形式を無料で変換できます。ファイルはお使いの端末内だけで処理されます。',
+  lang:'言語', dropAria:'ファイルを選択', dropTitle:'ここをクリックしてファイルを選ぶか、ドラッグ＆ドロップしてください',
+  dropSub:'複数ファイルOK · iPhoneの写真（HEIC）、PDF、Photoshop（PSD）、フォントにも対応',
+  fmt:'変換先', grpCommon:'よく使う形式', grpOther:'その他の画像',
+  optIco:'ICO（アイコン）', optCur:'CUR（マウスカーソル）', optPsd:'PSD（Photoshop）', avifNo:'AVIF（このブラウザでは保存不可）',
+  quality:'画質', merge:'すべてを1つのPDFファイルにまとめる',
+  convert:'変換する', converting:'変換中…（{n}/{total}）', saveAll:'すべて保存', save:'保存', remove:'削除',
+  empty:'まだファイルが選ばれていません。',
+  hintSvg:'SVGに変換すると、画像をSVGファイルの中に入れて保存します。線のベクター画像にはなりません。',
+  hintIco:'アイコンには16・32・48・64・128・256 pxのサイズを1つのファイルに収めます。',
+  hintCur:'カーソルは32・48・64 pxで作成し、クリック位置は左上です。',
+  infoTitle:'対応している形式', canOpen:'開けるファイル', vecTitle:'図面・刺しゅうファイル（プレビュー画像に変換）',
+  fontTitle:'フォント（自動変換）', notTitle:'対応していない形式',
+  note:'画質を下げるとファイルが小さくなります。JPG・BMP・PDFでは透明部分が白になります。GIF・XPMは最大256色のため、写真は少し粗くなることがあります。',
+  footer:'ファイルはどこにもアップロードされません。',
+  smaller:'{p}% 縮小', pages:'{n}ページ', mergedInto:'上のPDFにまとめました', mergedName:'まとめたファイル',
+  eLib:'変換ツールを読み込めませんでした。インターネット接続を確認してください。',
+  eOpen:'このファイルは画像として開けません。', eWebp:'このブラウザはWebPの保存に対応していません。',
+  eAvif:'このブラウザはAVIFの保存に対応していません。最新のChromeでお試しください。', eGeneric:'変換できませんでした。ファイルが壊れているか、対応していない形式の可能性があります。',
+  E_BAD:'ファイルが壊れているか、実際には{fmt}ファイルではありません。', E_VARIANT:'この{fmt}ファイルは、まだ読み込めないバージョンまたは圧縮方式を使っています。',
+  E_WOFF2:'WOFF2には対応していません（WOFFのみ）。',
+  noEps:'EPS・PSは印刷用のプログラム言語のため、ブラウザでは読み込めません。', noEmf:'EMF・WMF（Windowsの図形ファイル）にはまだ対応していません。',
+  noCorel:'CorelDRAW専用の形式で、公開された変換方法がありません。', noDoc:'文書ファイルはこの画像変換ツールでは扱いません。',
+  noOther:'{fmt}ファイルには対応していません。' },
+
+zh: { _name:'中文（简体）',
+  title:'图片格式转换器 – 免费转换 JPG、PNG、WebP、HEIC、PDF',
+  desc:'免费转换 JPG、PNG、WebP、HEIC、PDF、TIFF、PSD、ICO 等格式。文件不会离开你的设备。',
+  h1:'图片格式转换器', sub:'免费转换图片文件格式。文件只在你的设备上处理。',
+  lang:'语言', dropAria:'选择文件', dropTitle:'点击这里选择文件，或把文件拖到这里',
+  dropSub:'可一次选择多个文件 · 支持 iPhone 照片（HEIC）、PDF、Photoshop（PSD）和字体',
+  fmt:'转换为', grpCommon:'常用格式', grpOther:'其他图片格式',
+  optIco:'ICO（图标）', optCur:'CUR（鼠标指针）', optPsd:'PSD（Photoshop）', avifNo:'AVIF（此浏览器无法保存）',
+  quality:'画质', merge:'合并为一个 PDF 文件',
+  convert:'转换', converting:'正在转换…（{n}/{total}）', saveAll:'全部保存', save:'保存', remove:'删除',
+  empty:'还没有选择文件。',
+  hintSvg:'转换为 SVG 时，会把图片放进 SVG 文件中保存，不会变成矢量线条。',
+  hintIco:'图标文件内包含 16、32、48、64、128、256 px 六种尺寸。',
+  hintCur:'指针文件为 32、48、64 px，点击位置在左上角。',
+  infoTitle:'支持的格式', canOpen:'可以打开的文件', vecTitle:'图纸和刺绣文件（转换为预览图片）',
+  fontTitle:'字体（自动转换）', notTitle:'不支持的格式',
+  note:'降低画质可以减小文件大小。转换为 JPG、BMP、PDF 时，透明区域会变成白色。GIF 和 XPM 最多 256 色，照片可能略显粗糙。',
+  footer:'你的文件不会上传到任何地方。',
+  smaller:'缩小 {p}%', pages:'{n} 页', mergedInto:'已合并到上方的 PDF', mergedName:'合并文件',
+  eLib:'无法加载转换工具，请检查网络连接。',
+  eOpen:'无法将此文件作为图片打开。', eWebp:'此浏览器不支持保存 WebP。',
+  eAvif:'此浏览器不支持保存 AVIF，请尝试最新版 Chrome。', eGeneric:'无法转换此文件，文件可能已损坏或格式不受支持。',
+  E_BAD:'文件可能已损坏，或者并不是真正的 {fmt} 文件。', E_VARIANT:'此 {fmt} 文件使用了暂时无法读取的版本或压缩方式。',
+  E_WOFF2:'不支持 WOFF2（仅支持 WOFF）。',
+  noEps:'EPS 和 PS 是打印机编程语言，浏览器无法读取。', noEmf:'暂不支持 EMF 和 WMF（Windows 图形文件）。',
+  noCorel:'这是 CorelDRAW 专用格式，没有公开的转换方法。', noDoc:'此图片转换器不处理文档文件。',
+  noOther:'不支持 {fmt} 文件。' },
+
+es: { _name:'Español',
+  title:'Convertidor de imágenes – Convierte JPG, PNG, WebP, HEIC y PDF gratis',
+  desc:'Convierte JPG, PNG, WebP, HEIC, PDF, TIFF, PSD, ICO y más gratis. Tus archivos nunca salen de tu dispositivo.',
+  h1:'Convertidor de imágenes', sub:'Cambia el formato de tus imágenes gratis. Los archivos se procesan solo en tu dispositivo.',
+  lang:'Idioma', dropAria:'Elegir archivos', dropTitle:'Haz clic para elegir archivos o arrástralos aquí',
+  dropSub:'Varios archivos a la vez · también fotos de iPhone (HEIC), PDF, Photoshop (PSD) y fuentes',
+  fmt:'Convertir a', grpCommon:'Formatos comunes', grpOther:'Otras imágenes',
+  optIco:'ICO (icono)', optCur:'CUR (cursor del ratón)', optPsd:'PSD (Photoshop)', avifNo:'AVIF (este navegador no puede guardarlo)',
+  quality:'Calidad', merge:'Unir todo en un solo archivo PDF',
+  convert:'Convertir', converting:'Convirtiendo… ({n}/{total})', saveAll:'Guardar todo', save:'Guardar', remove:'Quitar',
+  empty:'Aún no has elegido ningún archivo.',
+  hintSvg:'Al convertir a SVG, la imagen se guarda dentro de un archivo SVG. No se convierte en líneas vectoriales.',
+  hintIco:'El icono incluye los tamaños de 16, 32, 48, 64, 128 y 256 px en un solo archivo.',
+  hintCur:'El cursor se crea en 32, 48 y 64 px, con el punto de clic arriba a la izquierda.',
+  infoTitle:'Formatos compatibles', canOpen:'Archivos que puedes abrir', vecTitle:'Planos y bordados (se convierten en una imagen de vista previa)',
+  fontTitle:'Fuentes (conversión automática)', notTitle:'No compatibles',
+  note:'Menor calidad significa archivos más pequeños. JPG, BMP y PDF vuelven blancas las zonas transparentes. GIF y XPM usan como máximo 256 colores, por lo que las fotos pueden verse algo ásperas.',
+  footer:'Tus archivos nunca se suben a ningún sitio.',
+  smaller:'{p}% más pequeño', pages:'{n} páginas', mergedInto:'Unido en el PDF de arriba', mergedName:'unido',
+  eLib:'No se pudo cargar la herramienta de conversión. Revisa tu conexión a internet.',
+  eOpen:'Este archivo no se puede abrir como imagen.', eWebp:'Este navegador no puede guardar WebP.',
+  eAvif:'Este navegador no puede guardar AVIF. Prueba con la última versión de Chrome.', eGeneric:'No se pudo convertir este archivo. Puede estar dañado o en un formato no compatible.',
+  E_BAD:'El archivo parece dañado o no es realmente un archivo {fmt}.', E_VARIANT:'Este archivo {fmt} usa una versión o compresión que todavía no podemos leer.',
+  E_WOFF2:'WOFF2 no es compatible (solo WOFF).',
+  noEps:'EPS y PS son lenguajes de programación de impresoras, así que los navegadores no pueden leerlos.', noEmf:'EMF y WMF (dibujos de Windows) aún no son compatibles.',
+  noCorel:'Es un formato exclusivo de CorelDRAW sin una forma pública de convertirlo.', noDoc:'Este convertidor de imágenes no trabaja con documentos.',
+  noOther:'Los archivos {fmt} no son compatibles.' },
+
+pt: { _name:'Português',
+  title:'Conversor de imagens – Converta JPG, PNG, WebP, HEIC e PDF grátis',
+  desc:'Converta JPG, PNG, WebP, HEIC, PDF, TIFF, PSD, ICO e mais de graça. Seus arquivos nunca saem do seu dispositivo.',
+  h1:'Conversor de imagens', sub:'Mude o formato das suas imagens de graça. Os arquivos são processados só no seu dispositivo.',
+  lang:'Idioma', dropAria:'Escolher arquivos', dropTitle:'Clique para escolher arquivos ou arraste-os para cá',
+  dropSub:'Vários arquivos de uma vez · também fotos do iPhone (HEIC), PDF, Photoshop (PSD) e fontes',
+  fmt:'Converter para', grpCommon:'Formatos comuns', grpOther:'Outras imagens',
+  optIco:'ICO (ícone)', optCur:'CUR (cursor do mouse)', optPsd:'PSD (Photoshop)', avifNo:'AVIF (este navegador não consegue salvar)',
+  quality:'Qualidade', merge:'Juntar tudo em um único arquivo PDF',
+  convert:'Converter', converting:'Convertendo… ({n}/{total})', saveAll:'Salvar tudo', save:'Salvar', remove:'Remover',
+  empty:'Nenhum arquivo escolhido ainda.',
+  hintSvg:'Ao converter para SVG, a imagem é salva dentro de um arquivo SVG. Ela não vira linhas vetoriais.',
+  hintIco:'O ícone traz os tamanhos 16, 32, 48, 64, 128 e 256 px em um só arquivo.',
+  hintCur:'O cursor é criado em 32, 48 e 64 px, com o ponto de clique no canto superior esquerdo.',
+  infoTitle:'Formatos compatíveis', canOpen:'Arquivos que você pode abrir', vecTitle:'Desenhos técnicos e bordados (convertidos em imagem de prévia)',
+  fontTitle:'Fontes (conversão automática)', notTitle:'Não compatíveis',
+  note:'Qualidade menor gera arquivos menores. JPG, BMP e PDF deixam as áreas transparentes brancas. GIF e XPM usam no máximo 256 cores, então fotos podem ficar um pouco ásperas.',
+  footer:'Seus arquivos nunca são enviados para lugar nenhum.',
+  smaller:'{p}% menor', pages:'{n} páginas', mergedInto:'Juntado no PDF acima', mergedName:'combinado',
+  eLib:'Não foi possível carregar a ferramenta de conversão. Verifique sua conexão com a internet.',
+  eOpen:'Este arquivo não pode ser aberto como imagem.', eWebp:'Este navegador não consegue salvar WebP.',
+  eAvif:'Este navegador não consegue salvar AVIF. Tente a versão mais recente do Chrome.', eGeneric:'Não foi possível converter este arquivo. Ele pode estar danificado ou em um formato não compatível.',
+  E_BAD:'O arquivo parece danificado ou não é realmente um arquivo {fmt}.', E_VARIANT:'Este arquivo {fmt} usa uma versão ou compressão que ainda não conseguimos ler.',
+  E_WOFF2:'WOFF2 não é compatível (apenas WOFF).',
+  noEps:'EPS e PS são linguagens de programação de impressoras, por isso os navegadores não conseguem lê-los.', noEmf:'EMF e WMF (desenhos do Windows) ainda não são compatíveis.',
+  noCorel:'É um formato exclusivo do CorelDRAW, sem forma pública de conversão.', noDoc:'Este conversor de imagens não trabalha com documentos.',
+  noOther:'Arquivos {fmt} não são compatíveis.' },
+
+fr: { _name:'Français',
+  title:'Convertisseur d’images – Convertir JPG, PNG, WebP, HEIC et PDF gratuitement',
+  desc:'Convertissez JPG, PNG, WebP, HEIC, PDF, TIFF, PSD, ICO et plus gratuitement. Vos fichiers ne quittent jamais votre appareil.',
+  h1:'Convertisseur d’images', sub:'Changez le format de vos images gratuitement. Les fichiers sont traités uniquement sur votre appareil.',
+  lang:'Langue', dropAria:'Choisir des fichiers', dropTitle:'Cliquez pour choisir des fichiers ou glissez-les ici',
+  dropSub:'Plusieurs fichiers à la fois · aussi les photos d’iPhone (HEIC), PDF, Photoshop (PSD) et polices',
+  fmt:'Convertir en', grpCommon:'Formats courants', grpOther:'Autres images',
+  optIco:'ICO (icône)', optCur:'CUR (curseur de souris)', optPsd:'PSD (Photoshop)', avifNo:'AVIF (ce navigateur ne peut pas l’enregistrer)',
+  quality:'Qualité', merge:'Tout réunir dans un seul fichier PDF',
+  convert:'Convertir', converting:'Conversion… ({n}/{total})', saveAll:'Tout enregistrer', save:'Enregistrer', remove:'Retirer',
+  empty:'Aucun fichier choisi pour l’instant.',
+  hintSvg:'En SVG, l’image est placée dans un fichier SVG. Elle n’est pas transformée en tracés vectoriels.',
+  hintIco:'L’icône contient les tailles 16, 32, 48, 64, 128 et 256 px dans un seul fichier.',
+  hintCur:'Le curseur est créé en 32, 48 et 64 px, avec le point de clic en haut à gauche.',
+  infoTitle:'Formats pris en charge', canOpen:'Fichiers que vous pouvez ouvrir', vecTitle:'Plans et broderies (convertis en image d’aperçu)',
+  fontTitle:'Polices (conversion automatique)', notTitle:'Non pris en charge',
+  note:'Une qualité plus basse donne des fichiers plus légers. JPG, BMP et PDF rendent les zones transparentes blanches. GIF et XPM utilisent au plus 256 couleurs, les photos peuvent donc paraître un peu grossières.',
+  footer:'Vos fichiers ne sont jamais envoyés nulle part.',
+  smaller:'{p} % plus léger', pages:'{n} pages', mergedInto:'Réuni dans le PDF ci-dessus', mergedName:'combine',
+  eLib:'Impossible de charger l’outil de conversion. Vérifiez votre connexion internet.',
+  eOpen:'Ce fichier ne peut pas être ouvert comme image.', eWebp:'Ce navigateur ne peut pas enregistrer en WebP.',
+  eAvif:'Ce navigateur ne peut pas enregistrer en AVIF. Essayez la dernière version de Chrome.', eGeneric:'Impossible de convertir ce fichier. Il est peut-être endommagé ou dans un format non pris en charge.',
+  E_BAD:'Le fichier semble endommagé, ou ce n’est pas vraiment un fichier {fmt}.', E_VARIANT:'Ce fichier {fmt} utilise une version ou une compression que nous ne savons pas encore lire.',
+  E_WOFF2:'WOFF2 n’est pas pris en charge (WOFF uniquement).',
+  noEps:'EPS et PS sont des langages de programmation d’imprimante, les navigateurs ne peuvent donc pas les lire.', noEmf:'EMF et WMF (dessins Windows) ne sont pas encore pris en charge.',
+  noCorel:'C’est un format propre à CorelDRAW, sans méthode publique de conversion.', noDoc:'Ce convertisseur d’images ne traite pas les documents.',
+  noOther:'Les fichiers {fmt} ne sont pas pris en charge.' },
+
+de: { _name:'Deutsch',
+  title:'Bildkonverter – JPG, PNG, WebP, HEIC und PDF kostenlos umwandeln',
+  desc:'Wandle JPG, PNG, WebP, HEIC, PDF, TIFF, PSD, ICO und mehr kostenlos um. Deine Dateien verlassen nie dein Gerät.',
+  h1:'Bildkonverter', sub:'Ändere das Format deiner Bilder kostenlos. Die Dateien werden nur auf deinem Gerät verarbeitet.',
+  lang:'Sprache', dropAria:'Dateien auswählen', dropTitle:'Klicke hier, um Dateien auszuwählen, oder ziehe sie hierher',
+  dropSub:'Mehrere Dateien auf einmal · auch iPhone-Fotos (HEIC), PDF, Photoshop (PSD) und Schriften',
+  fmt:'Umwandeln in', grpCommon:'Gängige Formate', grpOther:'Weitere Bildformate',
+  optIco:'ICO (Symbol)', optCur:'CUR (Mauszeiger)', optPsd:'PSD (Photoshop)', avifNo:'AVIF (dieser Browser kann es nicht speichern)',
+  quality:'Qualität', merge:'Alles zu einer PDF-Datei zusammenfügen',
+  convert:'Umwandeln', converting:'Wird umgewandelt… ({n}/{total})', saveAll:'Alle speichern', save:'Speichern', remove:'Entfernen',
+  empty:'Noch keine Dateien ausgewählt.',
+  hintSvg:'Bei SVG wird dein Bild in eine SVG-Datei eingebettet. Es wird nicht in Vektorlinien umgewandelt.',
+  hintIco:'Das Symbol enthält die Größen 16, 32, 48, 64, 128 und 256 px in einer Datei.',
+  hintCur:'Der Mauszeiger wird in 32, 48 und 64 px erstellt, der Klickpunkt liegt oben links.',
+  infoTitle:'Unterstützte Formate', canOpen:'Dateien, die du öffnen kannst', vecTitle:'Zeichnungen und Stickdateien (als Vorschaubild umgewandelt)',
+  fontTitle:'Schriften (automatische Umwandlung)', notTitle:'Nicht unterstützt',
+  note:'Geringere Qualität ergibt kleinere Dateien. JPG, BMP und PDF machen transparente Bereiche weiß. GIF und XPM nutzen höchstens 256 Farben, Fotos können daher etwas grob wirken.',
+  footer:'Deine Dateien werden nirgendwohin hochgeladen.',
+  smaller:'{p} % kleiner', pages:'{n} Seiten', mergedInto:'In der PDF oben zusammengefügt', mergedName:'zusammengefuegt',
+  eLib:'Das Umwandlungswerkzeug konnte nicht geladen werden. Bitte prüfe deine Internetverbindung.',
+  eOpen:'Diese Datei lässt sich nicht als Bild öffnen.', eWebp:'Dieser Browser kann kein WebP speichern.',
+  eAvif:'Dieser Browser kann kein AVIF speichern. Versuche es mit der neuesten Chrome-Version.', eGeneric:'Diese Datei konnte nicht umgewandelt werden. Sie ist vielleicht beschädigt oder hat ein nicht unterstütztes Format.',
+  E_BAD:'Die Datei scheint beschädigt zu sein oder ist keine echte {fmt}-Datei.', E_VARIANT:'Diese {fmt}-Datei verwendet eine Version oder Komprimierung, die wir noch nicht lesen können.',
+  E_WOFF2:'WOFF2 wird nicht unterstützt (nur WOFF).',
+  noEps:'EPS und PS sind Druckersprachen, deshalb können Browser sie nicht lesen.', noEmf:'EMF und WMF (Windows-Zeichnungen) werden noch nicht unterstützt.',
+  noCorel:'Das ist ein reines CorelDRAW-Format ohne öffentlichen Weg zur Umwandlung.', noDoc:'Dieser Bildkonverter verarbeitet keine Dokumente.',
+  noOther:'{fmt}-Dateien werden nicht unterstützt.' }
+};
+
+</script>
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const drop=$('drop'), file=$('file'), list=$('list'), empty=$('empty'), fmtSel=$('fmt');
+  const convertBtn=$('convert'), allBtn=$('all'), q=$('quality'), qval=$('qval'), qrow=$('qrow'), mergeRow=$('mergeRow'), merge=$('merge'), hint=$('hint');
+  let items=[];      // {file, ext, thumb, outs:[{blob,url,name}], error:{k,fmt}}
+  let mergedPdf=null;
+
+  const kb = n => n<1024*1024 ? Math.max(1,Math.round(n/1024))+' KB' : (n/1024/1024).toFixed(2)+' MB';
+  const extOf = name => (name.match(/\.([^.]+)$/)||[,''])[1].toLowerCase();
+  const baseOf = name => name.replace(/\.[^.]+$/,'');
+  const FONT = ['ttf','otf','woff','woff2'];
+  const NO = { eps:'noEps', ps:'noEps', emf:'noEmf', wmf:'noEmf', cdr:'noCorel', cdt:'noCorel', cmx:'noCorel', ccx:'noCorel',
+    cgm:'noOther', fig:'noOther', sk:'noOther', sk1:'noOther', aff:'noOther', pcx:'noOther', html:'noOther', htm:'noOther',
+    doc:'noDoc', docx:'noDoc', woff2:'E_WOFF2' };
+  const ERR_KEYS = new Set(['eLib','eOpen','eWebp','eAvif','eGeneric','E_BAD','E_VARIANT','E_WOFF2']);
+
+  /* ---- language ---- */
+  const langSel=$('lang');
+  let lang='en';
+  function pickLang(){
+    try{ const u=new URLSearchParams(location.search).get('lang'); if(u && I18N[u]) return u; }catch(e){}
+    try{ const s=localStorage.getItem('imgconv-lang'); if(s && I18N[s]) return s; }catch(e){}
+    for(const l of (navigator.languages || [navigator.language || 'en'])){ const k=String(l).toLowerCase().split('-')[0]; if(I18N[k]) return k; }
+    return 'en';
+  }
+  function t(k,v){ let s=(I18N[lang] && I18N[lang][k]) || I18N.en[k] || k; if(v) s=s.replace(/\{(\w+)\}/g,(m,x)=> x in v ? v[x] : m); return s; }
+  function applyLang(){
+    document.documentElement.lang = lang==='zh' ? 'zh-CN' : lang;
+    document.title=t('title'); $('metaDesc').setAttribute('content',t('desc'));
+    document.querySelectorAll('[data-i18n]').forEach(e=>{ e.textContent=t(e.dataset.i18n); });
+    document.querySelectorAll('[data-i18n-label]').forEach(e=>e.setAttribute('label',t(e.dataset.i18nLabel)));
+    document.querySelectorAll('[data-i18n-aria]').forEach(e=>e.setAttribute('aria-label',t(e.dataset.i18nAria)));
+    langSel.value=lang; syncControls(); render();
+  }
+  Object.keys(I18N).forEach(k=>{ const o=document.createElement('option'); o.value=k; o.textContent=I18N[k]._name; langSel.append(o); });
+  langSel.addEventListener('change',()=>{ lang=langSel.value; try{ localStorage.setItem('imgconv-lang',lang); }catch(e){} applyLang(); });
+
+
+  /* ---- external tools (HEIC, PDF), loaded only when needed ---- */
+  const loaded={};
+  function loadScript(src){
+    if(!loaded[src]) loaded[src]=new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=()=>{delete loaded[src];rej(new Error('eLib'));}; document.head.append(s); });
+    return loaded[src];
+  }
+  const HEIC_LIB='https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js';
+  const PDF_LIB='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+  const PDF_WORKER='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+  /* ---- can this browser save AVIF? ---- */
+  let avifOk=null;
+  (function(){ const c=document.createElement('canvas'); c.width=c.height=2; c.toBlob(b=>{ avifOk=!!b && b.type==='image/avif'; if(!avifOk){ const o=$('avifOpt'); o.disabled=true; o.dataset.i18n='avifNo'; o.textContent=t('avifNo'); } },'image/avif',0.8); })();
+
+  /* ---- UI events ---- */
+  drop.addEventListener('click',()=>file.click());
+  drop.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();file.click();} });
+  ['dragenter','dragover'].forEach(t=>drop.addEventListener(t,e=>{e.preventDefault();drop.classList.add('over');}));
+  ['dragleave','drop'].forEach(t=>drop.addEventListener(t,e=>{e.preventDefault();drop.classList.remove('over');}));
+  drop.addEventListener('drop',e=>add(e.dataTransfer.files));
+  file.addEventListener('change',()=>{ add(file.files); file.value=''; });
+  fmtSel.addEventListener('change',()=>{ syncControls(); resetOutputs(); });
+  merge.addEventListener('change',resetOutputs);
+  q.addEventListener('input',()=>{ qval.textContent=q.value+'%'; resetOutputs(); });
+
+  function syncControls(){
+    const f=fmtSel.value;
+    qrow.hidden = !['jpg','webp','avif','pdf'].includes(f);
+    mergeRow.hidden = f!=='pdf';
+    hint.textContent = f==='svg' ? t('hintSvg') : f==='ico' ? t('hintIco') : f==='cur' ? t('hintCur') : '';
+  }
+
+  function add(files){
+    for(const f of files){
+      const ext=extOf(f.name);
+      const it={file:f, ext, thumb:null, outs:[], error:null};
+      if(NO[ext]) it.error={k:NO[ext], fmt:ext.toUpperCase()};
+      if(/^image\//.test(f.type) && !NO[ext]) blobToCanvas(f).then(c=>{ it.thumb=thumbOf(c); render(); }).catch(()=>{});
+      items.push(it);
+    }
+    render();
+  }
+  function clearOuts(it){ it.outs.forEach(o=>URL.revokeObjectURL(o.url)); it.outs=[]; it.merged=false; if(it.error && !NO[it.ext]) it.error=null; }
+  function resetOutputs(){ items.forEach(clearOuts); if(mergedPdf){URL.revokeObjectURL(mergedPdf.url); mergedPdf=null;} render(); }
+
+  function dlLink(o,label){ const a=document.createElement('a'); a.className='btn ghost'; a.textContent=label; a.href=o.url; a.download=o.name; return a; }
+
+  function render(){
+    list.innerHTML='';
+    empty.hidden = items.length>0;
+    convertBtn.disabled = !items.some(i=>!NO[i.ext]);
+    allBtn.hidden = !(mergedPdf || items.some(i=>i.outs.length));
+    if(mergedPdf){
+      const li=document.createElement('li'); li.className='item';
+      li.innerHTML='<div class="thumb">PDF</div>';
+      const meta=document.createElement('div'); meta.className='meta';
+      meta.innerHTML='<div class="name"></div><div class="size"></div>';
+      meta.firstChild.textContent=mergedPdf.name; meta.lastChild.innerHTML='<b>'+kb(mergedPdf.blob.size)+'</b> · '+t('pages',{n:mergedPdf.pages});
+      const acts=document.createElement('div'); acts.className='acts'; acts.append(dlLink(mergedPdf,t('save')));
+      li.append(meta,acts); list.append(li);
+    }
+    items.forEach((it,idx)=>{
+      const li=document.createElement('li'); li.className='item';
+      let th;
+      const src = it.thumb;
+      if(src){ th=document.createElement('img'); th.src=src; th.alt=''; } else { th=document.createElement('div'); th.textContent=it.ext||'?'; }
+      th.className='thumb';
+      const meta=document.createElement('div'); meta.className='meta';
+      const name=document.createElement('div'); name.className='name';
+      const size=document.createElement('div'); size.className='size';
+      if(it.error){ name.textContent=it.file.name; size.className='size err'; size.textContent=t(it.error.k,{fmt:it.error.fmt}); }
+      else if(it.outs.length){
+        name.textContent = it.outs.length>1 ? baseOf(it.file.name)+' ('+it.outs.length+')' : it.outs[0].name;
+        const total=it.outs.reduce((s,o)=>s+o.blob.size,0), diff=Math.round((1-total/it.file.size)*100);
+        size.innerHTML=kb(it.file.size)+' → <b>'+kb(total)+'</b>'+(diff>0?' ('+t('smaller',{p:diff})+')':'');
+      } else if(it.merged){ name.textContent=it.file.name; size.textContent=t('mergedInto'); }
+      else { name.textContent=it.file.name; size.textContent=kb(it.file.size); }
+      meta.append(name,size);
+      const acts=document.createElement('div'); acts.className='acts';
+      if(it.outs.length){ it.outs.forEach((o,k)=>acts.append(dlLink(o, it.outs.length>1?(k+1)+'':t('save')))); }
+      if(!it.outs.length){ const rm=document.createElement('button'); rm.className='btn ghost'; rm.textContent=t('remove'); rm.onclick=()=>{ clearOuts(it); items.splice(idx,1); render(); }; acts.append(rm); }
+      li.append(th,meta,acts); list.append(li);
+    });
+  }
+
+  /* ---- reading: anything to a canvas ---- */
+  const loadImg = url => new Promise((res,rej)=>{ const im=new Image(); im.onload=()=>res(im); im.onerror=()=>rej(new Error('eOpen')); im.src=url; });
+  /* Reads an image three ways, because some apps' built-in viewers block one route or another */
+  async function blobToCanvas(blob){
+    const draw=(src,w,h)=>{ if(!w||!h){ w=1024; h=1024; } const c=document.createElement('canvas'); c.width=w; c.height=h; c.getContext('2d').drawImage(src,0,0,w,h); return c; };
+    if(window.createImageBitmap && !/svg/.test(blob.type)){
+      try{ const bm=await createImageBitmap(blob); const c=draw(bm,bm.width,bm.height); bm.close && bm.close(); return c; }catch(e){}
+    }
+    try{
+      const url=URL.createObjectURL(blob);
+      try{ const im=await loadImg(url); return draw(im,im.naturalWidth,im.naturalHeight); } finally { URL.revokeObjectURL(url); }
+    }catch(e){}
+    const dataUrl=await new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.onerror=()=>rej(new Error('eOpen')); fr.readAsDataURL(blob); });
+    const im=await loadImg(dataUrl); return draw(im,im.naturalWidth,im.naturalHeight);
+  }
+  function thumbOf(c){ const s=112, k=Math.min(1,s/Math.max(c.width,c.height)), t=document.createElement('canvas'); t.width=Math.max(1,Math.round(c.width*k)); t.height=Math.max(1,Math.round(c.height*k)); t.getContext('2d').drawImage(c,0,0,t.width,t.height); try{ return t.toDataURL('image/png'); }catch(e){ return null; } }
+  function dataToCanvas(img){ const c=document.createElement('canvas'); c.width=img.width; c.height=img.height; c.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(img.data.buffer,img.data.byteOffset,img.data.length),img.width,img.height),0,0); return c; }
+  const svgBlob = s => new Blob([s],{type:'image/svg+xml'});
+  function resolveColor(name){ const c=document.createElement('canvas').getContext('2d'); c.fillStyle='#010203'; c.fillStyle=name; const v=c.fillStyle; return v==='#010203'?null:v.replace('#',''); }
+
+  async function readSources(it){
+    const f=it.file, ext=it.ext, bytes=async()=>new Uint8Array(await f.arrayBuffer());
+    if(ext==='heic'||ext==='heif'){
+      await loadScript(HEIC_LIB);
+      let r=await window.heic2any({blob:f,toType:'image/png'}); if(!Array.isArray(r)) r=[r];
+      return Promise.all(r.map(async (b,i)=>({canvas:await blobToCanvas(b), suffix:r.length>1?'-'+(i+1):''})));
+    }
+    if(ext==='pdf'){
+      await loadScript(PDF_LIB);
+      pdfjsLib.GlobalWorkerOptions.workerSrc=PDF_WORKER;
+      const doc=await pdfjsLib.getDocument({data:await bytes()}).promise, out=[];
+      for(let p=1;p<=doc.numPages;p++){
+        const page=await doc.getPage(p), vp=page.getViewport({scale:2});
+        const c=document.createElement('canvas'); c.width=Math.ceil(vp.width); c.height=Math.ceil(vp.height);
+        const ctx=c.getContext('2d'); ctx.fillStyle='#fff'; ctx.fillRect(0,0,c.width,c.height);
+        await page.render({canvasContext:ctx,viewport:vp}).promise;
+        out.push({canvas:c, suffix:doc.numPages>1?'-'+p:''});
+      }
+      return out;
+    }
+    const one = c => [{canvas:c, suffix:''}];
+    if(ext==='tif'||ext==='tiff'){ try{ return one(await blobToCanvas(f)); }catch(e){ return one(dataToCanvas(await Codecs.decodeTIFF(await bytes()))); } }
+    if(ext==='tga') return one(dataToCanvas(Codecs.decodeTGA(await bytes())));
+    if(ext==='psd') return one(dataToCanvas(Codecs.decodePSD(await bytes())));
+    if(ext==='dds') return one(dataToCanvas(Codecs.decodeDDS(await bytes())));
+    if(['rgb','rgba','sgi','bw','int','inta'].includes(ext)) return one(dataToCanvas(Codecs.decodeSGI(await bytes())));
+    if(ext==='xpm') return one(dataToCanvas(Codecs.decodeXPM(await bytes(), resolveColor)));
+    if(ext==='cur') return one(await blobToCanvas(new Blob([Codecs.curToIco(await bytes())],{type:'image/x-icon'})));
+    const vec={dxf:Codecs.decodeDXF, plt:Codecs.decodePLT, hpgl:Codecs.decodePLT, hgl:Codecs.decodePLT, dst:Codecs.decodeDST, exp:Codecs.decodeEXP, pes:Codecs.decodePES, pec:Codecs.decodePES, pcs:Codecs.decodePCS}[ext];
+    if(vec){ const flip=['dxf','plt','hpgl','hgl'].includes(ext); const r=Codecs.pathsToSVG(vec(await bytes()),{flipY:flip, lineWidth:2.2}); return one(await blobToCanvas(svgBlob(r.svg))); }
+    return one(await blobToCanvas(f));
+  }
+
+  /* ---- saving: canvas to the chosen format ---- */
+  const toBlob=(c,type,qq)=>new Promise(r=>c.toBlob(r,type,qq));
+  const pixels = c => { const d=c.getContext('2d').getImageData(0,0,c.width,c.height); return {width:d.width,height:d.height,data:d.data}; };
+  function whiteCanvas(c){ const w=document.createElement('canvas'); w.width=c.width; w.height=c.height; const x=w.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,w.width,w.height); x.drawImage(c,0,0); return w; }
+  function square(c,s){ const o=document.createElement('canvas'); o.width=o.height=s; const x=o.getContext('2d'); x.imageSmoothingQuality='high'; const k=Math.min(s/c.width,s/c.height), w=c.width*k, h=c.height*k; x.drawImage(c,(s-w)/2,(s-h)/2,w,h); return o; }
+  async function jpegBytes(c){ return new Uint8Array(await (await toBlob(whiteCanvas(c),'image/jpeg',q.value/100)).arrayBuffer()); }
+  const bin = (u8,type) => new Blob([u8],{type});
+
+  async function encode(c, f){
+    const qq=q.value/100;
+    switch(f){
+      case 'jpg': return toBlob(whiteCanvas(c),'image/jpeg',qq);
+      case 'png': return toBlob(c,'image/png');
+      case 'webp': { const b=await toBlob(c,'image/webp',qq); if(!b||b.type!=='image/webp') throw new Error('eWebp'); return b; }
+      case 'avif': { const b=await toBlob(c,'image/avif',qq); if(!b||b.type!=='image/avif') throw new Error('eAvif'); return b; }
+      case 'gif': return bin(Codecs.encodeGIF(pixels(c)),'image/gif');
+      case 'bmp': return bin(Codecs.encodeBMP(pixels(c)),'image/bmp');
+      case 'tiff': return bin(Codecs.encodeTIFF(pixels(c)),'image/tiff');
+      case 'tga': return bin(Codecs.encodeTGA(pixels(c)),'image/x-tga');
+      case 'psd': return bin(Codecs.encodePSD(pixels(c)),'image/vnd.adobe.photoshop');
+      case 'dds': return bin(Codecs.encodeDDS(pixels(c)),'image/vnd-ms.dds');
+      case 'rgb': return bin(Codecs.encodeSGI(pixels(c)),'image/sgi');
+      case 'xpm': return bin(Codecs.encodeXPM(pixels(c)),'image/x-xpixmap');
+      case 'pdf': return bin(Codecs.encodePDF([{width:c.width,height:c.height,jpeg:await jpegBytes(c)}]),'application/pdf');
+      case 'svg': { const png=new Uint8Array(await (await toBlob(c,'image/png')).arrayBuffer()); let s=''; for(let i=0;i<png.length;i+=32768) s+=String.fromCharCode.apply(null,png.subarray(i,i+32768)); return bin(Codecs.encodeSVG(c.width,c.height,btoa(s)),'image/svg+xml'); }
+      case 'ico': case 'cur': {
+        const sizes = f==='ico' ? [16,32,48,64,128,256] : [32,48,64], entries=[];
+        for(const s of sizes){ const sq=square(c,s); entries.push(f==='cur' ? {width:s,height:s,pixels:pixels(sq)} : {width:s,height:s,png:new Uint8Array(await (await toBlob(sq,'image/png')).arrayBuffer())}); }
+        return bin(Codecs.encodeICO(entries, f==='cur'), f==='ico'?'image/x-icon':'image/x-win-bitmap');
+      }
+    }
+    throw new Error('eGeneric');
+  }
+  const extName = f => f==='tiff'?'tif':f;
+
+  async function convertFont(it){
+    const b=new Uint8Array(await it.file.arrayBuffer());
+    if(it.ext==='woff'){ const r=await Codecs.woffToSfnt(b); return [{blob:bin(r.bytes,'font/'+r.ext), name:baseOf(it.file.name)+'.'+r.ext}]; }
+    return [{blob:bin(await Codecs.sfntToWoff(b),'font/woff'), name:baseOf(it.file.name)+'.woff'}];
+  }
+
+  convertBtn.addEventListener('click',async()=>{
+    const f=fmtSel.value;
+    convertBtn.disabled=true;
+    resetOutputs();
+    const pdfPages=[], mergeIt = f==='pdf' && merge.checked;
+    let n=0;
+    for(const it of items){
+      n++; convertBtn.textContent=t('converting',{n,total:items.length});
+      if(NO[it.ext]) continue;
+      try{
+        if(FONT.includes(it.ext)){ it.outs=(await convertFont(it)).map(o=>({...o,url:URL.createObjectURL(o.blob)})); continue; }
+        const srcs=await readSources(it);
+        if(!it.thumb && srcs[0]) it.thumb=thumbOf(srcs[0].canvas);
+        if(mergeIt){ for(const s of srcs) pdfPages.push({width:s.canvas.width,height:s.canvas.height,jpeg:await jpegBytes(s.canvas)}); it.merged=true; continue; }
+        for(const s of srcs){
+          const blob=await encode(s.canvas,f);
+          it.outs.push({blob,url:URL.createObjectURL(blob),name:baseOf(it.file.name)+s.suffix+'.'+extName(f)});
+        }
+      }catch(e){ it.error={k: ERR_KEYS.has(e && e.message) ? e.message : 'eGeneric', fmt:(it.ext||'').toUpperCase()}; }
+      render();
+    }
+    if(pdfPages.length){
+      const blob=bin(Codecs.encodePDF(pdfPages),'application/pdf');
+      mergedPdf={blob,url:URL.createObjectURL(blob),name:(items.length===1?baseOf(items[0].file.name):t('mergedName'))+'.pdf',pages:pdfPages.length};
+    }
+    items.forEach(it=>{ if(!mergeIt) it.merged=false; });
+    convertBtn.textContent=t('convert'); render();
+  });
+
+  allBtn.addEventListener('click',async()=>{
+    const outs=[...(mergedPdf?[mergedPdf]:[]), ...items.flatMap(i=>i.outs)];
+    for(const o of outs){ const a=document.createElement('a'); a.href=o.url; a.download=o.name; document.body.append(a); a.click(); a.remove(); await new Promise(r=>setTimeout(r,400)); }
+  });
+
+  lang=pickLang(); applyLang();
+})();
+</script>
+</body>
+</html>
