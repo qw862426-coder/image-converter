@@ -5,16 +5,16 @@
   var LANGS = { en: 'English', ko: '한국어', ja: '日本語', zh: '中文（简体）', es: 'Español', pt: 'Português', fr: 'Français', de: 'Deutsch' };
   var KEY = 'imgconv-lang';
   var T = {
-    en: { scan: 'Photo to scan', img: 'Image converter', doc: 'Documents to PDF', guide: 'How to use', about: 'About', privacy: 'Privacy policy', contact: 'Contact', lang: 'Language', menu: 'Menu', note: 'Files are converted on your device and never uploaded.' },
-    ko: { scan: '사진 → 스캔본', img: '이미지 변환', doc: '문서 → PDF', guide: '사용 방법', about: '사이트 소개', privacy: '개인정보처리방침', contact: '문의하기', lang: '언어', menu: '메뉴', note: '파일은 내 기기에서 변환되며 어디에도 업로드되지 않습니다.' },
-    ja: { scan: '写真をスキャンに', img: '画像変換', doc: '文書をPDFに', guide: '使い方', about: 'このサイトについて', privacy: 'プライバシーポリシー', contact: 'お問い合わせ', lang: '言語', menu: 'メニュー', note: 'ファイルは端末内で変換され、アップロードされることはありません。' },
-    zh: { scan: '照片转扫描件', img: '图片转换', doc: '文档转 PDF', guide: '使用方法', about: '关于本站', privacy: '隐私政策', contact: '联系我们', lang: '语言', menu: '菜单', note: '文件在你的设备上转换，不会上传到任何地方。' },
-    es: { scan: 'Foto a escaneo', img: 'Convertir imágenes', doc: 'Documentos a PDF', guide: 'Cómo usarlo', about: 'Acerca de', privacy: 'Privacidad', contact: 'Contacto', lang: 'Idioma', menu: 'Menú', note: 'Los archivos se convierten en tu dispositivo y nunca se suben.' },
-    pt: { scan: 'Foto para digitalização', img: 'Converter imagens', doc: 'Documentos para PDF', guide: 'Como usar', about: 'Sobre', privacy: 'Privacidade', contact: 'Contato', lang: 'Idioma', menu: 'Menu', note: 'Os arquivos são convertidos no seu dispositivo e nunca são enviados.' },
-    fr: { scan: 'Photo en scan', img: 'Convertir des images', doc: 'Documents en PDF', guide: 'Mode d’emploi', about: 'À propos', privacy: 'Confidentialité', contact: 'Contact', lang: 'Langue', menu: 'Menu', note: 'Les fichiers sont convertis sur votre appareil et ne sont jamais envoyés.' },
-    de: { scan: 'Foto zu Scan', img: 'Bilder umwandeln', doc: 'Dokumente zu PDF', guide: 'Anleitung', about: 'Über uns', privacy: 'Datenschutz', contact: 'Kontakt', lang: 'Sprache', menu: 'Menü', note: 'Dateien werden auf deinem Gerät umgewandelt und nie hochgeladen.' }
+    en: { bg: 'Remove background', scan: 'Photo to scan', img: 'Image converter', doc: 'Documents to PDF', guide: 'How to use', about: 'About', privacy: 'Privacy policy', contact: 'Contact', lang: 'Language', menu: 'Menu', note: 'Files are converted on your device and never uploaded.' },
+    ko: { bg: '배경 지우기', scan: '사진 → 스캔본', img: '이미지 변환', doc: '문서 → PDF', guide: '사용 방법', about: '사이트 소개', privacy: '개인정보처리방침', contact: '문의하기', lang: '언어', menu: '메뉴', note: '파일은 내 기기에서 변환되며 어디에도 업로드되지 않습니다.' },
+    ja: { bg: '背景を削除', scan: '写真をスキャンに', img: '画像変換', doc: '文書をPDFに', guide: '使い方', about: 'このサイトについて', privacy: 'プライバシーポリシー', contact: 'お問い合わせ', lang: '言語', menu: 'メニュー', note: 'ファイルは端末内で変換され、アップロードされることはありません。' },
+    zh: { bg: '去除背景', scan: '照片转扫描件', img: '图片转换', doc: '文档转 PDF', guide: '使用方法', about: '关于本站', privacy: '隐私政策', contact: '联系我们', lang: '语言', menu: '菜单', note: '文件在你的设备上转换，不会上传到任何地方。' },
+    es: { bg: 'Quitar fondo', scan: 'Foto a escaneo', img: 'Convertir imágenes', doc: 'Documentos a PDF', guide: 'Cómo usarlo', about: 'Acerca de', privacy: 'Privacidad', contact: 'Contacto', lang: 'Idioma', menu: 'Menú', note: 'Los archivos se convierten en tu dispositivo y nunca se suben.' },
+    pt: { bg: 'Remover fundo', scan: 'Foto para digitalização', img: 'Converter imagens', doc: 'Documentos para PDF', guide: 'Como usar', about: 'Sobre', privacy: 'Privacidade', contact: 'Contato', lang: 'Idioma', menu: 'Menu', note: 'Os arquivos são convertidos no seu dispositivo e nunca são enviados.' },
+    fr: { bg: 'Supprimer le fond', scan: 'Photo en scan', img: 'Convertir des images', doc: 'Documents en PDF', guide: 'Mode d’emploi', about: 'À propos', privacy: 'Confidentialité', contact: 'Contact', lang: 'Langue', menu: 'Menu', note: 'Les fichiers sont convertis sur votre appareil et ne sont jamais envoyés.' },
+    de: { bg: 'Hintergrund entfernen', scan: 'Foto zu Scan', img: 'Bilder umwandeln', doc: 'Dokumente zu PDF', guide: 'Anleitung', about: 'Über uns', privacy: 'Datenschutz', contact: 'Kontakt', lang: 'Sprache', menu: 'Menü', note: 'Dateien werden auf deinem Gerät umgewandelt und nie hochgeladen.' }
   };
-  var LINKS = [['img', '/'], ['doc', '/document-to-pdf/'], ['scan', '/scan/'], ['guide', '/guide/']];
+  var LINKS = [['img', '/'], ['doc', '/document-to-pdf/'], ['scan', '/scan/'], ['bg', '/remove-background/'], ['guide', '/guide/']];
   var FOOT = [['about', '/about/'], ['privacy', '/privacy/'], ['contact', '/contact/']];
 
   function pick() {
