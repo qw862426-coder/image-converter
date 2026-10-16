@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="canonical" href="https://picshifter.pages.dev/fr/remove-background/">
+<link rel="alternate" hreflang="en" href="https://picshifter.pages.dev/remove-background/">
+<link rel="alternate" hreflang="ko" href="https://picshifter.pages.dev/ko/remove-background/">
+<link rel="alternate" hreflang="ja" href="https://picshifter.pages.dev/ja/remove-background/">
+<link rel="alternate" hreflang="zh-Hans" href="https://picshifter.pages.dev/zh/remove-background/">
+<link rel="alternate" hreflang="es" href="https://picshifter.pages.dev/es/remove-background/">
+<link rel="alternate" hreflang="pt" href="https://picshifter.pages.dev/pt/remove-background/">
+<link rel="alternate" hreflang="fr" href="https://picshifter.pages.dev/fr/remove-background/">
+<link rel="alternate" hreflang="de" href="https://picshifter.pages.dev/de/remove-background/">
+<link rel="alternate" hreflang="x-default" href="https://picshifter.pages.dev/remove-background/">
+<title>Supprimer l’arrière-plan d’une image – Gratuit, sans envoi | PicShifter</title>
+<meta id="metaDesc" name="description" content="Supprimez gratuitement l’arrière-plan de photos de personnes, d’animaux et de produits. PNG transparent ou fond blanc. Fonctionne dans le navigateur, sans envoi.">
+<link rel="stylesheet" href="/assets/base.css">
+<style>
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;max-width:100%;flex-wrap:wrap}
+.seg button{border:0;background:transparent;color:var(--fg);font:inherit;font-size:.9rem;padding:8px 12px;cursor:pointer;text-align:left;line-height:1.25}
+.seg button small{display:block;font-size:.72rem;opacity:.75;word-break:keep-all}
+.seg button+button{border-left:1px solid var(--line)}
+.seg.two{display:grid;grid-template-columns:1fr 1fr;flex:1 1 260px}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg);font-weight:500}
+.swatch{width:36px;height:34px;border:1px solid var(--line);border-radius:8px;padding:2px;background:var(--panel);cursor:pointer}
+.status{display:flex;flex-direction:column;gap:6px;font-size:.9rem;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin:0;padding:0;list-style:none}
+.card{border:1px solid var(--line);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:8px;background:var(--panel);min-width:0}
+.view{position:relative;aspect-ratio:1/1;border-radius:6px;overflow:hidden;display:grid;place-items:center;max-width:100%;
+  background-color:#fff;background-image:linear-gradient(45deg,#d9dde2 25%,transparent 25%),linear-gradient(-45deg,#d9dde2 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#d9dde2 75%),linear-gradient(-45deg,transparent 75%,#d9dde2 75%);
+  background-size:20px 20px;background-position:0 0,0 10px,10px -10px,-10px 0}
+.view img{max-width:100%;max-height:100%;object-fit:contain;display:block}
+.view span{position:absolute;inset:auto 8px 8px 8px;font-size:.8rem;background:rgba(0,0,0,.6);color:#fff;border-radius:6px;padding:4px 8px;text-align:center}
+.card .name{font-size:.82rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card .err{font-size:.8rem;color:var(--err)}
+.card .tools{display:flex;gap:6px;flex-wrap:wrap}
+.card .tools>*{flex:1 1 auto;text-align:center}
+.notes{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 20px}
+.notes h2{margin:0 0 8px;font-size:1rem}
+.notes ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:.9rem}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <div>
+      <h1 data-i18n="h1">Supprimer l’arrière-plan</h1>
+      <p data-i18n="sub">Détourez une personne, un animal ou un produit et obtenez un PNG transparent. L’IA fonctionne sur votre appareil.</p>
+    </div>
+  </header>
+
+  <section class="panel">
+    <div class="drop" id="drop" tabindex="0" role="button" aria-label="Choisir des photos" data-i18n-aria="dropAria">
+      <strong data-i18n="dropTitle">Cliquez pour choisir des photos ou glissez-les ici</strong>
+      <span data-i18n="dropSub">JPG, PNG, WebP, HEIC · plusieurs à la fois</span>
+    </div>
+    <input type="file" id="file" multiple hidden accept="image/*,.heic,.heif">
+
+    <div class="row">
+      <span class="label" data-i18n="quality">Qualité</span>
+      <div class="seg two" id="model" role="group">
+        <button type="button" data-v="hq" aria-pressed="true"><span data-i18n="qHq">Haute qualité</span><small data-i18n="qHqNote">44 Mo téléchargés la première fois</small></button>
+        <button type="button" data-v="fast" aria-pressed="false"><span data-i18n="qFast">Rapide</span><small data-i18n="qFastNote">5 Mo, bords moins précis</small></button>
+      </div>
+    </div>
+    <div class="row">
+      <span class="label" data-i18n="bg">Arrière-plan</span>
+      <div class="seg" id="bg" role="group">
+        <button type="button" data-v="none" aria-pressed="true" data-i18n="bgNone">Transparent</button>
+        <button type="button" data-v="#ffffff" aria-pressed="false" data-i18n="bgWhite">Blanc</button>
+        <button type="button" data-v="color" aria-pressed="false" data-i18n="bgColor">Couleur</button>
+      </div>
+      <input type="color" id="color" class="swatch" value="#3b82f6" aria-label="Choisir la couleur de fond" data-i18n-aria="bgColorAria" hidden>
+    </div>
+    <div class="status" id="status" hidden><span id="statusText"></span><div class="bar"><i id="statusBar"></i></div></div>
+    <div class="row"><button class="btn" id="all" hidden data-i18n="saveAll">Tout enregistrer</button></div>
+  </section>
+
+  <section class="panel">
+    <ul class="grid" id="grid"></ul>
+    <p class="empty" id="empty" data-i18n="empty">Aucune photo pour l’instant.</p>
+  </section>
+
+  <section class="notes">
+    <h2 data-i18n="noteTitle">Bon à savoir</h2>
+    <ul><li data-i18n="note1">Fonctionne au mieux quand un seul sujet se détache nettement du fond : une personne, un animal ou un produit.</li><li data-i18n="note2">Les scènes chargées, les cheveux fins et les objets transparents peuvent demander une photo plus nette.</li><li data-i18n="note3">Le modèle d’IA est téléchargé une fois et conservé par votre navigateur : les visites suivantes démarrent plus vite. Vos photos ne quittent jamais votre appareil.</li></ul>
+  </section>
+</main>
+
+<script src="/remove-background/i18n.js"></script>
+<script>window.PAGE_LANG="fr";</script>
+<script src="/assets/site.js"></script>
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const drop=$('drop'), file=$('file'), grid=$('grid'), empty=$('empty'), allBtn=$('all'), color=$('color');
+  const statusBox=$('status'), statusText=$('statusText'), statusBar=$('statusBar');
+  const S=320, MAX_SRC=4000;
+  let lang='en', model='hq', bg='none', items=[], seq=0, running=false, status=null;
+
+  function t(k,v){ let s=(BG_I18N[lang]&&BG_I18N[lang][k])||BG_I18N.en[k]||k; if(v) s=s.replace(/\{(\w+)\}/g,(m,x)=>x in v?v[x]:m); return s; }
+  function applyLang(){
+    document.title=t('title'); $('metaDesc').setAttribute('content',t('desc'));
+    document.querySelectorAll('[data-i18n]').forEach(e=>{ e.textContent=t(e.dataset.i18n); });
+    document.querySelectorAll('[data-i18n-aria]').forEach(e=>e.setAttribute('aria-label',t(e.dataset.i18nAria)));
+    showStatus(status); render();
+  }
+  function showStatus(s){
+    status=s; statusBox.hidden=!s; if(!s) return;
+    statusText.textContent = s.stage==='download'? t('dl',{p:Math.round(s.value*100)}) : s.stage==='prepare'? t('prep') : t('runN',{n:s.n,total:s.total});
+    statusBar.style.width = (s.stage==='download'? s.value*100 : s.stage==='prepare'? 100 : (s.n-1)/s.total*100)+'%';
+  }
+
+  /* ---------- worker ---------- */
+  let worker=null, pending={};
+  function getWorker(){
+    if(worker) return worker;
+    worker=new Worker('/remove-background/worker.js');
+    worker.onmessage=e=>{
+      const m=e.data;
+      if(m.type==='progress' && (m.stage==='download'||m.stage==='prepare')) showStatus({stage:m.stage,value:m.value});
+      else if(m.type==='mask' && pending[m.id]){ pending[m.id].resolve(m.mask); delete pending[m.id]; }
+      else if(m.type==='error'){ const p=pending[m.id]; if(p){ p.reject(new Error(m.message)); delete pending[m.id]; } else Object.keys(pending).forEach(k=>{ pending[k].reject(new Error(m.message)); delete pending[k]; }); }
+    };
+    worker.onerror=()=>{ Object.keys(pending).forEach(k=>{ pending[k].reject(new Error('eGeneric')); delete pending[k]; }); worker=null; };
+    return worker;
+  }
+  function runModel(input,id){ return new Promise((resolve,reject)=>{ pending[id]={resolve,reject}; getWorker().postMessage({type:'run',model,input,id},[input.buffer]); }); }
+
+  /* ---------- reading ---------- */
+  let heicLoad=null;
+  function loadHeic(){ if(!heicLoad) heicLoad=new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='/vendor/heic2any.min.js'; s.onload=res; s.onerror=()=>{ heicLoad=null; rej(new Error('eLib')); }; document.head.append(s); }); return heicLoad; }
+  function limited(src,w,h){ const k=Math.min(1,MAX_SRC/Math.max(w,h)), c=document.createElement('canvas'); c.width=Math.round(w*k); c.height=Math.round(h*k); c.getContext('2d').drawImage(src,0,0,c.width,c.height); return c; }
+  async function decode(blob){
+    if(window.createImageBitmap){ try{ const b=await createImageBitmap(blob,{imageOrientation:'from-image'}); const c=limited(b,b.width,b.height); b.close&&b.close(); return c; }catch(e){} }
+    const url=await new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.onerror=()=>rej(new Error('eOpen')); fr.readAsDataURL(blob); });
+    const im=await new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=()=>rej(new Error('eOpen')); i.src=url; });
+    return limited(im,im.naturalWidth,im.naturalHeight);
+  }
+  async function readFile(f){
+    if(/\.(heic|heif)$/i.test(f.name)||/hei[cf]/i.test(f.type)){
+      try{ return await decode(f); }catch(e){}
+      await loadHeic(); let r=await window.heic2any({blob:f,toType:'image/jpeg',quality:0.95}); return decode(Array.isArray(r)?r[0]:r);
+    }
+    return decode(f);
+  }
+
+  /* ---------- model input / output ---------- */
+  function toInput(canvas){
+    const c=document.createElement('canvas'); c.width=S; c.height=S; const x=c.getContext('2d'); x.imageSmoothingQuality='high'; x.drawImage(canvas,0,0,S,S);
+    const d=x.getImageData(0,0,S,S).data, n=S*S, out=new Float32Array(3*n), mean=[0.485,0.456,0.406], std=[0.229,0.224,0.225];
+    let mx=1; for(let i=0;i<d.length;i+=4){ if(d[i]>mx)mx=d[i]; if(d[i+1]>mx)mx=d[i+1]; if(d[i+2]>mx)mx=d[i+2]; }
+    for(let i=0;i<n;i++) for(let ch=0;ch<3;ch++) out[ch*n+i]=(d[i*4+ch]/mx-mean[ch])/std[ch];
+    return out;
+  }
+  function maskCanvas(mask){
+    const c=document.createElement('canvas'); c.width=S; c.height=S; const x=c.getContext('2d'), im=x.createImageData(S,S);
+    for(let i=0;i<S*S;i++){ im.data[i*4+3]=Math.round(mask[i]*255); }
+    x.putImageData(im,0,0); return c;
+  }
+  function compose(it, maxSide){
+    const k=Math.min(1,(maxSide||Infinity)/Math.max(it.src.width,it.src.height));
+    const w=Math.round(it.src.width*k), h=Math.round(it.src.height*k), c=document.createElement('canvas'); c.width=w; c.height=h;
+    const x=c.getContext('2d'); x.imageSmoothingQuality='high';
+    x.drawImage(it.src,0,0,w,h);
+    x.globalCompositeOperation='destination-in'; x.drawImage(it.maskC,0,0,w,h);
+    const fill = bg==='none'? null : bg==='color'? color.value : bg;
+    if(fill){ x.globalCompositeOperation='destination-over'; x.fillStyle=fill; x.fillRect(0,0,w,h); }
+    x.globalCompositeOperation='source-over';
+    return c;
+  }
+  function refreshPreview(it){ if(it.maskC){ it.preview=compose(it,800).toDataURL(bg==='none'?'image/png':'image/jpeg',0.9); } }
+
+  /* ---------- queue ---------- */
+  async function pump(){
+    if(running) return; running=true;
+    try{
+      for(;;){
+        const todo=items.filter(i=>i.state==='queued'); if(!todo.length) break;
+        const total=items.filter(i=>i.state!=='error').length, done=items.filter(i=>i.state==='done').length;
+        const it=todo[0]; it.state='working'; render();
+        try{
+          if(!it.src) it.src=await readFile(it.file);
+          it.orig=limited(it.src,it.src.width,it.src.height).toDataURL('image/jpeg',0.8);
+          showStatus(status && status.stage==='download' ? status : {stage:'run',n:done+1,total});
+          const mask=await runModel(toInput(it.src), it.id);
+          showStatus({stage:'run',n:done+1,total});
+          it.maskC=maskCanvas(mask); refreshPreview(it); it.state='done';
+        }catch(e){ it.state='error'; it.error=['eOpen','eModel','eLib'].includes(e.message)?e.message:'eGeneric'; console.error(e); }
+        render();
+      }
+    } finally { running=false; showStatus(null); render(); }
+  }
+  function add(files){ for(const f of files) items.push({id:++seq, file:f, name:f.name, state:'queued'}); render(); pump(); }
+
+  /* ---------- list ---------- */
+  function download(c,name){
+    const type=bg==='none'?'image/png':'image/jpeg';
+    c.toBlob(b=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=name; document.body.append(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),60000); },type,0.92);
+  }
+  const outName = it => it.name.replace(/\.[^.]+$/,'')+(bg==='none'?'-no-bg.png':'-bg.jpg');
+  function render(){
+    grid.innerHTML=''; empty.hidden=items.length>0;
+    allBtn.hidden=items.filter(i=>i.state==='done').length<2;
+    items.forEach((it,idx)=>{
+      const li=document.createElement('li'); li.className='card';
+      const view=document.createElement('div'); view.className='view';
+      const src = it.showOrig ? it.orig : (it.preview || it.orig);
+      if(src){ const im=document.createElement('img'); im.src=src; im.alt=it.name; view.append(im); }
+      if(it.state==='queued'||it.state==='working'){ const s=document.createElement('span'); s.textContent=it.state==='working'?t('working'):t('waiting'); view.append(s); }
+      const name=document.createElement('div'); name.className='name'; name.textContent=it.name;
+      li.append(view,name);
+      if(it.state==='error'){ const e=document.createElement('div'); e.className='err'; e.textContent=t(it.error); li.append(e); }
+      const tools=document.createElement('div'); tools.className='tools';
+      if(it.state==='done'){
+        const s=document.createElement('button'); s.className='btn'; s.textContent=t('save'); s.onclick=()=>download(compose(it),outName(it)); tools.append(s);
+        const o=document.createElement('button'); o.className='btn ghost'; o.textContent=it.showOrig?t('showResult'):t('showOrig'); o.onclick=()=>{ it.showOrig=!it.showOrig; render(); }; tools.append(o);
+      }
+      if(it.state!=='working'){ const r=document.createElement('button'); r.className='btn ghost'; r.textContent=t('remove'); r.onclick=()=>{ items.splice(idx,1); render(); }; tools.append(r); }
+      li.append(tools); grid.append(li);
+    });
+  }
+
+  /* ---------- controls ---------- */
+  drop.addEventListener('click',()=>file.click());
+  drop.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); file.click(); } });
+  ['dragenter','dragover'].forEach(n=>drop.addEventListener(n,e=>{ e.preventDefault(); drop.classList.add('over'); }));
+  ['dragleave','drop'].forEach(n=>drop.addEventListener(n,e=>{ e.preventDefault(); drop.classList.remove('over'); }));
+  drop.addEventListener('drop',e=>add(e.dataTransfer.files));
+  file.addEventListener('change',()=>{ const f=[...file.files]; file.value=''; add(f); });
+  function seg(id,fn){ document.querySelectorAll('#'+id+' button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#'+id+' button').forEach(x=>x.setAttribute('aria-pressed',String(x===b))); fn(b.dataset.v); })); }
+  seg('model',v=>{ model=v; });
+  seg('bg',v=>{ bg=v; color.hidden=v!=='color'; items.forEach(refreshPreview); render(); });
+  color.addEventListener('input',()=>{ items.forEach(refreshPreview); render(); });
+  allBtn.addEventListener('click',async()=>{ for(const it of items){ if(it.state!=='done') continue; download(compose(it),outName(it)); await new Promise(r=>setTimeout(r,400)); } });
+
+  Site.onChange(l=>{ lang=l; applyLang(); });
+})();
+</script>
+</body>
+</html>

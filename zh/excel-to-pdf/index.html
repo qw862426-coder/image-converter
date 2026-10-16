@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="canonical" href="https://picshifter.pages.dev/zh/excel-to-pdf/">
+<link rel="alternate" hreflang="en" href="https://picshifter.pages.dev/excel-to-pdf/">
+<link rel="alternate" hreflang="ko" href="https://picshifter.pages.dev/ko/excel-to-pdf/">
+<link rel="alternate" hreflang="ja" href="https://picshifter.pages.dev/ja/excel-to-pdf/">
+<link rel="alternate" hreflang="zh-Hans" href="https://picshifter.pages.dev/zh/excel-to-pdf/">
+<link rel="alternate" hreflang="es" href="https://picshifter.pages.dev/es/excel-to-pdf/">
+<link rel="alternate" hreflang="pt" href="https://picshifter.pages.dev/pt/excel-to-pdf/">
+<link rel="alternate" hreflang="fr" href="https://picshifter.pages.dev/fr/excel-to-pdf/">
+<link rel="alternate" hreflang="de" href="https://picshifter.pages.dev/de/excel-to-pdf/">
+<link rel="alternate" hreflang="x-default" href="https://picshifter.pages.dev/excel-to-pdf/">
+<title>Excel 转 PDF – 免费将 XLSX、XLS、CSV 转为 PDF | PicShifter</title>
+<meta id="metaDesc" name="description" content="免费将 Excel 表格（XLSX、XLS、CSV）转换为 PDF，每个工作表都变成可打印页面。在浏览器中处理，无需上传。">
+<link rel="stylesheet" href="/assets/base.css">
+<style>
+.kinds{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:10px}
+.kinds b{font-size:.75rem;font-weight:700;letter-spacing:.04em;padding:3px 8px;border-radius:6px;color:#fff}
+.k-docx{background:#2b579a}.k-xlsx{background:#217346}.k-pptx{background:#c43e1c}.k-hwp{background:#1f8ac0}
+.thumb.k-docx,.thumb.k-xlsx,.thumb.k-pptx,.thumb.k-hwp{color:#fff}
+.item .bar{margin-top:6px}
+.notes{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 20px}
+.notes h2{margin:0 0 8px;font-size:1rem}
+.notes ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:.9rem}
+#stage{position:fixed;left:-20000px;top:0;width:1200px;height:900px;border:0;visibility:hidden}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <div>
+      <h1 data-i18n="h1">Excel 转 PDF</h1>
+      <p data-i18n="sub">把 Excel 工作表转换成便于打印和分享的 PDF。所有操作都在你的设备上完成。</p>
+    </div>
+  </header>
+
+  <section class="panel">
+    <div class="drop" id="drop" tabindex="0" role="button" aria-label="选择文档" data-i18n-aria="dropAria">
+      <strong data-i18n="dropTitle">点击这里选择文档，或把文档拖到这里</strong>
+      <span data-i18n="dropSub">Word（DOCX）· Excel（XLSX、XLS、CSV）· PowerPoint（PPTX）· Hangul（HWP）· 可一次选择多个</span>
+      <div class="kinds" aria-hidden="true"><b class="k-docx">DOCX</b><b class="k-xlsx">XLSX</b><b class="k-pptx">PPTX</b><b class="k-hwp">HWP</b></div>
+    </div>
+    <input type="file" id="file" multiple hidden accept=".docx,.xlsx,.xlsm,.xls,.ods,.csv,.pptx,.hwp,.hwpx,.doc,.ppt">
+    <div class="row">
+      <button class="btn" id="convert" disabled data-i18n="convert">转换为 PDF</button>
+      <button class="btn ghost" id="all" hidden data-i18n="saveAll">全部保存</button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <ul class="list" id="list"></ul>
+    <p class="empty" id="empty" data-i18n="empty">还没有选择文档。</p>
+  </section>
+
+  <section class="notes">
+    <h2 data-i18n="noteTitle">注意事项</h2>
+    <ul>
+      <li data-i18n="note1">PDF 由页面图片组成，因此其中的文字无法选择或搜索。</li>
+      <li data-i18n="note2">排版可能与原文件略有不同，复杂的 PowerPoint 和 Hangul 文档尤其如此。设备上没有的字体会被替换。</li>
+      <li data-i18n="note3">不支持旧格式（DOC、PPT）和 HWPX。请先另存为 DOCX、PPTX 或 HWP。</li>
+    </ul>
+  </section>
+  <section class="doc landing">
+    <article>
+<h2>用 PDF 分享表格</h2>
+<p>把价格表、日程表或报告发给只需要阅读或打印的人，PDF 是最简单的方式。对方不需要 Excel，也不会不小心改动你的数字。</p>
+<h2>如何把 Excel 转成 PDF</h2>
+<ol><li>在上方选择你的 .xlsx、.xls 或 .csv 文件。</li><li>点击<b>转换为 PDF</b>。</li><li>保存 PDF。每个工作表从新的一页开始，顶部显示表名。</li></ol>
+<h2>转换效果</h2>
+<ul><li>单元格的值按 Excel 中的显示方式输出，包括数字格式。</li><li>很长的工作表会延续到多页 A4；很宽的工作表会改用横向。</li><li>不包含 Excel 中的图表、图片、颜色和打印设置。如需这些，请使用 Excel 自带的“另存为 PDF”。</li></ul>
+<h2>常见问题</h2>
+<h3>公式会保留吗？</h3><p>PDF 显示的是计算结果，而不是公式。</p>
+<h3>能转换 CSV 文件吗？</h3><p>能。CSV 文件会作为一个工作表读取。</p>
+<h2>更多免费工具</h2><ul class="related"><li><a href="/zh/heic-to-jpg/">HEIC 转 JPG</a></li><li><a href="/zh/png-to-jpg/">PNG 转 JPG</a></li><li><a href="/zh/jpg-to-png/">JPG 转 PNG</a></li><li><a href="/zh/webp-to-jpg/">WebP 转 JPG</a></li><li><a href="/zh/jpg-to-pdf/">JPG 转 PDF</a></li><li><a href="/zh/pdf-to-jpg/">PDF 转 JPG</a></li><li><a href="/zh/compress-image/">压缩图片</a></li><li><a href="/zh/png-to-ico/">PNG 转 ICO</a></li><li><a href="/zh/word-to-pdf/">Word 转 PDF</a></li><li><a href="/zh/ppt-to-pdf/">PPT 转 PDF</a></li><li><a href="/zh/hwp-to-pdf/">HWP 转 PDF</a></li><li><a href="/zh/scan/">照片转扫描件</a></li><li><a href="/zh/remove-background/">去除背景</a></li></ul>
+    </article>
+  </section>
+</main>
+
+<script>window.PRESET={"accept": ".xlsx,.xlsm,.xls,.ods,.csv"};window.PAGE_I18N={"en": {"title": "Excel to PDF – Convert XLSX, XLS & CSV to PDF Free | PicShifter", "desc": "Convert Excel spreadsheets (XLSX, XLS, CSV) to PDF for free. Every sheet becomes printable pages. Runs in your browser, no upload.", "h1": "Excel to PDF", "sub": "Turn Excel sheets into PDF pages you can print or share. Everything happens on your device."}, "ko": {"title": "엑셀 PDF 변환 – XLSX·XLS·CSV를 PDF로 무료 | PicShifter", "desc": "엑셀 파일(XLSX, XLS, CSV)을 무료로 PDF로 바꾸세요. 시트마다 인쇄용 페이지로. 브라우저에서 처리, 업로드 없음.", "h1": "엑셀을 PDF로", "sub": "엑셀 시트를 인쇄하거나 공유하기 좋은 PDF로 바꿔요. 모든 작업은 내 기기 안에서 이뤄져요."}, "ja": {"title": "ExcelをPDFに – XLSX・XLS・CSVを無料でPDF変換 | PicShifter", "desc": "Excel（XLSX・XLS・CSV）を無料でPDFに変換。各シートを印刷用ページにします。ブラウザで処理、アップロード不要。", "h1": "ExcelをPDFに", "sub": "Excelのシートを、印刷や共有に便利なPDFに変換します。処理は端末内で行われます。"}, "zh": {"title": "Excel 转 PDF – 免费将 XLSX、XLS、CSV 转为 PDF | PicShifter", "desc": "免费将 Excel 表格（XLSX、XLS、CSV）转换为 PDF，每个工作表都变成可打印页面。在浏览器中处理，无需上传。", "h1": "Excel 转 PDF", "sub": "把 Excel 工作表转换成便于打印和分享的 PDF。所有操作都在你的设备上完成。"}, "es": {"title": "Excel a PDF – Convierte XLSX, XLS y CSV a PDF gratis | PicShifter", "desc": "Convierte hojas de Excel (XLSX, XLS, CSV) a PDF gratis. Cada hoja se convierte en páginas imprimibles. En tu navegador, sin subir nada.", "h1": "Excel a PDF", "sub": "Convierte hojas de Excel en páginas PDF para imprimir o compartir. Todo ocurre en tu dispositivo."}, "pt": {"title": "Excel para PDF – Converta XLSX, XLS e CSV em PDF grátis | PicShifter", "desc": "Converta planilhas do Excel (XLSX, XLS, CSV) em PDF de graça. Cada aba vira páginas para imprimir. No navegador, sem envio.", "h1": "Excel para PDF", "sub": "Transforme planilhas do Excel em páginas PDF para imprimir ou compartilhar. Tudo no seu dispositivo."}, "fr": {"title": "Excel en PDF – Convertir XLSX, XLS et CSV en PDF gratuitement | PicShifter", "desc": "Convertissez gratuitement vos classeurs Excel (XLSX, XLS, CSV) en PDF. Chaque feuille devient des pages imprimables. Dans le navigateur, sans envoi.", "h1": "Excel en PDF", "sub": "Transformez vos feuilles Excel en pages PDF à imprimer ou partager. Tout se passe sur votre appareil."}, "de": {"title": "Excel in PDF – XLSX, XLS und CSV kostenlos in PDF umwandeln | PicShifter", "desc": "Wandle Excel-Tabellen (XLSX, XLS, CSV) kostenlos in PDF um. Jedes Blatt wird zu druckbaren Seiten. Im Browser, ohne Upload.", "h1": "Excel zu PDF", "sub": "Mach aus Excel-Blättern PDF-Seiten zum Drucken oder Teilen. Alles passiert auf deinem Gerät."}};</script>
+<script src="/assets/codecs.js"></script>
+<script src="/document-to-pdf/i18n.js"></script>
+<script>window.PAGE_LANG="zh";</script>
+<script src="/assets/site.js"></script>
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const drop=$('drop'), file=$('file'), list=$('list'), empty=$('empty'), convertBtn=$('convert'), allBtn=$('all');
+  let items=[], lang='en', busy=false;
+
+  const KIND = { docx:'docx', xlsx:'xlsx', xlsm:'xlsx', xls:'xlsx', ods:'xlsx', csv:'xlsx', pptx:'pptx', hwp:'hwp' };
+  const OLD = { doc:['DOC','DOCX'], ppt:['PPT','PPTX'] };
+  const ERR = new Set(['eType','eOld','eHwpx','eEmpty','eTimeout','eGeneric']);
+  const MAP = { E_HWPX:'eHwpx', E_EMPTY:'eEmpty', E_TIMEOUT:'eTimeout' };
+
+  const PRESET=window.PRESET||{}, PAGE=window.PAGE_I18N||{};
+  function t(k,v){ let s=(PAGE[lang]&&PAGE[lang][k])||(DOC_I18N[lang]&&DOC_I18N[lang][k])||(PAGE.en&&PAGE.en[k])||DOC_I18N.en[k]||k; if(v) s=s.replace(/\{(\w+)\}/g,(m,x)=>x in v?v[x]:m); return s; }
+  const kb = n => n<1024*1024 ? Math.max(1,Math.round(n/1024))+' KB' : (n/1024/1024).toFixed(2)+' MB';
+  const extOf = n => (n.match(/\.([^.]+)$/)||[,''])[1].toLowerCase();
+  const baseOf = n => n.replace(/\.[^.]+$/,'');
+
+  function applyLang(){
+    document.title=t('title'); $('metaDesc').setAttribute('content',t('desc'));
+    document.querySelectorAll('[data-i18n]').forEach(e=>{ e.textContent=t(e.dataset.i18n); });
+    document.querySelectorAll('[data-i18n-aria]').forEach(e=>e.setAttribute('aria-label',t(e.dataset.i18nAria)));
+    if(busy) convertBtn.textContent=t('working');
+    render();
+  }
+
+  drop.addEventListener('click',()=>file.click());
+  drop.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); file.click(); } });
+  ['dragenter','dragover'].forEach(n=>drop.addEventListener(n,e=>{ e.preventDefault(); drop.classList.add('over'); }));
+  ['dragleave','drop'].forEach(n=>drop.addEventListener(n,e=>{ e.preventDefault(); drop.classList.remove('over'); }));
+  drop.addEventListener('drop',e=>add(e.dataTransfer.files));
+  file.addEventListener('change',()=>{ add(file.files); file.value=''; });
+
+  function add(files){
+    for(const f of files){
+      const ext=extOf(f.name), it={file:f, ext, kind:KIND[ext]||null, out:null, error:null, progress:0};
+      if(OLD[ext]) it.error={k:'eOld', v:{fmt:OLD[ext][0], to:OLD[ext][1]}};
+      else if(ext==='hwpx') it.error={k:'eHwpx'};
+      else if(!it.kind) it.error={k:'eType'};
+      items.push(it);
+    }
+    render();
+  }
+
+  function render(){
+    list.innerHTML='';
+    empty.hidden=items.length>0;
+    convertBtn.disabled=busy || !items.some(i=>!i.error && !i.out);
+    allBtn.hidden=!items.some(i=>i.out);
+    items.forEach((it,idx)=>{
+      const li=document.createElement('li'); li.className='item';
+      const th=document.createElement('div'); th.className='thumb'+(it.kind?' k-'+it.kind:''); th.textContent=it.ext||'?';
+      const meta=document.createElement('div'); meta.className='meta';
+      const name=document.createElement('div'); name.className='name';
+      const size=document.createElement('div'); size.className='size';
+      if(it.out){ name.textContent=it.out.name; size.innerHTML=kb(it.file.size)+' → <b>'+kb(it.out.blob.size)+'</b> · '+t('pages',{n:it.out.pages}); }
+      else if(it.error){ name.textContent=it.file.name; size.className='size err'; size.textContent=t(it.error.k,it.error.v); }
+      else { name.textContent=it.file.name; size.textContent=it.progress?t('working'):kb(it.file.size); }
+      meta.append(name,size);
+      if(it.progress && !it.out && !it.error){ const bar=document.createElement('div'); bar.className='bar'; const i=document.createElement('i'); i.style.width=Math.round(it.progress*100)+'%'; bar.append(i); meta.append(bar); }
+      const acts=document.createElement('div'); acts.className='acts';
+      if(it.out){ const a=document.createElement('a'); a.className='btn ghost'; a.textContent=t('save'); a.href=it.out.url; a.download=it.out.name; acts.append(a); }
+      else if(!busy){ const rm=document.createElement('button'); rm.className='btn ghost'; rm.textContent=t('remove'); rm.onclick=()=>{ items.splice(idx,1); render(); }; acts.append(rm); }
+      li.append(th,meta,acts); list.append(li);
+    });
+  }
+
+  /* Render one document inside its own hidden frame, so each library keeps its own globals and styles. */
+  function openFrame(kind){
+    return new Promise((resolve,reject)=>{
+      const f=document.createElement('iframe'); f.id='stage'; f.setAttribute('aria-hidden','true'); f.tabIndex=-1;
+      f.onload=()=>resolve(f); f.onerror=()=>reject(new Error('eGeneric'));
+      f.src='/render/'+kind+'.html'; document.body.append(f);
+    });
+  }
+  const toJpeg = c => new Promise(r=>c.toBlob(b=>b.arrayBuffer().then(a=>r(new Uint8Array(a))),'image/jpeg',0.88));
+
+  async function convertOne(it){
+    const buf=await it.file.arrayBuffer();
+    const frame=await openFrame(it.kind);
+    try{
+      it.progress=0.15; render();
+      const canvases=await Promise.race([
+        frame.contentWindow.renderDocument(buf, it.file.name),
+        new Promise((_,rej)=>setTimeout(()=>rej(new Error('E_TIMEOUT')),180000))
+      ]);
+      const pages=[];
+      for(let i=0;i<canvases.length;i++){
+        const c=canvases[i];
+        pages.push({ width:c.width, height:c.height, ptW:c.width/2*0.75, ptH:c.height/2*0.75, jpeg:await toJpeg(c) });
+        it.progress=0.3+0.7*(i+1)/canvases.length; render();
+      }
+      const blob=new Blob([Codecs.encodePDF(pages)],{type:'application/pdf'});
+      it.out={ blob, url:URL.createObjectURL(blob), name:baseOf(it.file.name)+'.pdf', pages:pages.length };
+    } finally { frame.remove(); }
+  }
+
+  convertBtn.addEventListener('click',async()=>{
+    busy=true; render();
+    const todo=items.filter(i=>!i.error && !i.out);
+    for(let n=0;n<todo.length;n++){
+      const it=todo[n];
+      convertBtn.textContent=t('converting',{n:n+1,total:todo.length});
+      try{ await convertOne(it); }
+      catch(e){ const m=e&&e.message; it.error={k: ERR.has(m)?m : (MAP[m]||'eGeneric')}; console.error(e); }
+      it.progress=0; render();
+    }
+    busy=false; convertBtn.textContent=t('convert'); render();
+  });
+
+  allBtn.addEventListener('click',async()=>{
+    for(const it of items){ if(!it.out) continue; const a=document.createElement('a'); a.href=it.out.url; a.download=it.out.name; document.body.append(a); a.click(); a.remove(); await new Promise(r=>setTimeout(r,400)); }
+  });
+
+  if(PRESET.accept) file.setAttribute('accept',PRESET.accept);
+  Site.onChange(l=>{ lang=l; applyLang(); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="canonical" href="https://picshifter.pages.dev/es/scan/">
+<link rel="alternate" hreflang="en" href="https://picshifter.pages.dev/scan/">
+<link rel="alternate" hreflang="ko" href="https://picshifter.pages.dev/ko/scan/">
+<link rel="alternate" hreflang="ja" href="https://picshifter.pages.dev/ja/scan/">
+<link rel="alternate" hreflang="zh-Hans" href="https://picshifter.pages.dev/zh/scan/">
+<link rel="alternate" hreflang="es" href="https://picshifter.pages.dev/es/scan/">
+<link rel="alternate" hreflang="pt" href="https://picshifter.pages.dev/pt/scan/">
+<link rel="alternate" hreflang="fr" href="https://picshifter.pages.dev/fr/scan/">
+<link rel="alternate" hreflang="de" href="https://picshifter.pages.dev/de/scan/">
+<link rel="alternate" hreflang="x-default" href="https://picshifter.pages.dev/scan/">
+<title>Foto a escaneo – Convierte fotos de documentos en escaneos PDF limpios | PicShifter</title>
+<meta id="metaDesc" name="description" content="Convierte fotos de documentos, recibos y apuntes en escaneos planos y limpios. Corrige la inclinación, quita sombras y guarda en PDF o JPG. Gratis, sin subir archivos.">
+<link rel="stylesheet" href="/assets/base.css">
+<style>
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex-wrap:wrap;max-width:100%}
+.seg button{border:0;background:transparent;color:var(--fg);font:inherit;font-size:.9rem;padding:8px 12px;cursor:pointer}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg);font-weight:500}
+.pages{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin:0;padding:0;list-style:none}
+.card{border:1px solid var(--line);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;background:var(--panel);min-width:0}
+.card .pv{aspect-ratio:3/4;background:var(--bg);border-radius:6px;display:grid;place-items:center;overflow:hidden;max-width:100%}
+.card .pv img{width:100%;height:100%;object-fit:contain;display:block}
+.card .pv span{font-size:.8rem;color:var(--muted);padding:8px;text-align:center}
+.card .no{font-size:.75rem;color:var(--err);line-height:1.35}
+.card .ttl{font-size:.8rem;color:var(--muted);display:flex;justify-content:space-between;gap:6px}
+.card .tools{display:flex;flex-wrap:wrap;gap:4px}
+.card .tools button{flex:1 1 auto;border:1px solid var(--line);background:transparent;color:var(--fg);border-radius:6px;font:inherit;font-size:.78rem;padding:5px 6px;cursor:pointer;min-width:0}
+.card .tools button.main{flex-basis:100%;border-color:var(--accent);color:var(--accent);font-weight:500}
+.card .tools button:disabled{opacity:.4;cursor:default}
+.tips{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 20px}
+.tips h2{margin:0 0 8px;font-size:1rem}
+.tips ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:.9rem}
+.editor{position:fixed;inset:0;z-index:50;background:#0d1116;display:flex;flex-direction:column;padding:calc(env(safe-area-inset-top,0px) + 12px) 12px calc(env(safe-area-inset-bottom,0px) + 12px);gap:10px;color:#fff}
+.editor p{margin:0;text-align:center;font-size:.95rem}
+.ed-stage{flex:1;min-height:0;display:grid;place-items:center;touch-action:none}
+.ed-stage canvas{max-width:100%;max-height:100%;touch-action:none;cursor:crosshair}
+.ed-bar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.ed-bar button{border:1px solid rgba(255,255,255,.4);background:transparent;color:#fff;border-radius:8px;font:inherit;padding:10px 14px;cursor:pointer}
+.ed-bar button.ok{background:#3b82f6;border-color:#3b82f6;font-weight:600}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <div>
+      <h1 data-i18n="h1">Foto a escaneo</h1>
+      <p data-i18n="sub">Haz que las fotos de papel parezcan sacadas de un escáner: rectas, sin sombras y guardadas en PDF.</p>
+    </div>
+  </header>
+
+  <section class="panel">
+    <div class="drop" id="drop" tabindex="0" role="button" aria-label="Elegir fotos" data-i18n-aria="dropAria">
+      <strong data-i18n="dropTitle">Haz clic para elegir fotos de documentos o arrástralas aquí</strong>
+      <span data-i18n="dropSub">JPG, PNG, HEIC y más · varias páginas a la vez</span>
+    </div>
+    <input type="file" id="file" multiple hidden accept="image/*,.heic,.heif">
+
+    <div class="row">
+      <span class="label" data-i18n="look">Aspecto</span>
+      <div class="seg" id="mode" role="group">
+        <button type="button" data-v="color" aria-pressed="false" data-i18n="mColor">Color</button>
+        <button type="button" data-v="gray" aria-pressed="false" data-i18n="mGray">Escala de grises</button>
+        <button type="button" data-v="bw" aria-pressed="true" data-i18n="mBw">Blanco y negro</button>
+        <button type="button" data-v="original" aria-pressed="false" data-i18n="mOrig">Original</button>
+      </div>
+    </div>
+    <div class="row">
+      <label class="label" for="out" data-i18n="saveAs">Guardar como</label>
+      <select id="out">
+        <option value="pdf" data-i18n="oPdf">PDF (un archivo)</option>
+        <option value="jpg" data-i18n="oJpg">Imágenes JPG</option>
+        <option value="png" data-i18n="oPng">Imágenes PNG</option>
+      </select>
+      <label class="label" for="size" id="sizeLabel" data-i18n="size">Tamaño de página</label>
+      <select id="size">
+        <option value="fit" data-i18n="sFit">Ajustar a la foto</option>
+        <option value="a4" data-i18n="sA4">A4</option>
+        <option value="letter" data-i18n="sLetter">Carta</option>
+      </select>
+    </div>
+    <div class="row">
+      <button class="btn" id="save" disabled data-i18n="saveBtn">Guardar</button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <ul class="pages" id="pages"></ul>
+    <p class="empty" id="empty" data-i18n="empty">Aún no hay páginas. Añade fotos de tu documento.</p>
+  </section>
+
+  <section class="tips">
+    <h2 data-i18n="tipsTitle">Consejos para un mejor escaneo</h2>
+    <ul><li data-i18n="tip1">Pon el papel sobre una superficie lisa y más oscura para que se vean bien sus bordes.</li><li data-i18n="tip2">Haz la foto desde arriba con luz uniforme y sin que tu sombra caiga sobre la hoja.</li><li data-i18n="tip3">Usa blanco y negro para páginas solo con texto y color para recibos, sellos o fotos.</li></ul>
+  </section>
+</main>
+
+<div class="editor" id="editor" hidden role="dialog" aria-modal="true" aria-labelledby="edTitle">
+  <p id="edTitle" data-i18n="edTitle">Arrastra los cuatro puntos a las esquinas del papel</p>
+  <div class="ed-stage" id="edStage"><canvas id="edCanvas"></canvas></div>
+  <div class="ed-bar">
+    <button type="button" id="edAuto" data-i18n="edAuto">Detectar</button>
+    <button type="button" id="edAll" data-i18n="edAll">Foto completa</button>
+    <button type="button" id="edCancel" data-i18n="edCancel">Cancelar</button>
+    <button type="button" id="edApply" class="ok" data-i18n="edApply">Aplicar</button>
+  </div>
+</div>
+
+<script src="/assets/codecs.js"></script>
+<script src="/scan/scan-core.js"></script>
+<script src="/scan/i18n.js"></script>
+<script>window.PAGE_LANG="es";</script>
+<script src="/assets/site.js"></script>
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const drop=$('drop'), file=$('file'), list=$('pages'), empty=$('empty'), saveBtn=$('save'), outSel=$('out'), sizeSel=$('size');
+  let lang='en', mode='bw', pages=[], busy=false, seq=0;
+  const MAX_SRC=3000, PREVIEW=900, FULL=2400;
+
+  function t(k,v){ let s=(SCAN_I18N[lang]&&SCAN_I18N[lang][k])||SCAN_I18N.en[k]||k; if(v) s=s.replace(/\{(\w+)\}/g,(m,x)=>x in v?v[x]:m); return s; }
+  function applyLang(){
+    document.title=t('title'); $('metaDesc').setAttribute('content',t('desc'));
+    document.querySelectorAll('[data-i18n]').forEach(e=>{ e.textContent=t(e.dataset.i18n); });
+    document.querySelectorAll('[data-i18n-aria]').forEach(e=>e.setAttribute('aria-label',t(e.dataset.i18nAria)));
+    render();
+  }
+  const tick = () => new Promise(r=>setTimeout(r,0));
+
+  /* ---------- reading photos ---------- */
+  let heicLoad=null;
+  function loadHeic(){ if(!heicLoad) heicLoad=new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='/vendor/heic2any.min.js'; s.onload=res; s.onerror=()=>{ heicLoad=null; rej(new Error('eLib')); }; document.head.append(s); }); return heicLoad; }
+  function drawLimited(src,w,h){
+    const k=Math.min(1,MAX_SRC/Math.max(w,h)), c=document.createElement('canvas');
+    c.width=Math.round(w*k); c.height=Math.round(h*k); c.getContext('2d').drawImage(src,0,0,c.width,c.height); return c;
+  }
+  async function decode(blob){
+    if(window.createImageBitmap){ try{ const b=await createImageBitmap(blob,{imageOrientation:'from-image'}); const c=drawLimited(b,b.width,b.height); b.close&&b.close(); return c; }catch(e){} }
+    const url=await new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.onerror=()=>rej(new Error('eOpen')); fr.readAsDataURL(blob); });
+    const im=await new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=()=>rej(new Error('eOpen')); i.src=url; });
+    return drawLimited(im,im.naturalWidth,im.naturalHeight);
+  }
+  async function readFile(f){
+    let blob=f;
+    if(/\.(heic|heif)$/i.test(f.name) || /hei[cf]/i.test(f.type)){
+      try{ return await decode(f); }catch(e){}
+      await loadHeic(); let r=await window.heic2any({blob:f,toType:'image/jpeg',quality:0.95}); blob=Array.isArray(r)?r[0]:r;
+    }
+    return decode(blob);
+  }
+  const pixels = c => { const d=c.getContext('2d').getImageData(0,0,c.width,c.height); return {width:d.width,height:d.height,data:d.data}; };
+  function toCanvas(img){ const c=document.createElement('canvas'); c.width=img.width; c.height=img.height; c.getContext('2d').putImageData(new ImageData(img.data,img.width,img.height),0,0); return c; }
+
+  /* ---------- processing ---------- */
+  function processPage(p, maxSide){
+    const size=ScanCore.outputSize(p.quad,maxSide);
+    let img=ScanCore.warp(p.src,p.quad,size);
+    img=ScanCore.enhance(img,mode);
+    img=ScanCore.rotate90(img,p.rot);
+    return toCanvas(img);
+  }
+  async function refresh(p){
+    p.preview=null; render(); await tick();
+    const c=processPage(p,PREVIEW);
+    p.preview=c.toDataURL('image/jpeg',0.82); render();
+  }
+  async function refreshAll(){ for(const p of pages.slice()){ await refresh(p); await tick(); } }
+
+  async function add(files){
+    for(const f of files){
+      const p={id:++seq, name:f.name, src:null, quad:null, found:true, rot:0, preview:null, error:null, loading:true};
+      pages.push(p); render(); await tick();
+      try{
+        const c=await readFile(f); p.src=pixels(c);
+        const d=ScanCore.detectPaper(p.src); p.quad=d.quad; p.found=d.found; p.auto=d.quad;
+        p.loading=false; await refresh(p);
+      }catch(e){ p.loading=false; p.error=(e&&e.message==='eLib')?'eLib':'eOpen'; render(); }
+    }
+  }
+
+  /* ---------- page list ---------- */
+  function render(){
+    list.innerHTML='';
+    empty.hidden=pages.length>0;
+    saveBtn.disabled=busy || !pages.some(p=>p.src);
+    if(!busy) saveBtn.textContent=t('saveBtn');
+    $('sizeLabel').hidden=sizeSel.hidden=outSel.value!=='pdf';
+    pages.forEach((p,i)=>{
+      const li=document.createElement('li'); li.className='card';
+      const ttl=document.createElement('div'); ttl.className='ttl';
+      const a=document.createElement('span'); a.textContent=t('page',{n:i+1});
+      const b=document.createElement('span'); b.textContent=p.name; b.style.overflow='hidden'; b.style.textOverflow='ellipsis'; b.style.whiteSpace='nowrap'; b.style.minWidth='0';
+      ttl.append(a,b);
+      const pv=document.createElement('div'); pv.className='pv';
+      if(p.preview){ const im=document.createElement('img'); im.src=p.preview; im.alt=t('page',{n:i+1}); pv.append(im); }
+      else { const s=document.createElement('span'); s.textContent=p.error?t(p.error):t('loading'); if(p.error) s.style.color='var(--err)'; pv.append(s); }
+      li.append(ttl,pv);
+      if(p.src && !p.found){ const no=document.createElement('div'); no.className='no'; no.textContent=t('notFound'); li.append(no); }
+      const tools=document.createElement('div'); tools.className='tools';
+      const btn=(label,fn,dis,cls)=>{ const x=document.createElement('button'); x.type='button'; x.textContent=label; x.disabled=!!dis||busy; if(cls) x.className=cls; x.onclick=fn; tools.append(x); };
+      btn(t('adjust'),()=>openEditor(p),!p.src,'main');
+      btn(t('rotate'),()=>{ p.rot=(p.rot+1)%4; refresh(p); },!p.src);
+      btn('↑',()=>{ pages.splice(i,1); pages.splice(i-1,0,p); render(); },i===0);
+      btn('↓',()=>{ pages.splice(i,1); pages.splice(i+1,0,p); render(); },i===pages.length-1);
+      btn(t('remove'),()=>{ pages.splice(i,1); render(); });
+      tools.children[2].setAttribute('aria-label',t('up')); tools.children[3].setAttribute('aria-label',t('down'));
+      li.append(tools); list.append(li);
+    });
+  }
+
+  /* ---------- corner editor ---------- */
+  const ed=$('editor'), cv=$('edCanvas'), stage=$('edStage');
+  let edPage=null, edQuad=null, edImg=null, edScale=1, drag=-1;
+  function openEditor(p){
+    edPage=p; edQuad=p.quad.map(q=>q.slice());
+    const k=Math.min(1,1600/Math.max(p.src.width,p.src.height));
+    const full=toCanvas(p.src); edImg=document.createElement('canvas'); edImg.width=Math.round(p.src.width*k); edImg.height=Math.round(p.src.height*k);
+    edImg.getContext('2d').drawImage(full,0,0,edImg.width,edImg.height);
+    ed.hidden=false; document.body.style.overflow='hidden';
+    requestAnimationFrame(layoutEditor);
+  }
+  function closeEditor(){ ed.hidden=true; document.body.style.overflow=''; edPage=null; edImg=null; }
+  function layoutEditor(){
+    if(!edPage) return;
+    const r=stage.getBoundingClientRect(), W=edPage.src.width, H=edPage.src.height;
+    edScale=Math.min(r.width/W, r.height/H);
+    const dpr=window.devicePixelRatio||1;
+    cv.style.width=(W*edScale)+'px'; cv.style.height=(H*edScale)+'px';
+    cv.width=Math.round(W*edScale*dpr); cv.height=Math.round(H*edScale*dpr);
+    drawEditor();
+  }
+  function drawEditor(){
+    const x=cv.getContext('2d'), s=cv.width/edPage.src.width, dpr=window.devicePixelRatio||1;
+    x.clearRect(0,0,cv.width,cv.height); x.drawImage(edImg,0,0,cv.width,cv.height);
+    x.save(); x.fillStyle='rgba(0,0,0,.45)'; x.beginPath(); x.rect(0,0,cv.width,cv.height);
+    x.moveTo(edQuad[0][0]*s,edQuad[0][1]*s); for(let i=3;i>=0;i--) x.lineTo(edQuad[i][0]*s,edQuad[i][1]*s); x.closePath(); x.fill('evenodd'); x.restore();
+    x.strokeStyle='#4f9cff'; x.lineWidth=2.5*dpr; x.beginPath(); edQuad.forEach((q,i)=>i?x.lineTo(q[0]*s,q[1]*s):x.moveTo(q[0]*s,q[1]*s)); x.closePath(); x.stroke();
+    edQuad.forEach((q,i)=>{ x.beginPath(); x.arc(q[0]*s,q[1]*s,(drag===i?14:11)*dpr,0,Math.PI*2); x.fillStyle='rgba(79,156,255,.35)'; x.fill(); x.lineWidth=3*dpr; x.strokeStyle='#fff'; x.stroke(); });
+  }
+  function ptr(e){ const r=cv.getBoundingClientRect(); return [(e.clientX-r.left)/edScale,(e.clientY-r.top)/edScale]; }
+  cv.addEventListener('pointerdown',e=>{
+    const p=ptr(e), lim=36/edScale; let best=-1, bd=Infinity;
+    edQuad.forEach((q,i)=>{ const d=Math.hypot(q[0]-p[0],q[1]-p[1]); if(d<bd){ bd=d; best=i; } });
+    if(bd<lim*1.6){ drag=best; cv.setPointerCapture(e.pointerId); e.preventDefault(); drawEditor(); }
+  });
+  cv.addEventListener('pointermove',e=>{
+    if(drag<0) return; const p=ptr(e), W=edPage.src.width, H=edPage.src.height;
+    edQuad[drag]=[Math.max(0,Math.min(W,p[0])),Math.max(0,Math.min(H,p[1]))]; drawEditor();
+  });
+  const end=()=>{ if(drag>=0){ drag=-1; drawEditor(); } };
+  cv.addEventListener('pointerup',end); cv.addEventListener('pointercancel',end);
+  window.addEventListener('resize',()=>{ if(!ed.hidden) layoutEditor(); });
+  $('edAuto').onclick=()=>{ edQuad=edPage.auto.map(q=>q.slice()); drawEditor(); };
+  $('edAll').onclick=()=>{ const W=edPage.src.width,H=edPage.src.height; edQuad=[[0,0],[W,0],[W,H],[0,H]]; drawEditor(); };
+  $('edCancel').onclick=closeEditor;
+  $('edApply').onclick=()=>{
+    const p=edPage; let q=ScanCore.orderQuad(edQuad);
+    if(!ScanCore.isConvex(q)) q=p.quad; p.quad=q; p.found=true; closeEditor(); refresh(p);
+  };
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape' && !ed.hidden) closeEditor(); });
+
+  /* ---------- saving ---------- */
+  const PAGE={ a4:[595.28,841.89], letter:[612,792] };
+  const blobOf=(c,type,q)=>new Promise(r=>c.toBlob(r,type,q));
+  function download(blob,name){ const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.append(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),60000); }
+  const base = () => (pages[0]&&pages[0].name.replace(/\.[^.]+$/,'')||'scan')+'-scan';
+
+  saveBtn.addEventListener('click',async()=>{
+    const todo=pages.filter(p=>p.src); if(!todo.length) return;
+    busy=true; render();
+    try{
+      const kind=outSel.value, pdfPages=[];
+      for(let i=0;i<todo.length;i++){
+        saveBtn.textContent=t('saving',{n:i+1,total:todo.length}); await tick();
+        let c=processPage(todo[i],FULL);
+        if(kind==='pdf'){
+          let ptW, ptH;
+          if(sizeSel.value==='fit'){ const k=841.89/Math.max(c.width,c.height); ptW=c.width*k; ptH=c.height*k; }
+          else {
+            let [pw,ph]=PAGE[sizeSel.value]; if(c.width>c.height) [pw,ph]=[ph,pw];
+            const k=Math.max(c.width/pw,c.height/ph), pc=document.createElement('canvas');
+            pc.width=Math.round(pw*k); pc.height=Math.round(ph*k);
+            const x=pc.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,pc.width,pc.height);
+            x.drawImage(c,Math.round((pc.width-c.width)/2),Math.round((pc.height-c.height)/2)); c=pc; ptW=pw; ptH=ph;
+          }
+          const jpg=new Uint8Array(await (await blobOf(c,'image/jpeg',0.9)).arrayBuffer());
+          pdfPages.push({width:c.width,height:c.height,ptW,ptH,jpeg:jpg});
+        } else {
+          const b=await blobOf(c,kind==='png'?'image/png':'image/jpeg',0.92);
+          download(b,base()+(todo.length>1?'-'+(i+1):'')+'.'+kind);
+          await new Promise(r=>setTimeout(r,400));
+        }
+      }
+      if(kind==='pdf') download(new Blob([Codecs.encodePDF(pdfPages)],{type:'application/pdf'}),base()+'.pdf');
+    } finally { busy=false; render(); }
+  });
+
+  /* ---------- controls ---------- */
+  drop.addEventListener('click',()=>file.click());
+  drop.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); file.click(); } });
+  ['dragenter','dragover'].forEach(n=>drop.addEventListener(n,e=>{ e.preventDefault(); drop.classList.add('over'); }));
+  ['dragleave','drop'].forEach(n=>drop.addEventListener(n,e=>{ e.preventDefault(); drop.classList.remove('over'); }));
+  drop.addEventListener('drop',e=>add(e.dataTransfer.files));
+  file.addEventListener('change',()=>{ const f=[...file.files]; file.value=''; add(f); });
+  document.querySelectorAll('#mode button').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#mode button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+    mode=b.dataset.v; refreshAll();
+  }));
+  outSel.addEventListener('change',render);
+
+  Site.onChange(l=>{ lang=l; applyLang(); });
+})();
+</script>
+</body>
+</html>

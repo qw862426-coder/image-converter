@@ -20,17 +20,25 @@
     ['JPG → PDF', '/jpg-to-pdf/'], ['PDF → JPG', '/pdf-to-jpg/'], ['PNG → ICO', '/png-to-ico/'], ['Word → PDF', '/word-to-pdf/'],
     ['Excel → PDF', '/excel-to-pdf/'], ['PPT → PDF', '/ppt-to-pdf/'], ['HWP → PDF', '/hwp-to-pdf/'], ['@compress', '/compress-image/']];
 
-  function pick() {
-    try { var u = new URLSearchParams(location.search).get('lang'); if (u && LANGS[u]) return u; } catch (e) {}
-    try { var s = localStorage.getItem(KEY); if (s && LANGS[s]) return s; } catch (e) {}
+  /* Every page has a fixed language from its address: /heic-to-jpg/ is English, /ko/heic-to-jpg/ is Korean. */
+  function stored() { try { var s = localStorage.getItem(KEY); return s && LANGS[s] ? s : null; } catch (e) { return null; } }
+  function browserLang() {
     var list = navigator.languages || [navigator.language || 'en'];
     for (var i = 0; i < list.length; i++) { var k = String(list[i]).toLowerCase().split('-')[0]; if (LANGS[k]) return k; }
     return 'en';
   }
-  var lang = pick(), subs = [];
-  window.__enTitle = document.title;
+  var PREFIX = new RegExp('^/(' + Object.keys(LANGS).filter(function (k) { return k !== 'en'; }).join('|') + ')(?=/)');
+  var bare = location.pathname.replace(/index\.html$/, '').replace(PREFIX, '') || '/';
+  var lang = window.PAGE_LANG && LANGS[window.PAGE_LANG] ? window.PAGE_LANG : (stored() || browserLang());
+  function pathFor(l, p) { return (l === 'en' ? '' : '/' + l) + p; }
+  /* First visit to an English address from a phone set to another supported language: open that language's page. */
+  if (window.PAGE_LANG === 'en') {
+    var want = stored() || browserLang();
+    if (want !== 'en' && location.protocol !== 'file:') { window.Site = { LANGS: LANGS, lang: want, onChange: function () {} }; location.replace(pathFor(want, bare) + location.search + location.hash); return; }
+  }
+  var subs = [];
   function t(k) { return (T[lang] && T[lang][k]) || T.en[k] || k; }
-  function here(href) { var p = location.pathname.replace(/index\.html$/, ''); return p === href; }
+  function here(href) { return bare === href; }
 
   var css = document.createElement('style');
   css.textContent =
@@ -52,7 +60,7 @@
   document.head.appendChild(css);
 
   var bar = document.createElement('header'); bar.className = 'sitebar';
-  bar.innerHTML = '<div class="sitebar-in"><a class="brand" href="/"><i aria-hidden="true"></i>PicShifter</a><nav class="sitenav"></nav>' +
+  bar.innerHTML = '<div class="sitebar-in"><a class="brand" href="' + pathFor(lang, '/') + '"><i aria-hidden="true"></i>PicShifter</a><nav class="sitenav"></nav>' +
     '<div class="sitelang"><label for="lang"></label><select id="lang"></select></div></div>';
   document.body.insertBefore(bar, document.body.firstChild);
   var sel = bar.querySelector('select');
@@ -66,16 +74,17 @@
     document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang;
     sel.value = lang; bar.querySelector('label').textContent = t('lang');
     var nav = bar.querySelector('.sitenav'); nav.innerHTML = '';
-    LINKS.forEach(function (l) { var a = document.createElement('a'); a.href = l[1]; a.textContent = t(l[0]); if (here(l[1])) a.setAttribute('aria-current', 'page'); nav.appendChild(a); });
+    LINKS.forEach(function (l) { var a = document.createElement('a'); a.href = pathFor(lang, l[1]); a.textContent = t(l[0]); if (here(l[1])) a.setAttribute('aria-current', 'page'); nav.appendChild(a); });
     var pn = foot.querySelector('.popular nav'); pn.innerHTML = ''; foot.querySelector('.popular b').textContent = t('popular');
-    POPULAR.forEach(function (l) { var a = document.createElement('a'); a.href = l[1]; a.textContent = l[0].charAt(0) === '@' ? t(l[0].slice(1)) : l[0]; pn.appendChild(a); });
+    POPULAR.forEach(function (l) { var a = document.createElement('a'); a.href = pathFor(lang, l[1]); a.textContent = l[0].charAt(0) === '@' ? t(l[0].slice(1)) : l[0]; pn.appendChild(a); });
     var fn = foot.querySelector('nav.legal'); fn.innerHTML = '';
-    FOOT.forEach(function (l) { var a = document.createElement('a'); a.href = l[1]; a.textContent = t(l[0]); fn.appendChild(a); });
+    FOOT.forEach(function (l) { var a = document.createElement('a'); a.href = pathFor(lang, l[1]); a.textContent = t(l[0]); fn.appendChild(a); });
     foot.querySelector('p').textContent = t('note');
   }
   sel.addEventListener('change', function () {
-    lang = sel.value; try { localStorage.setItem(KEY, lang); } catch (e) {}
-    paint(); subs.forEach(function (f) { f(lang); });
+    var next = sel.value; try { localStorage.setItem(KEY, next); } catch (e) {}
+    if (window.PAGE_LANG) { location.href = pathFor(next, bare) + location.hash; return; }
+    lang = next; paint(); subs.forEach(function (f) { f(lang); });
   });
   paint();
 
@@ -86,10 +95,6 @@
     var has = false; blocks.forEach(function (b) { if (b.getAttribute('data-lang') === lang) has = true; });
     var want = has ? lang : 'en';
     blocks.forEach(function (b) { b.hidden = b.getAttribute('data-lang') !== want; });
-    var shown = document.querySelector('[data-lang="' + want + '"] h1');
-    if (shown && want !== 'en') document.title = shown.textContent + ' | PicShifter';
-    else if (shown && window.__enTitle) document.title = window.__enTitle;
-    if (!window.__enTitle) window.__enTitle = document.title;
   }
   subs.push(showLangBlocks); showLangBlocks();
 

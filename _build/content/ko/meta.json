@@ -1,0 +1,18 @@
+{
+ "guide": {
+  "title": "이미지 변환·배경 지우기·PDF 스캔 사용 방법 | PicShifter",
+  "desc": "HEIC·JPG·PNG·WebP 이미지 변환, 워드·엑셀·파워포인트·한글(HWP) 문서의 PDF 변환, 휴대폰 사진으로 스캔본 만들기, 사진 배경 지우기 방법을 단계별로 안내합니다."
+ },
+ "about": {
+  "title": "PicShifter 소개",
+  "desc": "PicShifter는 파일을 업로드하지 않고 브라우저에서 이미지와 문서를 변환하는 무료 도구 모음입니다."
+ },
+ "privacy": {
+  "title": "개인정보처리방침 | PicShifter",
+  "desc": "PicShifter가 파일과 데이터, 광고용 쿠키를 어떻게 다루는지 안내합니다."
+ },
+ "contact": {
+  "title": "문의하기 | PicShifter",
+  "desc": "PicShifter 이용 중 문제, 제안, 개인정보 관련 문의 방법을 안내합니다."
+ }
+}

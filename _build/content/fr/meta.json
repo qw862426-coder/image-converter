@@ -1,0 +1,18 @@
+{
+ "guide": {
+  "title": "Convertir des images, supprimer un fond et créer des scans PDF | Guide PicShifter",
+  "desc": "Guide étape par étape pour convertir des images HEIC, JPG, PNG et WebP, transformer des fichiers Word, Excel, PowerPoint et Hangul (HWP) en PDF, faire des scans propres à partir de photos prises au téléphone et supprimer le fond des photos."
+ },
+ "about": {
+  "title": "À propos de PicShifter",
+  "desc": "PicShifter est un ensemble gratuit d’outils dans le navigateur pour convertir images et documents sans envoyer de fichiers."
+ },
+ "privacy": {
+  "title": "Politique de confidentialité | PicShifter",
+  "desc": "Comment PicShifter traite vos fichiers et vos données, y compris les cookies utilisés pour la publicité."
+ },
+ "contact": {
+  "title": "Contact | PicShifter",
+  "desc": "Comment contacter PicShifter pour un problème, une suggestion ou une question de confidentialité."
+ }
+}

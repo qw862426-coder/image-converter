@@ -1,0 +1,18 @@
+{
+ "guide": {
+  "title": "画像変換・背景削除・PDFスキャンのやり方 | PicShifter ガイド",
+  "desc": "HEIC・JPG・PNG・WebP画像の変換、Word・Excel・PowerPoint・ハングル（HWP）文書のPDF化、スマホ写真からのきれいなスキャン作成、写真の背景削除を手順ごとに解説します。"
+ },
+ "about": {
+  "title": "PicShifterについて",
+  "desc": "PicShifterは、ファイルをアップロードせずにブラウザ内で画像や文書を変換できる無料ツール集です。"
+ },
+ "privacy": {
+  "title": "プライバシーポリシー | PicShifter",
+  "desc": "PicShifterがファイルやデータをどのように扱うか、広告に使われるCookieも含めて説明します。"
+ },
+ "contact": {
+  "title": "お問い合わせ | PicShifter",
+  "desc": "不具合の報告、ご提案、プライバシーに関する質問の連絡方法です。"
+ }
+}

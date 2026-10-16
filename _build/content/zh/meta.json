@@ -1,0 +1,18 @@
+{
+ "guide": {
+  "title": "如何转换图片、去除背景和制作 PDF 扫描件 | PicShifter 指南",
+  "desc": "分步讲解如何转换 HEIC、JPG、PNG 和 WebP 图片，把 Word、Excel、PowerPoint 和韩文（HWP）文档转成 PDF，用手机照片制作清晰的扫描件，以及去除照片背景。"
+ },
+ "about": {
+  "title": "关于 PicShifter",
+  "desc": "PicShifter 是一套免费的浏览器工具，无需上传文件即可转换图片和文档。"
+ },
+ "privacy": {
+  "title": "隐私政策 | PicShifter",
+  "desc": "PicShifter 如何处理你的文件和数据，包括用于广告的 Cookie。"
+ },
+ "contact": {
+  "title": "联系我们 | PicShifter",
+  "desc": "就问题、建议或隐私疑问联系 PicShifter 的方式。"
+ }
+}

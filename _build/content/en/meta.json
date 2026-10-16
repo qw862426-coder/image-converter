@@ -1,0 +1,18 @@
+{
+ "guide": {
+  "title": "How to Convert Images, Remove Backgrounds and Make PDF Scans | PicShifter Guide",
+  "desc": "Step-by-step guide to converting HEIC, JPG, PNG and WebP images, turning Word, Excel, PowerPoint and Hangul (HWP) files into PDF, making clean scans from phone photos, and removing photo backgrounds."
+ },
+ "about": {
+  "title": "About PicShifter",
+  "desc": "PicShifter is a free set of browser-based tools for converting images and documents without uploading files."
+ },
+ "privacy": {
+  "title": "Privacy Policy | PicShifter",
+  "desc": "How PicShifter handles your files and data, including cookies used for advertising."
+ },
+ "contact": {
+  "title": "Contact | PicShifter",
+  "desc": "How to contact PicShifter about problems, suggestions or privacy questions."
+ }
+}
