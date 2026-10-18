@@ -18,7 +18,7 @@ en: {
 },
 ko: {
   title: '한글 워드 엑셀 PPT PDF 변환 | PicShifter',
-  desc: '워드(DOCX), 엑셀(XLSX), 파워포인트(PPTX), 한글(HWP) 파일을 무료로 PDF로 바꾸세요. 파일은 브라우저 안에서 변환되며 업로드되지 않습니다.',
+  desc: '워드, 엑셀, PPT, 한글(HWP) 파일을 무료로 PDF로 바꾸세요. 파일은 업로드되지 않아요.',
   h1: '문서를 PDF로', sub: '워드·엑셀·파워포인트·한글(HWP) 파일을 PDF로 바꿔요. 모든 작업은 내 기기 안에서 이뤄져요.',
   dropAria: '문서 선택', dropTitle: '여기를 눌러 문서를 고르거나 끌어다 놓으세요',
   dropSub: '워드(DOCX) · 엑셀(XLSX, XLS, CSV) · 파워포인트(PPTX) · 한글(HWP) · 여러 개 한 번에 가능',

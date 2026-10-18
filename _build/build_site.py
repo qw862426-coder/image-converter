@@ -21,6 +21,7 @@ SITE = 'https://picshifter.pages.dev'
 LANGS = ['en', 'ko', 'ja', 'zh', 'es', 'pt', 'fr', 'de']
 HREFLANG = {'zh': 'zh-Hans'}
 HTML_LANG = {'zh': 'zh-CN'}
+OG_LOCALE = {'en': 'en_US', 'ko': 'ko_KR', 'ja': 'ja_JP', 'zh': 'zh_CN', 'es': 'es_ES', 'pt': 'pt_BR', 'fr': 'fr_FR', 'de': 'de_DE'}
 LASTMOD = '2026-10-17'
 MORE = {'en': 'More free tools', 'ko': '다른 무료 도구', 'ja': 'ほかの無料ツール', 'zh': '更多免费工具', 'es': 'Más herramientas gratis',
         'pt': 'Mais ferramentas grátis', 'fr': 'Autres outils gratuits', 'de': 'Weitere kostenlose Tools'}
@@ -83,6 +84,16 @@ def localize(s, lang, path, title, desc, table=None, override=None):
     s = one(r'<link rel="canonical" href="[^"]*">\n?', head_links(lang, path), s)
     s = one(r'<title>.*?</title>', '<title>%s</title>' % html.escape(title, quote=False), s)
     s = one(r'(<meta(?=[^>]*name="description")[^>]*content=")[^"]*(")', lambda m: m.group(1) + html.escape(desc) + m.group(2), s)
+    # robots + Open Graph tags (used by Naver, Facebook, KakaoTalk link previews, ...)
+    og = ('<meta name="robots" content="index, follow">\n'
+          '<meta property="og:type" content="website">\n'
+          '<meta property="og:site_name" content="PicShifter">\n'
+          '<meta property="og:locale" content="%s">\n'
+          '<meta property="og:url" content="%s">\n'
+          '<meta property="og:title" content="%s">\n'
+          '<meta property="og:description" content="%s">\n'
+          '<meta name="twitter:card" content="summary">\n') % (OG_LOCALE[lang], url(lang, path), html.escape(title), html.escape(desc))
+    s = one(r'(<meta(?=[^>]*name="description")[^>]*>\n?)', lambda m: m.group(1) + og, s)
     if table is not None:
         def text(m):
             v = tr(table, lang, m.group(3), override)

@@ -1,8 +1,8 @@
 /* UI text in 8 languages. {x} placeholders are filled in by t(). */
 const I18N = {
 en: { _name:'English',
-  title:'Image Converter – Free JPG, PNG, WebP, HEIC & PDF Converter',
-  desc:'Convert JPG, PNG, WebP, HEIC, PDF, TIFF, PSD, ICO and more for free. Files never leave your device.',
+  title:'Free Image Converter | PicShifter',
+  desc:'Convert JPG, PNG, WebP, HEIC and PDF images for free. Files stay on your device.',
   h1:'Image Converter', sub:'Change image file formats for free. Your files are processed only on your device.',
   lang:'Language', dropAria:'Choose files', dropTitle:'Click to choose files, or drag them here',
   dropSub:'Many files at once · iPhone photos (HEIC), PDF, Photoshop (PSD) and fonts too',
@@ -30,7 +30,7 @@ en: { _name:'English',
 
 ko: { _name:'한국어',
   title:'무료 이미지 변환기 | PicShifter',
-  desc:'JPG, PNG, WebP, HEIC, PDF, TIFF, PSD, ICO 등 이미지를 무료로 변환하세요. 파일이 서버로 전송되지 않아 안전합니다.',
+  desc:'JPG, PNG, WebP, HEIC, PDF 이미지를 무료로 변환하세요. 파일은 서버로 전송되지 않아요.',
   h1:'이미지 변환기', sub:'사진·그림 파일 형식을 무료로 바꿔요. 파일은 내 기기 안에서만 처리돼요.',
   lang:'언어', dropAria:'파일 선택', dropTitle:'여기를 눌러 파일을 고르거나 끌어다 놓으세요',
   dropSub:'여러 개 한 번에 가능 · 아이폰 사진(HEIC), PDF, 포토샵(PSD), 폰트도 가능',

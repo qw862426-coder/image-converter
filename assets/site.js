@@ -32,7 +32,9 @@
   var lang = window.PAGE_LANG && LANGS[window.PAGE_LANG] ? window.PAGE_LANG : (stored() || browserLang());
   function pathFor(l, p) { return (l === 'en' ? '' : '/' + l) + p; }
   /* First visit to an English address from a phone set to another supported language: open that language's page. */
-  if (window.PAGE_LANG === 'en') {
+  /* Search engine robots (Naver Yeti, Googlebot, Bing ...) are never redirected: they must see each address as it is. */
+  var isBot = /bot|crawl|spider|slurp|yeti|daum|bingpreview|facebookexternalhit|kakaotalk-scrap/i.test(navigator.userAgent || '');
+  if (window.PAGE_LANG === 'en' && !isBot) {
     var want = stored() || browserLang();
     if (want !== 'en' && location.protocol !== 'file:') { window.Site = { LANGS: LANGS, lang: want, onChange: function () {} }; location.replace(pathFor(want, bare) + location.search + location.hash); return; }
   }
