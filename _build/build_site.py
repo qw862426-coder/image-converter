@@ -133,7 +133,25 @@ def related(lang, slug):
     return '<h2>%s</h2><ul class="related">%s</ul>' % (MORE[lang], items)
 
 
+_VER = {}
+
+
+def version_assets(s):
+    """Add ?v=<content hash> to local .js/.css links, so browsers and search robots never reuse an old copy."""
+    import hashlib
+    def rep(m):
+        p = m.group(2)
+        f = os.path.join(ROOT, p.lstrip('/'))
+        if not os.path.isfile(f):
+            return m.group(0)
+        if p not in _VER:
+            _VER[p] = hashlib.md5(open(f, 'rb').read()).hexdigest()[:8]
+        return '%s="%s?v=%s"' % (m.group(1), p, _VER[p])
+    return re.sub(r'\b(src|href)="(/[^"?#]+\.(?:js|css))"', rep, s)
+
+
 def write(lang, path, s):
+    s = version_assets(s)
     out = os.path.join(ROOT, prefix(lang).lstrip('/'), path.lstrip('/'), 'index.html')
     os.makedirs(os.path.dirname(out), exist_ok=True)
     with open(out, 'w', encoding='utf-8') as f:
