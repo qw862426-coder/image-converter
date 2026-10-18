@@ -18,7 +18,7 @@ en: {
   eGeneric: 'Something went wrong. Try a smaller photo or the Fast option.', eLib: 'Couldn’t load the HEIC reader. Check your internet connection.'
 },
 ko: {
-  title: '사진 배경 지우기 – 무료, 업로드 없음 | PicShifter',
+  title: '사진 배경 지우기 | PicShifter',
   desc: '사람·반려동물·상품 사진의 배경을 무료로 지우세요. 투명 PNG나 흰 배경으로 저장. 브라우저에서 처리되어 업로드되지 않습니다.',
   h1: '배경 지우기', sub: '사진에서 사람, 반려동물, 상품만 남기고 배경을 지워 투명 PNG로 만들어요. 인공지능이 내 기기에서 작동해요.',
   dropAria: '사진 선택', dropTitle: '여기를 눌러 사진을 고르거나 끌어다 놓으세요', dropSub: 'JPG, PNG, WebP, HEIC · 여러 장 한 번에 가능',

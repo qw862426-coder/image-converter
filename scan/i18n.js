@@ -17,7 +17,7 @@ en: {
   eOpen: 'This file can’t be opened as an image.', eLib: 'Couldn’t load the HEIC reader. Check your internet connection.'
 },
 ko: {
-  title: '사진을 스캔본으로 – 문서 사진을 깔끔한 PDF 스캔으로 | PicShifter',
+  title: '사진을 스캔본으로 만들기 | PicShifter',
   desc: '휴대폰으로 찍은 문서·영수증·필기 사진을 반듯한 스캔본으로 바꿔요. 기울어짐과 그림자를 없애고 PDF나 JPG로 저장. 무료, 업로드 없음.',
   h1: '사진을 스캔본으로', sub: '휴대폰으로 찍은 종이 사진을 스캐너로 스캔한 것처럼 반듯하고 그림자 없이 만들어 PDF로 저장해요.',
   dropAria: '사진 선택', dropTitle: '여기를 눌러 문서 사진을 고르거나 끌어다 놓으세요', dropSub: 'JPG, PNG, HEIC 등 · 여러 장 한 번에 가능',

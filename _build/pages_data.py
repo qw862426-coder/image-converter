@@ -13,7 +13,7 @@ def M(**langs):
 page('heic-to-jpg', 'image', {'fmt': 'jpg', 'quality': 92, 'accept': 'image/*,.heic,.heif'},
 M(
  en=dict(title='HEIC to JPG Converter – Free, No Upload | PicShifter', desc='Convert iPhone HEIC photos to JPG for free. Many photos at once, right in your browser. Your photos are never uploaded.', h1='HEIC to JPG', sub='Turn iPhone HEIC photos into JPG files that open anywhere. Converted on your device.'),
- ko=dict(title='HEIC JPG 변환 – 아이폰 사진 무료 변환 | PicShifter', desc='아이폰 HEIC 사진을 무료로 JPG로 바꾸세요. 여러 장을 한 번에, 브라우저에서 바로. 사진은 업로드되지 않습니다.', h1='HEIC를 JPG로', sub='아이폰 HEIC 사진을 어디서나 열리는 JPG로 바꿔요. 내 기기 안에서 변환돼요.'),
+ ko=dict(title='아이폰 사진 HEIC JPG 변환 | PicShifter', desc='아이폰 HEIC 사진을 무료로 JPG로 바꾸세요. 여러 장을 한 번에, 브라우저에서 바로. 사진은 업로드되지 않습니다.', h1='HEIC를 JPG로', sub='아이폰 HEIC 사진을 어디서나 열리는 JPG로 바꿔요. 내 기기 안에서 변환돼요.'),
  ja=dict(title='HEICをJPGに変換 – 無料・アップロード不要 | PicShifter', desc='iPhoneのHEIC写真を無料でJPGに変換。複数枚をまとめてブラウザで変換でき、写真はアップロードされません。', h1='HEICをJPGに', sub='iPhoneのHEIC写真を、どこでも開けるJPGに変換します。処理は端末内で行われます。'),
  zh=dict(title='HEIC 转 JPG – 免费，无需上传 | PicShifter', desc='免费将 iPhone 的 HEIC 照片转换为 JPG。可批量转换，直接在浏览器中完成，照片不会上传。', h1='HEIC 转 JPG', sub='把 iPhone 的 HEIC 照片转换成到处都能打开的 JPG。在你的设备上完成转换。'),
  es=dict(title='Convertir HEIC a JPG – Gratis, sin subir archivos | PicShifter', desc='Convierte fotos HEIC del iPhone a JPG gratis. Varias a la vez, en tu navegador. Tus fotos nunca se suben.', h1='HEIC a JPG', sub='Convierte las fotos HEIC del iPhone en JPG que se abren en cualquier sitio. Todo en tu dispositivo.'),
@@ -42,7 +42,7 @@ ko='''<h2>HEIC 사진이 안 열리는 이유</h2>
 page('png-to-jpg', 'image', {'fmt': 'jpg', 'quality': 90},
 M(
  en=dict(title='PNG to JPG Converter – Free, No Upload | PicShifter', desc='Convert PNG images to JPG for free and make them smaller. Batch conversion in your browser, no upload.', h1='PNG to JPG', sub='Turn PNG images into smaller JPG files. Converted on your device.'),
- ko=dict(title='PNG JPG 변환 – 무료, 업로드 없음 | PicShifter', desc='PNG 이미지를 무료로 JPG로 바꿔 용량을 줄이세요. 여러 장을 브라우저에서 한 번에 변환, 업로드 없음.', h1='PNG를 JPG로', sub='PNG 이미지를 용량이 작은 JPG로 바꿔요. 내 기기 안에서 변환돼요.'),
+ ko=dict(title='PNG JPG 변환 | PicShifter', desc='PNG 이미지를 무료로 JPG로 바꿔 용량을 줄이세요. 여러 장을 브라우저에서 한 번에 변환, 업로드 없음.', h1='PNG를 JPG로', sub='PNG 이미지를 용량이 작은 JPG로 바꿔요. 내 기기 안에서 변환돼요.'),
  ja=dict(title='PNGをJPGに変換 – 無料・アップロード不要 | PicShifter', desc='PNG画像を無料でJPGに変換して軽くできます。ブラウザでまとめて変換、アップロード不要。', h1='PNGをJPGに', sub='PNG画像を軽いJPGに変換します。処理は端末内で行われます。'),
  zh=dict(title='PNG 转 JPG – 免费，无需上传 | PicShifter', desc='免费将 PNG 图片转换为更小的 JPG。在浏览器中批量转换，无需上传。', h1='PNG 转 JPG', sub='把 PNG 图片转换成更小的 JPG 文件。在你的设备上完成转换。'),
  es=dict(title='Convertir PNG a JPG – Gratis, sin subir archivos | PicShifter', desc='Convierte imágenes PNG a JPG gratis y redúcelas. Conversión por lotes en tu navegador, sin subir nada.', h1='PNG a JPG', sub='Convierte imágenes PNG en archivos JPG más ligeros. Todo en tu dispositivo.'),
@@ -71,7 +71,7 @@ ko='''<h2>PNG를 JPG로 바꾸면 좋을 때</h2>
 page('jpg-to-png', 'image', {'fmt': 'png'},
 M(
  en=dict(title='JPG to PNG Converter – Free, No Upload | PicShifter', desc='Convert JPG photos to PNG for free. Lossless output for editing and design, converted in your browser with no upload.', h1='JPG to PNG', sub='Turn JPG photos into PNG files for editing and design. Converted on your device.'),
- ko=dict(title='JPG PNG 변환 – 무료, 업로드 없음 | PicShifter', desc='JPG 사진을 무료로 PNG로 바꾸세요. 편집과 디자인용 무손실 파일, 브라우저에서 변환, 업로드 없음.', h1='JPG를 PNG로', sub='JPG 사진을 편집·디자인용 PNG 파일로 바꿔요. 내 기기 안에서 변환돼요.'),
+ ko=dict(title='JPG PNG 변환 | PicShifter', desc='JPG 사진을 무료로 PNG로 바꾸세요. 편집과 디자인용 무손실 파일, 브라우저에서 변환, 업로드 없음.', h1='JPG를 PNG로', sub='JPG 사진을 편집·디자인용 PNG 파일로 바꿔요. 내 기기 안에서 변환돼요.'),
  ja=dict(title='JPGをPNGに変換 – 無料・アップロード不要 | PicShifter', desc='JPG写真を無料でPNGに変換。編集やデザインに使えるロスレス形式で、ブラウザ内で変換します。', h1='JPGをPNGに', sub='JPG写真を編集・デザイン向けのPNGに変換します。処理は端末内で行われます。'),
  zh=dict(title='JPG 转 PNG – 免费，无需上传 | PicShifter', desc='免费将 JPG 照片转换为 PNG，无损输出便于编辑和设计，在浏览器中完成，无需上传。', h1='JPG 转 PNG', sub='把 JPG 照片转换成便于编辑和设计的 PNG。在你的设备上完成转换。'),
  es=dict(title='Convertir JPG a PNG – Gratis, sin subir archivos | PicShifter', desc='Convierte fotos JPG a PNG gratis. Salida sin pérdidas para editar y diseñar, en tu navegador y sin subir nada.', h1='JPG a PNG', sub='Convierte fotos JPG en archivos PNG para editar y diseñar. Todo en tu dispositivo.'),
@@ -100,7 +100,7 @@ ko='''<h2>JPG를 PNG로 바꾸는 이유</h2>
 page('webp-to-jpg', 'image', {'fmt': 'jpg', 'quality': 90},
 M(
  en=dict(title='WebP to JPG Converter – Free, No Upload | PicShifter', desc='Convert WebP images saved from websites to JPG for free. Batch conversion in your browser, no upload.', h1='WebP to JPG', sub='Turn WebP images from websites into JPG files that open everywhere. Converted on your device.'),
- ko=dict(title='WebP JPG 변환 – 무료, 업로드 없음 | PicShifter', desc='웹사이트에서 저장한 WebP 이미지를 무료로 JPG로 바꾸세요. 브라우저에서 여러 장 변환, 업로드 없음.', h1='WebP를 JPG로', sub='웹에서 저장한 WebP 이미지를 어디서나 열리는 JPG로 바꿔요. 내 기기 안에서 변환돼요.'),
+ ko=dict(title='WebP JPG 변환 | PicShifter', desc='웹사이트에서 저장한 WebP 이미지를 무료로 JPG로 바꾸세요. 브라우저에서 여러 장 변환, 업로드 없음.', h1='WebP를 JPG로', sub='웹에서 저장한 WebP 이미지를 어디서나 열리는 JPG로 바꿔요. 내 기기 안에서 변환돼요.'),
  ja=dict(title='WebPをJPGに変換 – 無料・アップロード不要 | PicShifter', desc='Webサイトから保存したWebP画像を無料でJPGに変換。ブラウザでまとめて変換、アップロード不要。', h1='WebPをJPGに', sub='Webから保存したWebP画像を、どこでも開けるJPGに変換します。処理は端末内で行われます。'),
  zh=dict(title='WebP 转 JPG – 免费，无需上传 | PicShifter', desc='免费将网页上保存的 WebP 图片转换为 JPG。在浏览器中批量转换，无需上传。', h1='WebP 转 JPG', sub='把网页上保存的 WebP 图片转换成到处都能打开的 JPG。在你的设备上完成转换。'),
  es=dict(title='Convertir WebP a JPG – Gratis, sin subir archivos | PicShifter', desc='Convierte imágenes WebP guardadas de páginas web a JPG gratis. Por lotes en tu navegador, sin subir nada.', h1='WebP a JPG', sub='Convierte imágenes WebP de páginas web en JPG que se abren en cualquier sitio. Todo en tu dispositivo.'),
@@ -129,7 +129,7 @@ ko='''<h2>WebP 파일이 뭐예요?</h2>
 page('jpg-to-pdf', 'image', {'fmt': 'pdf', 'quality': 85},
 M(
  en=dict(title='JPG to PDF – Combine Images into One PDF, Free | PicShifter', desc='Combine JPG, PNG and HEIC photos into a single PDF for free. Great for receipts and documents. Runs in your browser, no upload.', h1='JPG to PDF', sub='Put one or many photos into a single PDF file. Converted on your device.'),
- ko=dict(title='JPG PDF 변환 – 사진 여러 장을 PDF 하나로, 무료 | PicShifter', desc='JPG, PNG, HEIC 사진 여러 장을 무료로 PDF 하나로 합치세요. 영수증·서류 제출에 좋아요. 브라우저에서 처리, 업로드 없음.', h1='JPG를 PDF로', sub='사진 한 장 또는 여러 장을 PDF 파일 하나로 만들어요. 내 기기 안에서 변환돼요.'),
+ ko=dict(title='JPG PDF 변환 | PicShifter', desc='JPG, PNG, HEIC 사진 여러 장을 무료로 PDF 하나로 합치세요. 영수증·서류 제출에 좋아요. 브라우저에서 처리, 업로드 없음.', h1='JPG를 PDF로', sub='사진 한 장 또는 여러 장을 PDF 파일 하나로 만들어요. 내 기기 안에서 변환돼요.'),
  ja=dict(title='JPGをPDFに – 複数の画像を1つのPDFに・無料 | PicShifter', desc='JPG・PNG・HEICの写真を無料で1つのPDFにまとめます。レシートや書類の提出に便利。ブラウザで処理、アップロード不要。', h1='JPGをPDFに', sub='1枚または複数の写真を1つのPDFファイルにまとめます。処理は端末内で行われます。'),
  zh=dict(title='JPG 转 PDF – 多张图片合成一个 PDF，免费 | PicShifter', desc='免费将 JPG、PNG、HEIC 照片合并成一个 PDF，适合提交收据和文件。在浏览器中处理，无需上传。', h1='JPG 转 PDF', sub='把一张或多张照片放进一个 PDF 文件。在你的设备上完成转换。'),
  es=dict(title='JPG a PDF – Une imágenes en un solo PDF gratis | PicShifter', desc='Une fotos JPG, PNG y HEIC en un solo PDF gratis. Ideal para recibos y documentos. En tu navegador, sin subir nada.', h1='JPG a PDF', sub='Pon una o varias fotos en un solo archivo PDF. Todo en tu dispositivo.'),
@@ -158,7 +158,7 @@ ko='''<h2>사진 여러 장을 PDF 하나로</h2>
 page('pdf-to-jpg', 'image', {'fmt': 'jpg', 'quality': 90, 'accept': 'application/pdf,.pdf'},
 M(
  en=dict(title='PDF to JPG – Convert PDF Pages to Images, Free | PicShifter', desc='Turn every page of a PDF into a JPG image for free. Works in your browser, no upload.', h1='PDF to JPG', sub='Save each page of a PDF as a JPG image. Converted on your device.'),
- ko=dict(title='PDF JPG 변환 – PDF 페이지를 이미지로, 무료 | PicShifter', desc='PDF의 모든 페이지를 무료로 JPG 이미지로 바꾸세요. 브라우저에서 처리, 업로드 없음.', h1='PDF를 JPG로', sub='PDF의 쪽마다 JPG 이미지로 저장해요. 내 기기 안에서 변환돼요.'),
+ ko=dict(title='PDF JPG 변환 | PicShifter', desc='PDF의 모든 페이지를 무료로 JPG 이미지로 바꾸세요. 브라우저에서 처리, 업로드 없음.', h1='PDF를 JPG로', sub='PDF의 쪽마다 JPG 이미지로 저장해요. 내 기기 안에서 변환돼요.'),
  ja=dict(title='PDFをJPGに – PDFのページを画像に変換・無料 | PicShifter', desc='PDFの全ページを無料でJPG画像に変換。ブラウザで処理、アップロード不要。', h1='PDFをJPGに', sub='PDFの各ページをJPG画像として保存します。処理は端末内で行われます。'),
  zh=dict(title='PDF 转 JPG – 把 PDF 页面转成图片，免费 | PicShifter', desc='免费将 PDF 的每一页转换为 JPG 图片。在浏览器中完成，无需上传。', h1='PDF 转 JPG', sub='把 PDF 的每一页保存为 JPG 图片。在你的设备上完成转换。'),
  es=dict(title='PDF a JPG – Convierte páginas PDF en imágenes gratis | PicShifter', desc='Convierte cada página de un PDF en una imagen JPG gratis. En tu navegador, sin subir nada.', h1='PDF a JPG', sub='Guarda cada página de un PDF como imagen JPG. Todo en tu dispositivo.'),
@@ -187,7 +187,7 @@ ko='''<h2>PDF를 그림으로 바꿔야 할 때</h2>
 page('compress-image', 'image', {'fmt': 'jpg', 'quality': 70},
 M(
  en=dict(title='Compress Image – Reduce JPG, PNG & HEIC File Size, Free | PicShifter', desc='Make photos smaller for email, forms and websites. Compress JPG, PNG and HEIC images for free in your browser, no upload.', h1='Compress images', sub='Shrink photo file sizes while keeping them looking good. Everything happens on your device.'),
- ko=dict(title='사진 용량 줄이기 – JPG·PNG·HEIC 압축, 무료 | PicShifter', desc='메일·서류 제출·홈페이지용으로 사진 용량을 줄이세요. JPG, PNG, HEIC를 브라우저에서 무료로 압축, 업로드 없음.', h1='사진 용량 줄이기', sub='보기 좋은 화질은 유지하면서 사진 용량을 줄여요. 모든 작업은 내 기기 안에서 이뤄져요.'),
+ ko=dict(title='사진 용량 줄이기 | PicShifter', desc='메일·서류 제출·홈페이지용으로 사진 용량을 줄이세요. JPG, PNG, HEIC를 브라우저에서 무료로 압축, 업로드 없음.', h1='사진 용량 줄이기', sub='보기 좋은 화질은 유지하면서 사진 용량을 줄여요. 모든 작업은 내 기기 안에서 이뤄져요.'),
  ja=dict(title='画像を圧縮 – JPG・PNG・HEICのサイズを小さく・無料 | PicShifter', desc='メールや提出フォーム、Webサイト向けに写真を軽くします。JPG・PNG・HEICをブラウザで無料圧縮、アップロード不要。', h1='画像を圧縮', sub='見た目を保ったまま写真のファイルサイズを小さくします。処理は端末内で行われます。'),
  zh=dict(title='图片压缩 – 减小 JPG、PNG、HEIC 文件大小，免费 | PicShifter', desc='为邮件、表单和网站压缩照片。在浏览器中免费压缩 JPG、PNG 和 HEIC，无需上传。', h1='压缩图片', sub='在保持观感的同时减小照片文件大小。所有操作都在你的设备上完成。'),
  es=dict(title='Comprimir imágenes – Reduce el tamaño de JPG, PNG y HEIC gratis | PicShifter', desc='Haz tus fotos más ligeras para correos, formularios y webs. Comprime JPG, PNG y HEIC gratis en tu navegador, sin subir nada.', h1='Comprimir imágenes', sub='Reduce el tamaño de tus fotos sin que pierdan buen aspecto. Todo ocurre en tu dispositivo.'),
@@ -216,7 +216,7 @@ ko='''<h2>사진 용량을 줄여야 하는 이유</h2>
 page('png-to-ico', 'image', {'fmt': 'ico'},
 M(
  en=dict(title='PNG to ICO – Favicon & Icon Maker, Free | PicShifter', desc='Convert PNG, JPG or SVG images into ICO icons and website favicons with 16–256 px sizes in one file. Free, in your browser.', h1='PNG to ICO', sub='Make a website favicon or Windows icon from any image. Created on your device.'),
- ko=dict(title='PNG ICO 변환 – 파비콘·아이콘 만들기, 무료 | PicShifter', desc='PNG, JPG, SVG 이미지를 16~256px 크기가 한 파일에 담긴 ICO 아이콘·파비콘으로 무료 변환. 브라우저에서 처리.', h1='PNG를 ICO로', sub='아무 이미지로 홈페이지 파비콘이나 윈도우 아이콘을 만들어요. 내 기기 안에서 만들어져요.'),
+ ko=dict(title='PNG ICO 변환 | PicShifter', desc='PNG, JPG, SVG 이미지를 16~256px 크기가 한 파일에 담긴 ICO 아이콘·파비콘으로 무료 변환. 브라우저에서 처리.', h1='PNG를 ICO로', sub='아무 이미지로 홈페이지 파비콘이나 윈도우 아이콘을 만들어요. 내 기기 안에서 만들어져요.'),
  ja=dict(title='PNGをICOに – ファビコン・アイコン作成・無料 | PicShifter', desc='PNG・JPG・SVG画像を、16〜256pxのサイズを1つにまとめたICOアイコンやファビコンに無料で変換。ブラウザ内で処理。', h1='PNGをICOに', sub='好きな画像からWebサイトのファビコンやWindowsアイコンを作ります。処理は端末内で行われます。'),
  zh=dict(title='PNG 转 ICO – 免费制作网站图标和 favicon | PicShifter', desc='把 PNG、JPG 或 SVG 图片转换为包含 16–256 px 多种尺寸的 ICO 图标和网站 favicon。免费，在浏览器中完成。', h1='PNG 转 ICO', sub='用任意图片制作网站 favicon 或 Windows 图标。在你的设备上生成。'),
  es=dict(title='PNG a ICO – Crea favicons e iconos gratis | PicShifter', desc='Convierte imágenes PNG, JPG o SVG en iconos ICO y favicons con tamaños de 16 a 256 px en un solo archivo. Gratis, en tu navegador.', h1='PNG a ICO', sub='Crea el favicon de tu web o un icono de Windows a partir de cualquier imagen. Todo en tu dispositivo.'),
@@ -247,7 +247,7 @@ DOC_ACCEPT = {'word': '.docx', 'excel': '.xlsx,.xlsm,.xls,.ods,.csv', 'ppt': '.p
 page('word-to-pdf', 'doc', {'accept': '.docx,.doc'},
 M(
  en=dict(title='Word to PDF – Convert DOCX to PDF Free, No Upload | PicShifter', desc='Convert Word (DOCX) documents to PDF for free, right in your browser. No sign-up and no upload.', h1='Word to PDF', sub='Turn Word (DOCX) documents into PDF. Everything happens on your device.'),
- ko=dict(title='워드 PDF 변환 – DOCX를 PDF로 무료 변환 | PicShifter', desc='워드(DOCX) 문서를 브라우저에서 바로 무료로 PDF로 바꾸세요. 가입도 업로드도 필요 없어요.', h1='워드를 PDF로', sub='워드(DOCX) 문서를 PDF로 바꿔요. 모든 작업은 내 기기 안에서 이뤄져요.'),
+ ko=dict(title='워드 PDF 변환 | PicShifter', desc='워드(DOCX) 문서를 브라우저에서 바로 무료로 PDF로 바꾸세요. 가입도 업로드도 필요 없어요.', h1='워드를 PDF로', sub='워드(DOCX) 문서를 PDF로 바꿔요. 모든 작업은 내 기기 안에서 이뤄져요.'),
  ja=dict(title='WordをPDFに – DOCXを無料でPDF変換 | PicShifter', desc='Word（DOCX）文書をブラウザで無料でPDFに変換。登録もアップロードも不要です。', h1='WordをPDFに', sub='Word（DOCX）文書をPDFに変換します。処理は端末内で行われます。'),
  zh=dict(title='Word 转 PDF – 免费将 DOCX 转为 PDF | PicShifter', desc='在浏览器中免费将 Word（DOCX）文档转换为 PDF，无需注册，无需上传。', h1='Word 转 PDF', sub='把 Word（DOCX）文档转换为 PDF。所有操作都在你的设备上完成。'),
  es=dict(title='Word a PDF – Convierte DOCX a PDF gratis | PicShifter', desc='Convierte documentos de Word (DOCX) a PDF gratis en tu navegador. Sin registro y sin subir archivos.', h1='Word a PDF', sub='Convierte documentos de Word (DOCX) en PDF. Todo ocurre en tu dispositivo.'),
@@ -275,7 +275,7 @@ ko='''<h2>워드 파일을 PDF로 보내는 이유</h2>
 page('excel-to-pdf', 'doc', {'accept': '.xlsx,.xlsm,.xls,.ods,.csv'},
 M(
  en=dict(title='Excel to PDF – Convert XLSX, XLS & CSV to PDF Free | PicShifter', desc='Convert Excel spreadsheets (XLSX, XLS, CSV) to PDF for free. Every sheet becomes printable pages. Runs in your browser, no upload.', h1='Excel to PDF', sub='Turn Excel sheets into PDF pages you can print or share. Everything happens on your device.'),
- ko=dict(title='엑셀 PDF 변환 – XLSX·XLS·CSV를 PDF로 무료 | PicShifter', desc='엑셀 파일(XLSX, XLS, CSV)을 무료로 PDF로 바꾸세요. 시트마다 인쇄용 페이지로. 브라우저에서 처리, 업로드 없음.', h1='엑셀을 PDF로', sub='엑셀 시트를 인쇄하거나 공유하기 좋은 PDF로 바꿔요. 모든 작업은 내 기기 안에서 이뤄져요.'),
+ ko=dict(title='엑셀 PDF 변환 | PicShifter', desc='엑셀 파일(XLSX, XLS, CSV)을 무료로 PDF로 바꾸세요. 시트마다 인쇄용 페이지로. 브라우저에서 처리, 업로드 없음.', h1='엑셀을 PDF로', sub='엑셀 시트를 인쇄하거나 공유하기 좋은 PDF로 바꿔요. 모든 작업은 내 기기 안에서 이뤄져요.'),
  ja=dict(title='ExcelをPDFに – XLSX・XLS・CSVを無料でPDF変換 | PicShifter', desc='Excel（XLSX・XLS・CSV）を無料でPDFに変換。各シートを印刷用ページにします。ブラウザで処理、アップロード不要。', h1='ExcelをPDFに', sub='Excelのシートを、印刷や共有に便利なPDFに変換します。処理は端末内で行われます。'),
  zh=dict(title='Excel 转 PDF – 免费将 XLSX、XLS、CSV 转为 PDF | PicShifter', desc='免费将 Excel 表格（XLSX、XLS、CSV）转换为 PDF，每个工作表都变成可打印页面。在浏览器中处理，无需上传。', h1='Excel 转 PDF', sub='把 Excel 工作表转换成便于打印和分享的 PDF。所有操作都在你的设备上完成。'),
  es=dict(title='Excel a PDF – Convierte XLSX, XLS y CSV a PDF gratis | PicShifter', desc='Convierte hojas de Excel (XLSX, XLS, CSV) a PDF gratis. Cada hoja se convierte en páginas imprimibles. En tu navegador, sin subir nada.', h1='Excel a PDF', sub='Convierte hojas de Excel en páginas PDF para imprimir o compartir. Todo ocurre en tu dispositivo.'),
@@ -305,7 +305,7 @@ ko='''<h2>엑셀을 PDF로 공유하면 좋은 점</h2>
 page('ppt-to-pdf', 'doc', {'accept': '.pptx,.ppt'},
 M(
  en=dict(title='PowerPoint to PDF – Convert PPTX to PDF Free | PicShifter', desc='Convert PowerPoint (PPTX) presentations to PDF for free. One slide per page, in your browser with no upload.', h1='PowerPoint to PDF', sub='Turn PowerPoint slides into a PDF you can share or print. Everything happens on your device.'),
- ko=dict(title='PPT PDF 변환 – 파워포인트 PPTX를 PDF로 무료 | PicShifter', desc='파워포인트(PPTX) 발표 자료를 무료로 PDF로 바꾸세요. 슬라이드 한 장이 한 페이지로, 브라우저에서 처리, 업로드 없음.', h1='PPT를 PDF로', sub='파워포인트 슬라이드를 공유하거나 인쇄하기 좋은 PDF로 바꿔요. 모든 작업은 내 기기 안에서 이뤄져요.'),
+ ko=dict(title='PPT PDF 변환 | PicShifter', desc='파워포인트(PPTX) 발표 자료를 무료로 PDF로 바꾸세요. 슬라이드 한 장이 한 페이지로, 브라우저에서 처리, 업로드 없음.', h1='PPT를 PDF로', sub='파워포인트 슬라이드를 공유하거나 인쇄하기 좋은 PDF로 바꿔요. 모든 작업은 내 기기 안에서 이뤄져요.'),
  ja=dict(title='PowerPointをPDFに – PPTXを無料でPDF変換 | PicShifter', desc='PowerPoint（PPTX）のプレゼンを無料でPDFに変換。1スライド1ページで、ブラウザ内で処理、アップロード不要。', h1='PowerPointをPDFに', sub='PowerPointのスライドを共有や印刷に便利なPDFに変換します。処理は端末内で行われます。'),
  zh=dict(title='PPT 转 PDF – 免费将 PowerPoint PPTX 转为 PDF | PicShifter', desc='免费将 PowerPoint（PPTX）演示文稿转换为 PDF，每张幻灯片一页，在浏览器中处理，无需上传。', h1='PPT 转 PDF', sub='把 PowerPoint 幻灯片转换成便于分享和打印的 PDF。所有操作都在你的设备上完成。'),
  es=dict(title='PowerPoint a PDF – Convierte PPTX a PDF gratis | PicShifter', desc='Convierte presentaciones de PowerPoint (PPTX) a PDF gratis. Una diapositiva por página, en tu navegador y sin subir nada.', h1='PowerPoint a PDF', sub='Convierte diapositivas de PowerPoint en un PDF para compartir o imprimir. Todo ocurre en tu dispositivo.'),
@@ -335,7 +335,7 @@ ko='''<h2>발표 자료를 PDF로 공유하는 이유</h2>
 page('hwp-to-pdf', 'doc', {'accept': '.hwp,.hwpx'},
 M(
  en=dict(title='HWP to PDF – Convert Hangul (HWP) Files to PDF Free | PicShifter', desc='Convert Korean Hangul word processor files (HWP) to PDF for free, without installing Hancom Office. Runs in your browser, no upload.', h1='HWP to PDF', sub='Open and convert Korean Hangul (HWP) documents to PDF without Hancom Office. Everything happens on your device.'),
- ko=dict(title='한글 PDF 변환 – HWP 파일을 PDF로 무료 변환 | PicShifter', desc='한글(HWP) 파일을 한컴오피스 설치 없이 무료로 PDF로 바꾸세요. 브라우저에서 처리, 업로드 없음.', h1='한글(HWP)을 PDF로', sub='한컴오피스 없이도 한글(HWP) 문서를 PDF로 바꿔요. 모든 작업은 내 기기 안에서 이뤄져요.'),
+ ko=dict(title='한글 HWP PDF 변환 | PicShifter', desc='한글(HWP) 파일을 한컴오피스 설치 없이 무료로 PDF로 바꾸세요. 브라우저에서 처리, 업로드 없음.', h1='한글(HWP)을 PDF로', sub='한컴오피스 없이도 한글(HWP) 문서를 PDF로 바꿔요. 모든 작업은 내 기기 안에서 이뤄져요.'),
  ja=dict(title='HWPをPDFに – 韓国語ワープロ「ハングル」文書を無料でPDF変換 | PicShifter', desc='韓国のワープロソフト「ハングル」（HWP）のファイルを、Hancom Officeなしで無料でPDFに変換。ブラウザ内で処理。', h1='HWPをPDFに', sub='Hancom Officeがなくても、ハングル（HWP）文書をPDFに変換できます。処理は端末内で行われます。'),
  zh=dict(title='HWP 转 PDF – 免费将韩文 Hangul（HWP）文件转为 PDF | PicShifter', desc='无需安装 Hancom Office，免费将韩国文字处理软件 Hangul 的 HWP 文件转换为 PDF。在浏览器中处理，无需上传。', h1='HWP 转 PDF', sub='无需 Hancom Office，也能把 Hangul（HWP）文档转换为 PDF。所有操作都在你的设备上完成。'),
  es=dict(title='HWP a PDF – Convierte archivos Hangul (HWP) a PDF gratis | PicShifter', desc='Convierte archivos del procesador de textos coreano Hangul (HWP) a PDF gratis, sin instalar Hancom Office. En tu navegador, sin subir nada.', h1='HWP a PDF', sub='Convierte documentos coreanos de Hangul (HWP) a PDF sin Hancom Office. Todo ocurre en tu dispositivo.'),

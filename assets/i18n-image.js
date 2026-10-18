@@ -29,7 +29,7 @@ en: { _name:'English',
   noOther:'{fmt} files aren’t supported.' },
 
 ko: { _name:'한국어',
-  title:'이미지 변환기 - JPG PNG WebP HEIC PDF 무료 변환',
+  title:'무료 이미지 변환기 | PicShifter',
   desc:'JPG, PNG, WebP, HEIC, PDF, TIFF, PSD, ICO 등 이미지를 무료로 변환하세요. 파일이 서버로 전송되지 않아 안전합니다.',
   h1:'이미지 변환기', sub:'사진·그림 파일 형식을 무료로 바꿔요. 파일은 내 기기 안에서만 처리돼요.',
   lang:'언어', dropAria:'파일 선택', dropTitle:'여기를 눌러 파일을 고르거나 끌어다 놓으세요',
