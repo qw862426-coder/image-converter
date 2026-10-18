@@ -1,3 +1,10 @@
+# Naver (Yeti)
+User-agent: Yeti
+Allow: /
+Disallow: /render/
+Disallow: /_build/
+
+# Google, Bing and all other search engines
 User-agent: *
 Allow: /
 Disallow: /render/
