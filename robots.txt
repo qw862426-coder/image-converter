@@ -3,11 +3,17 @@ User-agent: Yeti
 Allow: /
 Disallow: /render/
 Disallow: /_build/
+Disallow: /vendor/pdfjs/cmaps/
+Disallow: /vendor/pdfjs/standard_fonts/
+Disallow: /models/
 
 # Google, Bing and all other search engines
 User-agent: *
 Allow: /
 Disallow: /render/
 Disallow: /_build/
+Disallow: /vendor/pdfjs/cmaps/
+Disallow: /vendor/pdfjs/standard_fonts/
+Disallow: /models/
 
 Sitemap: https://picshifter.pages.dev/sitemap.xml
