@@ -68,7 +68,12 @@ footer{font-size:.8rem;color:var(--muted);text-align:center}
 .doc table{border-collapse:collapse;font-size:.9rem;width:100%}
 .doc th,.doc td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
 .doc th{background:var(--panel)}
-.doc .tablewrap{overflow-x:auto}
+.doc .tablewrap{overflow-x:auto;max-width:100%}
+.doc td{overflow-wrap:break-word}
+:lang(ko) .doc td:first-child,:lang(ko) .doc th{word-break:keep-all}
+.wrap>.doc,.doc>article{min-width:0}
+.wrap>.doc.landing{width:100%;box-sizing:border-box}
+@media (max-width:480px){.doc.landing article{padding:16px}.doc th,.doc td{padding:6px 7px}}
 .doc .callout{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
 .doc .toc{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
 .doc .toc ol{gap:2px}

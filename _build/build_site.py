@@ -164,7 +164,12 @@ def build():
     for lang in LANGS:
         for path, kind in TOOLS:
             t = I18N[kind]
-            s = localize(tpl[kind], lang, path, tr(t, lang, 'title'), tr(t, lang, 'desc'), t)
+            s = tpl[kind]
+            # explanatory article under the tool (content/<lang>/tool-<kind>.html), plus links to the other tools
+            art = '\n  <section class="doc landing">\n    <article>\n%s%s\n    </article>\n  </section>\n' % (
+                content(lang, 'tool-' + kind), related(lang, path.strip('/')))
+            s = one(r'\n</main>', art + '</main>', s)
+            s = localize(s, lang, path, tr(t, lang, 'title'), tr(t, lang, 'desc'), t)
             write(lang, path, s); count += 1
         for p in PAGES:
             path = '/%s/' % p['slug']
