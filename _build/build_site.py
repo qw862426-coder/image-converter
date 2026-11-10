@@ -22,7 +22,7 @@ LANGS = ['en', 'ko', 'ja', 'zh', 'es', 'pt', 'fr', 'de']
 HREFLANG = {'zh': 'zh-Hans'}
 HTML_LANG = {'zh': 'zh-CN'}
 OG_LOCALE = {'en': 'en_US', 'ko': 'ko_KR', 'ja': 'ja_JP', 'zh': 'zh_CN', 'es': 'es_ES', 'pt': 'pt_BR', 'fr': 'fr_FR', 'de': 'de_DE'}
-LASTMOD = '2026-10-17'
+LASTMOD = '2026-11-10'
 MORE = {'en': 'More free tools', 'ko': '다른 무료 도구', 'ja': 'ほかの無料ツール', 'zh': '更多免费工具', 'es': 'Más herramientas gratis',
         'pt': 'Mais ferramentas grátis', 'fr': 'Autres outils gratuits', 'de': 'Weitere kostenlose Tools'}
 
@@ -128,8 +128,13 @@ def landing_name(lang, slug):
     return p['meta'].get(lang, p['meta']['en'])['h1']
 
 
+GUIDE_NAME = {'en': 'How to use', 'ko': '사용 방법', 'ja': '使い方', 'zh': '使用方法', 'es': 'Cómo usarlo', 'pt': 'Como usar',
+              'fr': 'Mode d’emploi', 'de': 'Anleitung'}
+
+
 def related(lang, slug):
     items = ''.join('<li><a href="/%s/">%s</a></li>' % (k, html.escape(landing_name(lang, k))) for k in LANDING_ORDER if k != slug)
+    items += '<li><a href="/guide/">%s</a></li>' % html.escape(GUIDE_NAME[lang])
     return '<h2>%s</h2><ul class="related">%s</ul>' % (MORE[lang], items)
 
 
@@ -199,6 +204,8 @@ def build():
           'xmlns:xhtml="http://www.w3.org/1999/xhtml">\n' + '\n'.join(rows) + '\n</urlset>\n')
     with open(os.path.join(ROOT, 'sitemap.xml'), 'w', encoding='utf-8') as f:
         f.write(sm)
+    with open(os.path.join(ROOT, 'sitemap.txt'), 'w', encoding='utf-8') as f:
+        f.write(''.join(url(L, p) + '\n' for p in ALL_PATHS for L in LANGS))
     return count, len(rows)
 
 
