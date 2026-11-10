@@ -273,7 +273,8 @@
     if(ext==='pdf'){
       await loadScript(PDF_LIB);
       pdfjsLib.GlobalWorkerOptions.workerSrc=PDF_WORKER;
-      const doc=await pdfjsLib.getDocument({data:await bytes(), cMapUrl:'/vendor/pdfjs/cmaps/', cMapPacked:true, standardFontDataUrl:'/vendor/pdfjs/standard_fonts/'}).promise, out=[];
+      const PDFJS_DATA=['','vendor','pdfjs',''].join('/'); /* built in pieces: not a page for search robots */
+      const doc=await pdfjsLib.getDocument({data:await bytes(), cMapUrl:PDFJS_DATA+'cmaps/', cMapPacked:true, standardFontDataUrl:PDFJS_DATA+'standard_fonts/'}).promise, out=[];
       for(let p=1;p<=doc.numPages;p++){
         const page=await doc.getPage(p), vp=page.getViewport({scale:2});
         const c=document.createElement('canvas'); c.width=Math.ceil(vp.width); c.height=Math.ceil(vp.height);

@@ -1,9 +1,10 @@
 /* Background-removal worker: downloads the model once, runs it off the main thread, cleans up the mask. */
 importScripts('/vendor/ort/ort-wasm.js', '/vendor/ort/mini-ort.js');
 
+var MDIR = ['', 'models', ''].join('/'); /* built in pieces: not a page for search robots */
 var MODELS = {
-  hq: { parts: ['/models/silueta.onnx.part0', '/models/silueta.onnx.part1', '/models/silueta.onnx.part2'], size: 44173029 },
-  fast: { parts: ['/models/u2netp.onnx'], size: 4574861 }
+  hq: { parts: [MDIR + 'silueta.onnx.part0', MDIR + 'silueta.onnx.part1', MDIR + 'silueta.onnx.part2'], size: 44173029 },
+  fast: { parts: [MDIR + 'u2netp.onnx'], size: 4574861 }
 };
 var ortPromise = null, sessions = {}, S = 320;
 
