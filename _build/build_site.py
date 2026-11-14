@@ -204,6 +204,10 @@ def build():
           'xmlns:xhtml="http://www.w3.org/1999/xhtml">\n' + '\n'.join(rows) + '\n</urlset>\n')
     with open(os.path.join(ROOT, 'sitemap.xml'), 'w', encoding='utf-8') as f:
         f.write(sm)
+    # sitemap index (a "table of contents" pointing at sitemap.xml) - some sites only get read by Google this way
+    with open(os.path.join(ROOT, 'sitemap_index.xml'), 'w', encoding='utf-8') as f:
+        f.write('<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+                '  <sitemap><loc>%s/sitemap.xml</loc><lastmod>%s</lastmod></sitemap>\n</sitemapindex>\n' % (SITE, LASTMOD))
     with open(os.path.join(ROOT, 'sitemap.txt'), 'w', encoding='utf-8') as f:
         f.write(''.join(url(L, p) + '\n' for p in ALL_PATHS for L in LANGS))
     return count, len(rows)
