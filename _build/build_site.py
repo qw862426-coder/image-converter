@@ -21,6 +21,8 @@ SITE = 'https://picshifter.pages.dev'
 LANGS = ['en', 'ko', 'ja', 'zh', 'es', 'pt', 'fr', 'de']
 HREFLANG = {'zh': 'zh-Hans'}
 HTML_LANG = {'zh': 'zh-CN'}
+ADSENSE = ('<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6213198663836411"\n'
+           '     crossorigin="anonymous"></script>\n')
 OG_LOCALE = {'en': 'en_US', 'ko': 'ko_KR', 'ja': 'ja_JP', 'zh': 'zh_CN', 'es': 'es_ES', 'pt': 'pt_BR', 'fr': 'fr_FR', 'de': 'de_DE'}
 LASTMOD = '2026-11-10'
 MORE = {'en': 'More free tools', 'ko': '다른 무료 도구', 'ja': 'ほかの無料ツール', 'zh': '更多免费工具', 'es': 'Más herramientas gratis',
@@ -109,6 +111,8 @@ def localize(s, lang, path, title, desc, table=None, override=None):
             return f
         s = re.sub(r'<[^>]*\bdata-i18n-label="(\w+)"[^>]*>', set_attr('label', 'label'), s)
         s = re.sub(r'<[^>]*\bdata-i18n-aria="(\w+)"[^>]*>', set_attr('aria-label', 'aria'), s)
+    # Google AdSense (publisher ca-pub-6213198663836411)
+    s = one(r'</head>', ADSENSE + '</head>', s)
     s = one(r'<script src="/assets/site\.js"></script>', '<script>window.PAGE_LANG=%s;</script>\n<script src="/assets/site.js"></script>' % json.dumps(lang), s)
     if lang != 'en':
         def link(m):
