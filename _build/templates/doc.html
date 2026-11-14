@@ -130,7 +130,7 @@
     return new Promise((resolve,reject)=>{
       const f=document.createElement('iframe'); f.id='stage'; f.setAttribute('aria-hidden','true'); f.tabIndex=-1;
       f.onload=()=>resolve(f); f.onerror=()=>reject(new Error('eGeneric'));
-      f.src='/render/'+kind+'.html'; document.body.append(f);
+      f.src=['','render',kind+'.html'].join('/'); document.body.append(f); /* built in pieces: not a page for search robots */
     });
   }
   const toJpeg = c => new Promise(r=>c.toBlob(b=>b.arrayBuffer().then(a=>r(new Uint8Array(a))),'image/jpeg',0.88));
