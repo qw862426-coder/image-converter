@@ -42,6 +42,10 @@
     <div class="stagebox"><canvas id="view"></canvas><canvas id="ov"></canvas></div>
     <p class="hint" data-i18n="areaHint">To read only part of the image, drag a box over it. Otherwise the whole image is read.</p>
     <div class="row">
+      <label class="hint" for="script" data-i18n="scriptLabel">Text language</label>
+      <select id="script"><option value="" data-i18n="scrKo">Korean, English, European languages</option><option value="ja">日本語</option><option value="zh">中文(简体)</option></select>
+    </div>
+    <div class="row">
       <button class="btn" id="go" type="button" data-i18n="go">Read text</button>
       <button class="btn ghost small" id="whole" type="button" data-i18n="whole">Whole image</button>
       <button class="btn ghost small" id="other" type="button" data-i18n="other">Other image</button>
@@ -136,7 +140,7 @@
       const k=base.width/ov.width, r=box?{x:Math.round(box.x*k),y:Math.round(box.y*k),w:Math.round(box.w*k),h:Math.round(box.h*k)}:{x:0,y:0,w:base.width,h:base.height};
       const c=canvas(r.w,r.h), x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,r.w,r.h); x.drawImage(base,r.x,r.y,r.w,r.h,0,0,r.w,r.h);
       const rgba=x.getImageData(0,0,r.w,r.h).data;
-      const text=await new Promise((resolve,reject)=>{ waiting={resolve,reject}; getWorker().postMessage({rgba,w:r.w,h:r.h},[rgba.buffer]); });
+      const text=await new Promise((resolve,reject)=>{ waiting={resolve,reject}; getWorker().postMessage({rgba,w:r.w,h:r.h,lang:$('script').value},[rgba.buffer]); });
       $('out').value=text; $('out').hidden=false; $('outBtns').hidden=false; $('status').hidden=true;
       $('msg').textContent=text.trim()?'':t('empty');
     }catch(e){ alertMsg(t(e.message==='eModel'?'eModel':'eGeneric')); }
@@ -148,7 +152,8 @@
   });
   $('saveTxt').addEventListener('click',()=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([$('out').value],{type:'text/plain;charset=utf-8'})); a.download=fname+'.txt'; document.body.append(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),60000); });
 
-  Site.onChange(l=>{ lang=l; applyLang(); });
+  let scriptTouched=false; $('script').addEventListener('change',()=>{ scriptTouched=true; });
+  Site.onChange(l=>{ lang=l; applyLang(); if(!scriptTouched) $('script').value=(l==='ja'||l==='zh')?l:''; });
 })();
 </script>
 </body>
