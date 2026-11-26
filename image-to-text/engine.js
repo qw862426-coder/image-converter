@@ -155,7 +155,7 @@ function netClassify(P, geo) {
 }
 
 /* ---------- character counts from PicShifter's own text (which characters are common, which follow which) ---------- */
-var L = null, LDAT = 0.5;
+var L = null, LDAT = 4;
 function ldaT() { return (root.PicOCR && root.PicOCR.ldaT) || LDAT; }
 function loadLM(j) {
   var C = j.uni.length, tot = 0, uni = new Float64Array(C);
@@ -351,7 +351,7 @@ function readLine(line, lab, w) {
   }
   /* sentence context: pick the most likely chain of characters (Viterbi over the top guesses of each piece) */
   if (L && segs.length) {
-    var GAMMA = (root.PicOCR && root.PicOCR.gamma != null) ? root.PicOCR.gamma : 0.5, K = 6, prevC = null, prevV = null, back = [];
+    var GAMMA = (root.PicOCR && root.PicOCR.gamma != null) ? root.PicOCR.gamma : 0.4, K = 6, prevC = null, prevV = null, back = [];
     segs.forEach(function (sg, k) {
       var lp = scores(sg), idx = [];
       for (var c = 0; c < M.C; c++) if (lp[c] > -12) idx.push(c);
