@@ -15,10 +15,12 @@ function load(buf, meta) {
   var q = new Int8Array(buf.slice(o, o + C * D)); o += C * D;
   var P = new Float32Array(C * D), PP = new Float32Array(C);
   for (var c = 0; c < C; c++) { var s = 0; for (var d = 0; d < D; d++) { var v = q[c * D + d] * sc[d]; P[c * D + d] = v; s += v * v; } PP[c] = s; }
-  M = { dim: dim, D: D, C: C, mu: mu, W: W, P: P, PP: PP, chars: Array.from(meta.chars), med: meta.medDist };
+  M = { dim: dim, D: D, C: C, mu: mu, W: W, P: P, PP: PP, chars: Array.from(meta.chars), med: meta.medDist, lang: meta.lang || '', gamma: meta.gamma };
   M.skip = M.chars.map(function (ch) { return '■●▲★'.indexOf(ch) >= 0; });
   /* which numbers are Korean letters (syllables or single jamo) and which are Latin letters */
-  M.isKo = M.chars.map(function (ch) { var u = ch.charCodeAt(0); return (u >= 0xAC00 && u <= 0xD7A3) || (u >= 0x3131 && u <= 0x318E); });
+  M.isKo = M.chars.map(function (ch) { var u = ch.charCodeAt(0); return (u >= 0xAC00 && u <= 0xD7A3) || (u >= 0x3131 && u <= 0x318E) || (u >= 0x3041 && u <= 0x30FF) || (u >= 0x4E00 && u <= 0x9FFF); });
+  /* Chinese characters and Japanese kana: no spaces between them */
+  M.isCJK = M.chars.map(function (ch) { var u = ch.charCodeAt(0); return u >= 0x3000 && u < 0xAC00 && !(u >= 0x3131 && u <= 0x318E) || u >= 0xFF00; });
   M.isLat = M.chars.map(function (ch) { return /[A-Za-z\u00C0-\u024F\u1E00-\u1EFF]/.test(ch); });
 }
 
@@ -97,6 +99,7 @@ function classify(f, noKo) {
    → 256 → one score per character. Weights are stored as 8-bit numbers with one scale per output. */
 var N = null, SCALE = 1;
 function loadNet(buf, meta) {
+  if (!buf || !meta) { N = null; return; }
   var o = 0, L = {};
   function f32(n) { var a = new Float32Array(buf.slice(o, o + n * 4)); o += n * 4; return a; }
   meta.layers.forEach(function (l) { L[l.name] = { rows: l.rows, cols: l.cols, sc: f32(l.cols), b: f32(l.cols) }; });
@@ -161,6 +164,7 @@ function netClassify(P, geo) {
 var L = null, LDAT = 4;
 function ldaT() { return (root.PicOCR && root.PicOCR.ldaT) || LDAT; }
 function loadLM(j) {
+  if (!j) { L = null; return; }
   var C = j.uni.length, tot = 0, uni = new Float64Array(C);
   for (var c = 0; c < C; c++) { uni[c] = j.uni[c]; tot += uni[c]; }
   var pu = new Float32Array(C); for (c = 0; c < C; c++) pu[c] = (uni[c] + 0.3) / (tot + 0.3 * C);
@@ -332,7 +336,7 @@ function readLine(line, lab, w) {
   /* a line written mostly in Latin letters (English, French, Vietnamese…): read it again without Korean letters,
      so that "o" is not taken for "ㅇ" or "rt" for one Korean syllable */
   var nKo = 0, nLat = 0;
-  segs.forEach(function (sg) { if (M.isKo[sg.c]) { var u = M.chars[sg.c].charCodeAt(0); nKo += (u >= 0xAC00 ? 1 : 0.35); } else if (M.isLat[sg.c]) nLat++; });
+  segs.forEach(function (sg) { if (M.isKo[sg.c]) { var u = M.chars[sg.c].charCodeAt(0); nKo += (u >= 0x3131 && u <= 0x318E ? 0.35 : 1); } else if (M.isLat[sg.c]) nLat++; });
   if (nLat >= 3 && nKo < 0.3 * nLat) {
     NOKO = true;
     /* Latin text: most letters are short (a, e, o…), so measure the line from the baseline up to the tops of
@@ -374,7 +378,7 @@ function readLine(line, lab, w) {
   }
   /* sentence context: pick the most likely chain of characters (Viterbi over the top guesses of each piece) */
   if (L && segs.length) {
-    var GAMMA = (root.PicOCR && root.PicOCR.gamma != null) ? root.PicOCR.gamma : 0.4, K = 6, prevC = null, prevV = null, back = [];
+    var GAMMA = (root.PicOCR && root.PicOCR.gamma != null) ? root.PicOCR.gamma : (M.gamma != null ? M.gamma : 0.4), K = 6, prevC = null, prevV = null, back = [];
     segs.forEach(function (sg, k) {
       var lp = scores(sg), idx = [];
       for (var c = 0; c < M.C; c++) if (lp[c] > -12) idx.push(c);
@@ -393,7 +397,12 @@ function readLine(line, lab, w) {
   }
   var out = '';
   if (root.PicOCR && root.PicOCR.onSeg) segs.forEach(function (sg) { root.PicOCR.onSeg(sg, M.chars[sg.c], SCALE); });
-  segs.forEach(function (sgm, k) { if (k && sgm.x0 - segs[k - 1].x1 > spaceAt) out += ' '; out += M.chars[sgm.c]; });
+  segs.forEach(function (sgm, k) {
+    var gap = k ? sgm.x0 - segs[k - 1].x1 : 0, cjkLine = M.lang === 'ja' || M.lang === 'zh';
+    /* Japanese and Chinese: no spaces next to their own characters, and only clear gaps between Latin words */
+    if (k && gap > spaceAt && !(cjkLine ? (M.isCJK[sgm.c] || M.isCJK[segs[k - 1].c] || gap < 0.6 * H0) : (M.isCJK[sgm.c] && M.isCJK[segs[k - 1].c]))) out += ' ';
+    out += M.chars[sgm.c];
+  });
   return out;
 }
 

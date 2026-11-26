@@ -1,26 +1,42 @@
-/* Text recognition worker: loads PicShifter's own OCR model once and reads text from images. */
+/* Text recognition worker: loads PicShifter's own OCR models and reads text from images.
+   Three model sets: Korean + Latin letters (default), Japanese ('ja') and Chinese ('zh'). Only the chosen one is downloaded. */
 importScripts('/image-to-text/engine.js');
-var ready = null;
-function init() {
-  if (!ready) ready = Promise.all([
-    fetch('/image-to-text/ocr-model.bin').then(function (r) { if (!r.ok) throw new Error('eModel'); return r.arrayBuffer(); }),
-    fetch('/image-to-text/ocr-meta.json').then(function (r) { if (!r.ok) throw new Error('eModel'); return r.json(); }),
-    /* neural network + character counts: optional extras; reading still works without them */
-    fetch('/image-to-text/ocr-net.bin').then(function (r) { return r.ok ? r.arrayBuffer() : null; }).catch(function () { return null; }),
-    fetch('/image-to-text/ocr-net.json').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
-    fetch('/image-to-text/ocr-lm.json').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
-  ]).then(function (a) {
+var cache = {}, current = null;
+function get(url, type, optional) {
+  return fetch(url).then(function (r) {
+    if (!r.ok) { if (optional) return null; throw new Error('eModel'); }
+    return type === 'json' ? r.json() : r.arrayBuffer();
+  }).catch(function (e) { if (optional) return null; throw e; });
+}
+function files(lang) {
+  if (!cache[lang]) {
+    var sfx = lang ? '-' + lang : '', b = '/image-to-text/';
+    cache[lang] = Promise.all([
+      get(b + 'ocr-model' + sfx + '.bin', 'bin'),
+      get(b + 'ocr-meta' + sfx + '.json', 'json'),
+      /* neural network + character counts: optional extras; reading still works without them */
+      get(b + 'ocr-net' + sfx + '.bin', 'bin', true),
+      get(b + 'ocr-net' + sfx + '.json', 'json', true),
+      get(b + 'ocr-lm' + sfx + '.json', 'json', true)
+    ]);
+    cache[lang].catch(function () { delete cache[lang]; });
+  }
+  return cache[lang];
+}
+function use(lang) {
+  return files(lang).then(function (a) {
+    if (current === lang) return;
+    /* load() copies what it needs, so the cached buffers stay usable for switching back */
     PicOCR.load(a[0], a[1]);
-    if (a[2] && a[3]) PicOCR.loadNet(a[2], a[3]);
-    if (a[4]) PicOCR.loadLM(a[4]);
+    PicOCR.loadNet(a[2] && a[3] ? a[2] : null, a[3]);
+    PicOCR.loadLM(a[4]);
+    current = lang;
   });
-  ready.catch(function () { ready = null; });
-  return ready;
 }
 onmessage = async function (e) {
-  var m = e.data;
+  var m = e.data, lang = (m.lang === 'ja' || m.lang === 'zh') ? m.lang : '';
   try {
-    await init();
+    await use(lang);
     postMessage({ type: 'progress', value: 0 });
     var text = PicOCR.recognize(m.rgba, m.w, m.h, function (p) { postMessage({ type: 'progress', value: p }); });
     postMessage({ type: 'done', text: text });

@@ -1,0 +1,1 @@
+{"layers": [{"name": "k1", "rows": 9, "cols": 16}, {"name": "k2", "rows": 144, "cols": 32}, {"name": "k3", "rows": 288, "cols": 64}, {"name": "w4", "rows": 1028, "cols": 256}, {"name": "w5", "rows": 256, "cols": 3269}]}
