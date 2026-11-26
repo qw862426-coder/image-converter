@@ -34,6 +34,26 @@ ARTICLES = ['guide', 'about', 'privacy', 'contact']
 ALL_PATHS = [p for p, _ in TOOLS] + ['/%s/' % p['slug'] for p in PAGES] + ['/%s/' % a for a in ARTICLES]
 LANDING_ORDER = [p['slug'] for p in PAGES] + ['scan', 'remove-background']
 
+# Articles ("읽을거리"): English and Korean only. _build/posts/posts.json lists them with a publish date;
+# a post goes live only when the site is built on or after that date (Korea time).
+import datetime as _dt
+POST_LANGS = ['en', 'ko']
+POSTS_ALL = json.loads(open(os.path.join(HERE, 'posts', 'posts.json'), encoding='utf-8').read())
+TODAY = _dt.datetime.now(_dt.timezone(_dt.timedelta(hours=9))).strftime('%Y-%m-%d')
+POSTS = sorted([p for p in POSTS_ALL if p['date'] <= TODAY], key=lambda p: p['date'], reverse=True)
+POST_PATHS = ['/articles/'] + ['/articles/%s/' % p['slug'] for p in POSTS]
+POST_UI = {
+    'en': {'index_title': 'Articles: tips for images, PDFs and documents | PicShifter',
+           'index_desc': 'Plain guides to everyday file problems: photos that won’t open, files that are too big, and documents to submit.',
+           'h1': 'Articles', 'lede': 'Plain guides to everyday file problems, with the free PicShifter tool that fixes each one.',
+           'date': 'Published %s', 'more': 'More articles', 'all': 'All articles', 'try': 'Try it now:'},
+    'ko': {'index_title': '읽을거리: 사진·PDF·문서 파일 꿀팁 | PicShifter',
+           'index_desc': '안 열리는 사진, 너무 큰 파일, 제출용 서류처럼 자주 겪는 파일 문제를 쉽게 풀어 쓴 글 모음이에요.',
+           'h1': '읽을거리', 'lede': '자주 겪는 파일 문제를 쉽게 풀어 쓴 글이에요. 글마다 바로 해결할 수 있는 무료 도구를 함께 알려 드려요.',
+           'date': '%s 게시', 'more': '다른 글', 'all': '전체 글 보기', 'try': '바로 해 보기:'},
+}
+
+
 
 def read(path):
     with open(path, encoding='utf-8') as f:
@@ -75,15 +95,15 @@ def one(pattern, repl, s):
     return out
 
 
-def head_links(lang, path):
-    alts = ''.join('<link rel="alternate" hreflang="%s" href="%s">\n' % (HREFLANG.get(L, L), url(L, path)) for L in LANGS)
+def head_links(lang, path, langs=None):
+    alts = ''.join('<link rel="alternate" hreflang="%s" href="%s">\n' % (HREFLANG.get(L, L), url(L, path)) for L in (langs or LANGS))
     alts += '<link rel="alternate" hreflang="x-default" href="%s">\n' % url('en', path)
     return '<link rel="canonical" href="%s">\n%s' % (url(lang, path), alts)
 
 
-def localize(s, lang, path, title, desc, table=None, override=None):
+def localize(s, lang, path, title, desc, table=None, override=None, langs=None):
     s = one(r'<html lang="[^"]*">', '<html lang="%s">' % HTML_LANG.get(lang, lang), s)
-    s = one(r'<link rel="canonical" href="[^"]*">\n?', head_links(lang, path), s)
+    s = one(r'<link rel="canonical" href="[^"]*">\n?', head_links(lang, path, langs), s)
     s = one(r'<title>.*?</title>', '<title>%s</title>' % html.escape(title, quote=False), s)
     s = one(r'(<meta(?=[^>]*name="description")[^>]*content=")[^"]*(")', lambda m: m.group(1) + html.escape(desc) + m.group(2), s)
     # robots + Open Graph tags (used by Naver, Facebook, KakaoTalk link previews, ...)
@@ -113,12 +133,12 @@ def localize(s, lang, path, title, desc, table=None, override=None):
         s = re.sub(r'<[^>]*\bdata-i18n-aria="(\w+)"[^>]*>', set_attr('aria-label', 'aria'), s)
     # Google AdSense (publisher ca-pub-6213198663836411)
     s = one(r'</head>', ADSENSE + '</head>', s)
-    s = one(r'<script src="/assets/site\.js"></script>', '<script>window.PAGE_LANG=%s;</script>\n<script src="/assets/site.js"></script>' % json.dumps(lang), s)
+    s = one(r'<script src="/assets/site\.js"></script>', '<script>window.PAGE_LANG=%s;%s</script>\n<script src="/assets/site.js"></script>' % (json.dumps(lang), ('window.PAGE_ONLY=%s;' % json.dumps(langs)) if langs else ''), s)
     if lang != 'en':
         def link(m):
             target = m.group(1)
             base = target.split('#')[0]
-            return 'href="%s%s"' % (prefix(lang), target) if base in ALL_PATHS else m.group(0)
+            return 'href="%s%s"' % (prefix(lang), target) if base in ALL_PATHS or base in POST_PATHS else m.group(0)
         s = re.sub(r'href="(/[^"]*)"', link, s)
     return s
 
@@ -197,6 +217,7 @@ def build():
             s = tpl['article'].replace('<!--ARTICLE-->', content(lang, a))
             s = localize(s, lang, path, meta[a]['title'], meta[a]['desc'])
             write(lang, path, s); count += 1
+    count += build_posts(tpl['article'])
     # sitemap with language alternates
     rows = []
     for path in ALL_PATHS:
@@ -204,6 +225,14 @@ def build():
         alts += '<xhtml:link rel="alternate" hreflang="x-default" href="%s"/>' % url('en', path)
         for L in LANGS:
             rows.append('  <url><loc>%s</loc><lastmod>%s</lastmod>%s</url>' % (url(L, path), LASTMOD, alts))
+    for path in POST_PATHS:
+        slug = path.strip('/').split('/')[-1]
+        p = next((x for x in POSTS if x['slug'] == slug), None)
+        last = p['date'] if p else (POSTS[0]['date'] if POSTS else LASTMOD)
+        alts = ''.join('<xhtml:link rel="alternate" hreflang="%s" href="%s"/>' % (L, url(L, path)) for L in POST_LANGS)
+        alts += '<xhtml:link rel="alternate" hreflang="x-default" href="%s"/>' % url('en', path)
+        for L in POST_LANGS:
+            rows.append('  <url><loc>%s</loc><lastmod>%s</lastmod>%s</url>' % (url(L, path), last, alts))
     sm = ('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
           'xmlns:xhtml="http://www.w3.org/1999/xhtml">\n' + '\n'.join(rows) + '\n</urlset>\n')
     with open(os.path.join(ROOT, 'sitemap.xml'), 'w', encoding='utf-8') as f:
@@ -213,8 +242,39 @@ def build():
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
                 '  <sitemap><loc>%s/sitemap.xml</loc><lastmod>%s</lastmod></sitemap>\n</sitemapindex>\n' % (SITE, LASTMOD))
     with open(os.path.join(ROOT, 'sitemap.txt'), 'w', encoding='utf-8') as f:
-        f.write(''.join(url(L, p) + '\n' for p in ALL_PATHS for L in LANGS))
+        f.write(''.join(url(L, p) + '\n' for p in ALL_PATHS for L in LANGS) + ''.join(url(L, p) + '\n' for p in POST_PATHS for L in POST_LANGS))
     return count, len(rows)
+
+
+def post_card(lang, p):
+    m = p[lang]
+    return '<li><a href="/articles/%s/">%s</a><br><span class="post-desc">%s</span></li>' % (p['slug'], html.escape(m['h1']), html.escape(m['desc']))
+
+
+def build_posts(tpl):
+    n = 0
+    for lang in POST_LANGS:
+        ui = POST_UI[lang]
+        # list page
+        body = '<h1>%s</h1>\n<p class="lede">%s</p>\n<ul class="post-list">%s</ul>' % (
+            ui['h1'], ui['lede'], ''.join(post_card(lang, p) for p in POSTS))
+        s = localize(tpl.replace('<!--ARTICLE-->', body), lang, '/articles/', ui['index_title'], ui['index_desc'], langs=POST_LANGS)
+        write(lang, '/articles/', s); n += 1
+        for p in POSTS:
+            m = p[lang]
+            text = read(os.path.join(HERE, 'posts', lang, p['slug'] + '.html'))
+            others = [q for q in POSTS if q['slug'] != p['slug']][:4]
+            d = p['date'] if lang == 'en' else '%s년 %d월 %d일' % (p['date'][:4], int(p['date'][5:7]), int(p['date'][8:10]))
+            body = ('<h1>%s</h1>\n<p class="lede">%s</p>\n<p class="meta">%s</p>\n%s\n'
+                    '<p class="post-try"><b>%s</b> <a href="%s">%s</a></p>\n'
+                    '<h2>%s</h2><ul class="related">%s<li><a href="/articles/">%s</a></li></ul>') % (
+                html.escape(m['h1']), html.escape(m['lede']), ui['date'] % d, text,
+                ui['try'], p['tool'], html.escape(m['tool_name']),
+                ui['more'], ''.join('<li><a href="/articles/%s/">%s</a></li>' % (q['slug'], html.escape(q[lang]['h1'])) for q in others), ui['all'])
+            s = localize(tpl.replace('<!--ARTICLE-->', body), lang, '/articles/%s/' % p['slug'], m['title'], m['desc'], langs=POST_LANGS)
+            s = s.replace('<meta property="og:type" content="website">', '<meta property="og:type" content="article">')
+            write(lang, '/articles/%s/' % p['slug'], s); n += 1
+    return n
 
 
 if __name__ == '__main__':

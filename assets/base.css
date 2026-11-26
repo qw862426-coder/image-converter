@@ -89,3 +89,8 @@ footer{font-size:.8rem;color:var(--muted);text-align:center}
 .related{list-style:none;padding:0!important;display:flex!important;flex-direction:row!important;flex-wrap:wrap;gap:8px!important}
 .related a{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:.88rem;text-decoration:none}
 .related a:hover{border-color:var(--accent)}
+.post-list{list-style:none;padding:0!important;gap:14px!important}
+.post-list li{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--panel)}
+.post-list a{font-weight:600;text-decoration:none}
+.post-desc{color:var(--muted);font-size:.92rem}
+.post-try{border-left:3px solid var(--accent);padding:8px 12px;background:color-mix(in srgb,var(--accent) 8%,transparent);border-radius:0 8px 8px 0}

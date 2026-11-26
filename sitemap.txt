@@ -158,3 +158,11 @@ https://picshifter.pages.dev/es/contact/
 https://picshifter.pages.dev/pt/contact/
 https://picshifter.pages.dev/fr/contact/
 https://picshifter.pages.dev/de/contact/
+https://picshifter.pages.dev/articles/
+https://picshifter.pages.dev/ko/articles/
+https://picshifter.pages.dev/articles/heic-photos-wont-open/
+https://picshifter.pages.dev/ko/articles/heic-photos-wont-open/
+https://picshifter.pages.dev/articles/reduce-photo-file-size/
+https://picshifter.pages.dev/ko/articles/reduce-photo-file-size/
+https://picshifter.pages.dev/articles/open-hwp-on-mac-and-phone/
+https://picshifter.pages.dev/ko/articles/open-hwp-on-mac-and-phone/

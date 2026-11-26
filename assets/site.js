@@ -5,8 +5,8 @@
   var LANGS = { en: 'English', ko: '한국어', ja: '日本語', zh: '中文（简体）', es: 'Español', pt: 'Português', fr: 'Français', de: 'Deutsch' };
   var KEY = 'imgconv-lang';
   var T = {
-    en: { compress: 'Compress images', popular: 'Popular', bg: 'Remove background', scan: 'Photo to scan', img: 'Image converter', doc: 'Documents to PDF', guide: 'How to use', about: 'About', privacy: 'Privacy policy', contact: 'Contact', lang: 'Language', menu: 'Menu', note: 'Files are converted on your device and never uploaded.' },
-    ko: { compress: '사진 용량 줄이기', popular: '인기 변환', bg: '배경 지우기', scan: '사진 → 스캔본', img: '이미지 변환', doc: '문서 → PDF', guide: '사용 방법', about: '사이트 소개', privacy: '개인정보처리방침', contact: '문의하기', lang: '언어', menu: '메뉴', note: '파일은 내 기기에서 변환되며 어디에도 업로드되지 않습니다.' },
+    en: { compress: 'Compress images', popular: 'Popular', bg: 'Remove background', scan: 'Photo to scan', img: 'Image converter', doc: 'Documents to PDF', guide: 'How to use', posts: 'Articles', about: 'About', privacy: 'Privacy policy', contact: 'Contact', lang: 'Language', menu: 'Menu', note: 'Files are converted on your device and never uploaded.' },
+    ko: { compress: '사진 용량 줄이기', popular: '인기 변환', bg: '배경 지우기', scan: '사진 → 스캔본', img: '이미지 변환', doc: '문서 → PDF', guide: '사용 방법', posts: '읽을거리', about: '사이트 소개', privacy: '개인정보처리방침', contact: '문의하기', lang: '언어', menu: '메뉴', note: '파일은 내 기기에서 변환되며 어디에도 업로드되지 않습니다.' },
     ja: { compress: '画像を圧縮', popular: '人気の変換', bg: '背景を削除', scan: '写真をスキャンに', img: '画像変換', doc: '文書をPDFに', guide: '使い方', about: 'このサイトについて', privacy: 'プライバシーポリシー', contact: 'お問い合わせ', lang: '言語', menu: 'メニュー', note: 'ファイルは端末内で変換され、アップロードされることはありません。' },
     zh: { compress: '压缩图片', popular: '常用转换', bg: '去除背景', scan: '照片转扫描件', img: '图片转换', doc: '文档转 PDF', guide: '使用方法', about: '关于本站', privacy: '隐私政策', contact: '联系我们', lang: '语言', menu: '菜单', note: '文件在你的设备上转换，不会上传到任何地方。' },
     es: { compress: 'Comprimir imágenes', popular: 'Populares', bg: 'Quitar fondo', scan: 'Foto a escaneo', img: 'Convertir imágenes', doc: 'Documentos a PDF', guide: 'Cómo usarlo', about: 'Acerca de', privacy: 'Privacidad', contact: 'Contacto', lang: 'Idioma', menu: 'Menú', note: 'Los archivos se convierten en tu dispositivo y nunca se suben.' },
@@ -34,13 +34,15 @@
   /* First visit to an English address from a phone set to another supported language: open that language's page. */
   /* Search engine robots (Naver Yeti, Googlebot, Bing ...) are never redirected: they must see each address as it is. */
   var isBot = /bot|crawl|spider|slurp|yeti|daum|bingpreview|facebookexternalhit|kakaotalk-scrap|headless|lighthouse/i.test(navigator.userAgent || '') || navigator.webdriver === true;
+  var ONLY = window.PAGE_ONLY || null;
   if (window.PAGE_LANG === 'en' && !isBot) {
     var want = stored() || browserLang();
+    if (ONLY && ONLY.indexOf(want) < 0) want = 'en';
     if (want !== 'en' && location.protocol !== 'file:') { window.Site = { LANGS: LANGS, lang: want, onChange: function () {} }; location.replace(pathFor(want, bare) + location.search + location.hash); return; }
   }
   var subs = [];
   function t(k) { return (T[lang] && T[lang][k]) || T.en[k] || k; }
-  function here(href) { return bare === href; }
+  function here(href) { return bare === href || (href === '/articles/' && bare.indexOf('/articles/') === 0); }
 
   var css = document.createElement('style');
   css.textContent =
@@ -76,7 +78,7 @@
     document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang;
     sel.value = lang; bar.querySelector('label').textContent = t('lang');
     var nav = bar.querySelector('.sitenav'); nav.innerHTML = '';
-    LINKS.forEach(function (l) { var a = document.createElement('a'); a.href = pathFor(lang, l[1]); a.textContent = t(l[0]); if (here(l[1])) a.setAttribute('aria-current', 'page'); nav.appendChild(a); });
+    LINKS.concat(lang === 'en' || lang === 'ko' ? [['posts', '/articles/']] : []).forEach(function (l) { var a = document.createElement('a'); a.href = pathFor(lang, l[1]); a.textContent = t(l[0]); if (here(l[1])) a.setAttribute('aria-current', 'page'); nav.appendChild(a); });
     var pn = foot.querySelector('.popular nav'); pn.innerHTML = ''; foot.querySelector('.popular b').textContent = t('popular');
     POPULAR.forEach(function (l) { var a = document.createElement('a'); a.href = pathFor(lang, l[1]); a.textContent = l[0].charAt(0) === '@' ? t(l[0].slice(1)) : l[0]; pn.appendChild(a); });
     var fn = foot.querySelector('nav.legal'); fn.innerHTML = '';
@@ -85,7 +87,7 @@
   }
   sel.addEventListener('change', function () {
     var next = sel.value; try { localStorage.setItem(KEY, next); } catch (e) {}
-    if (window.PAGE_LANG) { location.href = pathFor(next, bare) + location.hash; return; }
+    if (window.PAGE_LANG) { location.href = (ONLY && ONLY.indexOf(next) < 0) ? pathFor(next, '/') : pathFor(next, bare) + location.hash; return; }
     lang = next; paint(); subs.forEach(function (f) { f(lang); });
   });
   paint();
