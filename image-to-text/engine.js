@@ -17,6 +17,9 @@ function load(buf, meta) {
   for (var c = 0; c < C; c++) { var s = 0; for (var d = 0; d < D; d++) { var v = q[c * D + d] * sc[d]; P[c * D + d] = v; s += v * v; } PP[c] = s; }
   M = { dim: dim, D: D, C: C, mu: mu, W: W, P: P, PP: PP, chars: Array.from(meta.chars), med: meta.medDist };
   M.skip = M.chars.map(function (ch) { return '■●▲★'.indexOf(ch) >= 0; });
+  /* which numbers are Korean letters (syllables or single jamo) and which are Latin letters */
+  M.isKo = M.chars.map(function (ch) { var u = ch.charCodeAt(0); return (u >= 0xAC00 && u <= 0xD7A3) || (u >= 0x3131 && u <= 0x318E); });
+  M.isLat = M.chars.map(function (ch) { return /[A-Za-z\u00C0-\u024F\u1E00-\u1EFF]/.test(ch); });
 }
 
 /* ---------- glyph features (must match feat.py) ---------- */
@@ -75,13 +78,13 @@ function ldaAll(f) {
   return out;
 }
 /* returns {c: index, d: distance, d2: second-best distance} */
-function classify(f) {
+function classify(f, noKo) {
   var D = M.D, dim = M.dim, z = new Float32Array(D), zz = 0, i, k;
   for (i = 0; i < dim; i++) { var v = f[i] - M.mu[i]; if (!v) continue; var row = i * D; for (k = 0; k < D; k++) z[k] += v * M.W[row + k]; }
   for (k = 0; k < D; k++) zz += z[k] * z[k];
   var best = 1e30, bi = 0, second = 1e30;
   for (var c = 0; c < M.C; c++) {
-    if (M.skip[c]) continue;
+    if (M.skip[c] || (noKo && M.isKo[c])) continue;
     var dot = 0, p = c * D; for (k = 0; k < D; k++) dot += z[k] * M.P[p + k];
     var d2 = zz - 2 * dot + M.PP[c];
     if (d2 < best) { second = best; best = d2; bi = c; } else if (d2 < second) second = d2;
@@ -288,46 +291,65 @@ function readLine(line, lab, w) {
     });
   });
   pieces = split;
-  var n = pieces.length, cache = {};
+  var n = pieces.length, cache = {}, NOKO = false;
   var NETDP = !!(root.PicOCR && root.PicOCR.netDP), NW = (root.PicOCR && root.PicOCR.nw) || 0.5;
   function seg(i, j) {
-    var key = i + ',' + j; if (cache[key]) return cache[key];
+    var key = (NOKO ? 'L' : '') + i + ',' + j; if (cache[key]) return cache[key];
     var x0 = 1e9, x1 = -1, y0 = 1e9, y1 = -1, ids = {};
     for (var k = i; k <= j; k++) { var p = pieces[k]; x0 = Math.min(x0, p.x0); x1 = Math.max(x1, p.x1); y0 = Math.min(y0, p.y0); y1 = Math.max(y1, p.y1); p.cs.forEach(function (c) { ids[c.id] = 1; }); }
     var gw = x1 - x0, gh = y1 - y0, ink = new Float32Array(gw * gh);
     for (var yy = 0; yy < gh; yy++) for (var xx = 0; xx < gw; xx++) { var l = lab[(y0 + yy) * w + x0 + xx]; if (l && ids[l]) ink[yy * gw + xx] = 1; }
-    var fv = features(ink, gw, gh, y0, y1, x0, x1, T0, H0), r = classify(fv); r.f = fv;
+    var fv = features(ink, gw, gh, y0, y1, x0, x1, T0, H0), r = classify(fv, NOKO); r.f = fv; r.noKo = NOKO;
     r.x0 = x0; r.x1 = x1; r.y0 = y0; r.y1 = y1;
     r.ink = ink; r.gw = gw; r.gh = gh; r.geo = [(x1 - x0) / H0, (y1 - y0) / H0, (y0 - T0) / H0, (y1 - T0) / H0];
     if (N && NETDP) { var t = netClassify(normalize(ink, gw, gh), r.geo); r.nc = t.c; r.nll = t.nll; }
     cache[key] = r; return r;
   }
-  var best = new Float64Array(n + 1).fill(1e30), from = new Int32Array(n + 1).fill(-1); best[0] = 0;
   var LAMBDA = (root.PicOCR && root.PicOCR.lambda) || 0.4, CUT = (root.PicOCR && root.PicOCR.cut != null) ? root.PicOCR.cut : 0.6;
-  for (var j = 0; j < n; j++) {
-    for (var i = j; i >= 0 && j - i < 4; i--) {
-      var width = pieces[j].x1 - pieces[i].x0;
-      if (i < j && width > 1.5 * H0) break;
-      if (i < j && pieces[i + 1].x0 - pieces[i].x1 > 0.35 * H0) break;
-      /* every gap inside the candidate must be small */
-      var okGap = true; for (var k = i; k < j; k++) if (pieces[k + 1].x0 - pieces[k].x1 > 0.3 * H0) { okGap = false; break; }
-      /* periods and commas (small marks sitting low) are never part of a bigger character */
-      if (okGap && i < j) for (k = i; k <= j; k++) { var pk = pieces[k]; if (!pk.sub && (pk.y1 - pk.y0) < 0.42 * H0 && (pk.x1 - pk.x0) < 0.3 * H0 && (pk.y0 > T0 + 0.55 * H0 || pk.y1 < T0 + 0.5 * H0)) { okGap = false; break; } }
-      if (!okGap) break;
-      if (best[i] >= 1e30) continue;
-      var r = seg(i, j), q = r.d / M.med, cost = best[i] + (r.nll != null ? NW * Math.min(r.nll, 6) : q * q) + LAMBDA + (pieces[i].cut ? CUT : 0) + (j + 1 < n && pieces[j + 1].cut ? CUT : 0);
-      if (cost < best[j + 1]) { best[j + 1] = cost; from[j + 1] = i; }
+  function runDP() {
+    var best = new Float64Array(n + 1).fill(1e30), from = new Int32Array(n + 1).fill(-1); best[0] = 0;
+    for (var j = 0; j < n; j++) {
+      for (var i = j; i >= 0 && j - i < 4; i--) {
+        var width = pieces[j].x1 - pieces[i].x0;
+        if (i < j && width > 1.5 * H0) break;
+        if (i < j && pieces[i + 1].x0 - pieces[i].x1 > 0.35 * H0) break;
+        /* every gap inside the candidate must be small */
+        var okGap = true; for (var k = i; k < j; k++) if (pieces[k + 1].x0 - pieces[k].x1 > 0.3 * H0) { okGap = false; break; }
+        /* periods and commas (small marks sitting low) are never part of a bigger character */
+        if (okGap && i < j) for (k = i; k <= j; k++) { var pk = pieces[k]; if (!pk.sub && (pk.y1 - pk.y0) < 0.42 * H0 && (pk.x1 - pk.x0) < 0.3 * H0 && (pk.y0 > T0 + 0.55 * H0 || pk.y1 < T0 + 0.5 * H0)) { okGap = false; break; } }
+        if (!okGap) break;
+        if (best[i] >= 1e30) continue;
+        var r = seg(i, j), q = r.d / M.med, cost = best[i] + (r.nll != null ? NW * Math.min(r.nll, 6) : q * q) + LAMBDA + (pieces[i].cut ? CUT : 0) + (j + 1 < n && pieces[j + 1].cut ? CUT : 0);
+        if (cost < best[j + 1]) { best[j + 1] = cost; from[j + 1] = i; }
+      }
     }
+    var out = [], at = n;
+    while (at > 0) { var i0 = from[at]; if (i0 < 0) { i0 = at - 1; } out.push(seg(i0, at - 1)); at = i0; }
+    return out.reverse();
   }
-  var segs = [], at = n;
-  while (at > 0) { var i0 = from[at]; if (i0 < 0) { i0 = at - 1; } segs.push(seg(i0, at - 1)); at = i0; }
-  segs.reverse();
+  var segs = runDP();
+  /* a line written mostly in Latin letters (English, French, Vietnamese…): read it again without Korean letters,
+     so that "o" is not taken for "ㅇ" or "rt" for one Korean syllable */
+  var nKo = 0, nLat = 0;
+  segs.forEach(function (sg) { if (M.isKo[sg.c]) { var u = M.chars[sg.c].charCodeAt(0); nKo += (u >= 0xAC00 ? 1 : 0.35); } else if (M.isLat[sg.c]) nLat++; });
+  if (nLat >= 3 && nKo < 0.3 * nLat) {
+    NOKO = true;
+    /* Latin text: most letters are short (a, e, o…), so measure the line from the baseline up to the tops of
+       tall letters (capitals, b, d, h…) instead of the typical letter top */
+    var big = pieces.filter(function (p) { return (p.y1 - p.y0) >= 0.3 * maxH; });
+    if (big.length >= 3) {
+      var tops = big.map(function (p) { return p.y0; }).sort(function (a, b) { return a - b; });
+      var B1 = median(big.map(function (p) { return p.y1; })), T1 = tops[Math.floor(0.2 * tops.length)];
+      if (B1 - T1 >= 4) { T0 = T1; H0 = B1 - T1; }
+    }
+    segs = runDP();
+  }
   /* score of every character for each chosen piece (log-probability): the network and the prototypes together */
   var BETA = (root.PicOCR && root.PicOCR.beta != null) ? root.PicOCR.beta : 4, med2 = M.med * M.med;
   function scores(sg) {
     if (sg.lp) return sg.lp;
     var d2 = ldaAll(sg.f), t = N ? netClassify(normalize(sg.ink, sg.gw, sg.gh), sg.geo) : null, lp = new Float32Array(M.C), mx = -1e30, c;
-    for (c = 0; c < M.C; c++) { lp[c] = M.skip[c] ? -1e9 : (t ? t.s[c] - BETA * d2[c] / med2 : -ldaT() * d2[c] / med2); if (lp[c] > mx) mx = lp[c]; }
+    for (c = 0; c < M.C; c++) { lp[c] = (M.skip[c] || (sg.noKo && M.isKo[c])) ? -1e9 : (t ? t.s[c] - BETA * d2[c] / med2 : -ldaT() * d2[c] / med2); if (lp[c] > mx) mx = lp[c]; }
     var sum = 0; for (c = 0; c < M.C; c++) sum += Math.exp(lp[c] - mx);
     var z = mx + Math.log(sum); for (c = 0; c < M.C; c++) lp[c] -= z;
     sg.lp = lp; return lp;
