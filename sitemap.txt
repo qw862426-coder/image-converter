@@ -70,6 +70,14 @@ https://picshifter.pages.dev/es/split-pdf/
 https://picshifter.pages.dev/pt/split-pdf/
 https://picshifter.pages.dev/fr/split-pdf/
 https://picshifter.pages.dev/de/split-pdf/
+https://picshifter.pages.dev/image-to-text/
+https://picshifter.pages.dev/ko/image-to-text/
+https://picshifter.pages.dev/ja/image-to-text/
+https://picshifter.pages.dev/zh/image-to-text/
+https://picshifter.pages.dev/es/image-to-text/
+https://picshifter.pages.dev/pt/image-to-text/
+https://picshifter.pages.dev/fr/image-to-text/
+https://picshifter.pages.dev/de/image-to-text/
 https://picshifter.pages.dev/heic-to-jpg/
 https://picshifter.pages.dev/ko/heic-to-jpg/
 https://picshifter.pages.dev/ja/heic-to-jpg/
