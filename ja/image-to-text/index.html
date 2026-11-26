@@ -14,14 +14,14 @@
 <link rel="alternate" hreflang="de" href="https://picshifter.pages.dev/de/image-to-text/">
 <link rel="alternate" hreflang="x-default" href="https://picshifter.pages.dev/image-to-text/">
 <title>画像から文字を読み取る(OCR)– 無料 | PicShifter</title>
-<meta id="metaDesc" name="description" content="スクリーンショットやスキャン、写真の韓国語と英語の文字をコピーできるテキストにします。無料・アップロード不要。">
+<meta id="metaDesc" name="description" content="スクリーンショットやスキャン、写真の日本語・英語・韓国語の文字をコピーできるテキストにします。無料・アップロード不要。">
 <meta name="robots" content="index, follow">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="PicShifter">
 <meta property="og:locale" content="ja_JP">
 <meta property="og:url" content="https://picshifter.pages.dev/ja/image-to-text/">
 <meta property="og:title" content="画像から文字を読み取る(OCR)– 無料 | PicShifter">
-<meta property="og:description" content="スクリーンショットやスキャン、写真の韓国語と英語の文字をコピーできるテキストにします。無料・アップロード不要。">
+<meta property="og:description" content="スクリーンショットやスキャン、写真の日本語・英語・韓国語の文字をコピーできるテキストにします。無料・アップロード不要。">
 <meta name="twitter:card" content="summary">
 <link rel="stylesheet" href="/assets/base.css?v=d7c952cd">
 <style>
@@ -45,7 +45,7 @@
   <header>
     <div>
       <h1 data-i18n="h1">画像の文字読み取り</h1>
-      <p data-i18n="sub">スクリーンショット、スキャンした書類、写真の韓国語(ハングル)と英語の文字をテキストにします。処理は端末内で行われます。</p>
+      <p data-i18n="sub">スクリーンショット、スキャンした書類、写真の日本語・英語・韓国語の文字をテキストにします。処理は端末内で行われます。</p>
     </div>
   </header>
 
@@ -60,6 +60,10 @@
   <section class="panel ed" id="ed" hidden>
     <div class="stagebox"><canvas id="view"></canvas><canvas id="ov"></canvas></div>
     <p class="hint" data-i18n="areaHint">一部だけ読み取るには、その部分をドラッグで囲みます。囲まなければ画像全体を読み取ります。</p>
+    <div class="row">
+      <label class="hint" for="script" data-i18n="scriptLabel">文字の言語</label>
+      <select id="script"><option value="" data-i18n="scrKo">韓国語・英語・ヨーロッパ言語</option><option value="ja">日本語</option><option value="zh">中文(简体)</option></select>
+    </div>
     <div class="row">
       <button class="btn" id="go" type="button" data-i18n="go">文字を読み取る</button>
       <button class="btn ghost small" id="whole" type="button" data-i18n="whole">画像全体</button>
@@ -76,12 +80,12 @@
 
   <section class="notes">
     <h2 data-i18n="noteTitle">知っておきたいこと</h2>
-    <ul><li data-i18n="note1">印刷された韓国語(ハングル)、英字とヨーロッパ言語・ベトナム語のアクセント付き文字、数字、よく使う記号を読み取ります。日本語・漢字・手書きにはまだ対応していません。</li><li data-i18n="note2">結果は必ず確認してから使ってください。小さい文字やぼやけた文字、装飾フォント、斜めから撮った写真は誤りが増えます。</li><li data-i18n="note3">画像が端末の外に送られることはありません。この文字認識はPicShifterが独自に作り、ブラウザ内だけで動きます。</li></ul>
+    <ul><li data-i18n="note1">日本語(ひらがな・カタカナ・常用漢字など約2,965字)、英字、数字、記号を読み取ります。韓国語・ヨーロッパ言語、中国語(簡体字)は「文字の言語」で切り替えられます。手書きにはまだ対応していません。</li><li data-i18n="note2">結果は必ず確認してから使ってください。小さい文字やぼやけた文字、装飾フォント、斜めから撮った写真は誤りが増えます。</li><li data-i18n="note3">画像が端末の外に送られることはありません。この文字認識はPicShifterが独自に作り、ブラウザ内だけで動きます。</li></ul>
   </section>
   <section class="doc landing">
     <article>
 <h2>読み取れる文字</h2>
-<ul><li>韓国語:よく使うハングル2,350字(KS X 1001)と、ㅋㅋのような単独の子音・母音</li><li>英字と、ドイツ語・フランス語・スペイン語・ポルトガル語・イタリア語・トルコ語・ポーランド語・ベトナム語のアクセント付き文字(é, ü, ñ, ç, ß, ế など)、数字、よく使う記号(. , ! ? ( ) / % € など)</li><li>スクリーンショット、スキャンした書類、レシート、正面から撮った案内文などの印刷文字</li></ul>
+<ul><li>韓国語:よく使うハングル2,350字(KS X 1001)と、ㅋㅋのような単独の子音・母音</li><li>英字と、ドイツ語・フランス語・スペイン語・ポルトガル語・イタリア語・トルコ語・ポーランド語・ベトナム語のアクセント付き文字(é, ü, ñ, ç, ß, ế など)、数字、よく使う記号(. , ! ? ( ) / % € など)</li><li>スクリーンショット、スキャンした書類、レシート、正面から撮った案内文などの印刷文字</li><li>日本語:よく使う漢字2,965字とひらがな・カタカナ(「文字の言語」で日本語を選びます)。中国語(簡体字)にも切り替えられます</li></ul>
 <h2>うまく読み取るコツ</h2>
 <ol><li>できればスクリーンショットかスキャンを使いましょう。写真よりずっと鮮明です。</li><li>写真なら明るい場所で正面から撮り、枠で文字の部分だけを選びます。</li><li>小さい文字は自動で拡大しますが、高さ12ピクセル未満の文字は誤りやすくなります。</li></ol>
 <h2>しくみ</h2>
@@ -91,7 +95,7 @@
   </section>
 </main>
 
-<script src="/image-to-text/i18n.js?v=ce3e533d"></script>
+<script src="/image-to-text/i18n.js?v=79b471b3"></script>
 <script>window.PAGE_LANG="ja";</script>
 <script src="/assets/site.js?v=d2f6b2d2"></script>
 <script>
@@ -167,7 +171,7 @@
       const k=base.width/ov.width, r=box?{x:Math.round(box.x*k),y:Math.round(box.y*k),w:Math.round(box.w*k),h:Math.round(box.h*k)}:{x:0,y:0,w:base.width,h:base.height};
       const c=canvas(r.w,r.h), x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,r.w,r.h); x.drawImage(base,r.x,r.y,r.w,r.h,0,0,r.w,r.h);
       const rgba=x.getImageData(0,0,r.w,r.h).data;
-      const text=await new Promise((resolve,reject)=>{ waiting={resolve,reject}; getWorker().postMessage({rgba,w:r.w,h:r.h},[rgba.buffer]); });
+      const text=await new Promise((resolve,reject)=>{ waiting={resolve,reject}; getWorker().postMessage({rgba,w:r.w,h:r.h,lang:$('script').value},[rgba.buffer]); });
       $('out').value=text; $('out').hidden=false; $('outBtns').hidden=false; $('status').hidden=true;
       $('msg').textContent=text.trim()?'':t('empty');
     }catch(e){ alertMsg(t(e.message==='eModel'?'eModel':'eGeneric')); }
@@ -179,7 +183,8 @@
   });
   $('saveTxt').addEventListener('click',()=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([$('out').value],{type:'text/plain;charset=utf-8'})); a.download=fname+'.txt'; document.body.append(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),60000); });
 
-  Site.onChange(l=>{ lang=l; applyLang(); });
+  let scriptTouched=false; $('script').addEventListener('change',()=>{ scriptTouched=true; });
+  Site.onChange(l=>{ lang=l; applyLang(); if(!scriptTouched) $('script').value=(l==='ja'||l==='zh')?l:''; });
 })();
 </script>
 </body>

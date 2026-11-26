@@ -40,3 +40,18 @@ Results (errors per 100 characters):            before v2   v2 (deployed)
   unseen typefaces + European/Vietnamese (mktest2)  35.0       14.4
   real screenshot (Apple font, HEIC article)         6.8        4.8
 Long screenshot in a browser: about 4.6 s (was about 2 s). Files: model 615 KB, network 1.0 MB, counts 67 KB.
+
+--- 2026-11-27 (deployed): Japanese and Chinese readers, picked under "Text language" on the page ---
+Separate model sets, files with -ja / -zh in image-to-text/. worker.js downloads only the chosen set.
+Characters (cjk.py): ja 3,269 = JIS X 0208 level-1 kanji 2,965 + kana + ASCII + punctuation;
+                     zh 3,885 = GB2312 level-1 hanzi 3,755 + ASCII + full-width punctuation.
+Fonts: ja Noto Sans/Serif CJK JP, IBM Plex Sans JP, LXGW WenKai (held out: BIZ UD Gothic);
+       zh Noto Sans/Serif CJK SC, WQY Zen Hei, IBM Plex Sans SC, LXGW WenKai (held out: LXGW Neo XiHei).
+Steps (L = ja or zh): gen_cjk.py L lda train|hold ; lda_cjk.py L ; gen_cjk.py L glyph 2 <seed> ;
+  gen3_cjk.py L tr 1200 <seed> ; gen3_cjk.py L va 100 <seed> ; extract.js (MD=out_L) ;
+  cnn_cjk.py L cnn_v2a.npz 5 cnn_L.npz 1.5e-3 (drawing layers from the Korean network, new output layer) ;
+  NOEVAL=1 export_cnn.py cnn_L.npz out_L ; lm_cjk.py L ; meta gets gamma 0.5, netT 2.
+Engine: no spaces next to Japanese/Chinese characters; half-width , : ( ) ! ? next to them become full-width;
+  a lone Latin letter between them is replaced by the best Japanese/Chinese character when nearly as likely.
+Test errors per 100 characters (mktest_cjk.py, own sentences, incl. held-out fonts, small and photo-like text):
+  ja: prototypes only 7.7 -> deployed 4.8      zh: prototypes only 5.2 -> deployed 3.5

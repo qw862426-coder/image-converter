@@ -61,6 +61,10 @@
     <div class="stagebox"><canvas id="view"></canvas><canvas id="ov"></canvas></div>
     <p class="hint" data-i18n="areaHint">Pour ne lire qu’une partie, tracez un cadre dessus. Sinon, toute l’image est lue.</p>
     <div class="row">
+      <label class="hint" for="script" data-i18n="scriptLabel">Langue du texte</label>
+      <select id="script"><option value="" data-i18n="scrKo">Coréen, anglais, langues européennes</option><option value="ja">日本語</option><option value="zh">中文(简体)</option></select>
+    </div>
+    <div class="row">
       <button class="btn" id="go" type="button" data-i18n="go">Lire le texte</button>
       <button class="btn ghost small" id="whole" type="button" data-i18n="whole">Image entière</button>
       <button class="btn ghost small" id="other" type="button" data-i18n="other">Autre image</button>
@@ -76,12 +80,12 @@
 
   <section class="notes">
     <h2 data-i18n="noteTitle">Bon à savoir</h2>
-    <ul><li data-i18n="note1">Lit le coréen (hangul) imprimé, les lettres latines accentuées (é, ç…) et celles d’autres langues européennes et du vietnamien, les chiffres et les symboles courants. L’écriture manuscrite n’est pas encore reconnue.</li><li data-i18n="note2">Vérifiez toujours le résultat. Le texte petit ou flou, les polices décoratives et les photos de biais causent plus d’erreurs.</li><li data-i18n="note3">Votre image ne quitte jamais votre appareil. Ce lecteur de texte a été créé par PicShifter et fonctionne uniquement dans le navigateur.</li></ul>
+    <ul><li data-i18n="note1">Lit le français et les autres lettres latines accentuées (allemand, espagnol, portugais, italien, turc, polonais, vietnamien), l’anglais, le coréen, les chiffres et les symboles. Pour le japonais ou le chinois (simplifié), choisissez-le dans Langue du texte. L’écriture manuscrite n’est pas encore reconnue.</li><li data-i18n="note2">Vérifiez toujours le résultat. Le texte petit ou flou, les polices décoratives et les photos de biais causent plus d’erreurs.</li><li data-i18n="note3">Votre image ne quitte jamais votre appareil. Ce lecteur de texte a été créé par PicShifter et fonctionne uniquement dans le navigateur.</li></ul>
   </section>
   <section class="doc landing">
     <article>
 <h2>Ce qu’il lit</h2>
-<ul><li>Coréen : les 2 350 syllabes hangul courantes (KS X 1001) et les consonnes et voyelles isolées comme ㅋㅋ.</li><li>Lettres latines avec accents (é, è, ç, œ…), ainsi que les lettres accentuées de l’allemand, de l’espagnol, du portugais, de l’italien, du turc, du polonais et du vietnamien, chiffres et symboles courants (. , ! ? « » ( ) / % € …).</li><li>Texte imprimé sur des captures, documents scannés, tickets et panneaux photographiés de face.</li></ul>
+<ul><li>Coréen : les 2 350 syllabes hangul courantes (KS X 1001) et les consonnes et voyelles isolées comme ㅋㅋ.</li><li>Lettres latines avec accents (é, è, ç, œ…), ainsi que les lettres accentuées de l’allemand, de l’espagnol, du portugais, de l’italien, du turc, du polonais et du vietnamien, chiffres et symboles courants (. , ! ? « » ( ) / % € …).</li><li>Texte imprimé sur des captures, documents scannés, tickets et panneaux photographiés de face.</li><li>Japonais et chinois (simplifié) : à choisir dans Langue du texte. Seul le modèle de la langue choisie est téléchargé.</li></ul>
 <h2>Pour un meilleur résultat</h2>
 <ol><li>Utilisez une capture d’écran ou un scan si possible : c’est bien plus net qu’une photo.</li><li>Pour une photo, prenez-la de face avec une bonne lumière, puis encadrez seulement le texte.</li><li>Le petit texte est agrandi automatiquement, mais sous environ 12 pixels de haut il reste des erreurs.</li></ol>
 <h2>Comment ça marche</h2>
@@ -91,7 +95,7 @@
   </section>
 </main>
 
-<script src="/image-to-text/i18n.js?v=ce3e533d"></script>
+<script src="/image-to-text/i18n.js?v=79b471b3"></script>
 <script>window.PAGE_LANG="fr";</script>
 <script src="/assets/site.js?v=d2f6b2d2"></script>
 <script>
@@ -167,7 +171,7 @@
       const k=base.width/ov.width, r=box?{x:Math.round(box.x*k),y:Math.round(box.y*k),w:Math.round(box.w*k),h:Math.round(box.h*k)}:{x:0,y:0,w:base.width,h:base.height};
       const c=canvas(r.w,r.h), x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,r.w,r.h); x.drawImage(base,r.x,r.y,r.w,r.h,0,0,r.w,r.h);
       const rgba=x.getImageData(0,0,r.w,r.h).data;
-      const text=await new Promise((resolve,reject)=>{ waiting={resolve,reject}; getWorker().postMessage({rgba,w:r.w,h:r.h},[rgba.buffer]); });
+      const text=await new Promise((resolve,reject)=>{ waiting={resolve,reject}; getWorker().postMessage({rgba,w:r.w,h:r.h,lang:$('script').value},[rgba.buffer]); });
       $('out').value=text; $('out').hidden=false; $('outBtns').hidden=false; $('status').hidden=true;
       $('msg').textContent=text.trim()?'':t('empty');
     }catch(e){ alertMsg(t(e.message==='eModel'?'eModel':'eGeneric')); }
@@ -179,7 +183,8 @@
   });
   $('saveTxt').addEventListener('click',()=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([$('out').value],{type:'text/plain;charset=utf-8'})); a.download=fname+'.txt'; document.body.append(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),60000); });
 
-  Site.onChange(l=>{ lang=l; applyLang(); });
+  let scriptTouched=false; $('script').addEventListener('change',()=>{ scriptTouched=true; });
+  Site.onChange(l=>{ lang=l; applyLang(); if(!scriptTouched) $('script').value=(l==='ja'||l==='zh')?l:''; });
 })();
 </script>
 </body>

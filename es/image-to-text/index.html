@@ -61,6 +61,10 @@
     <div class="stagebox"><canvas id="view"></canvas><canvas id="ov"></canvas></div>
     <p class="hint" data-i18n="areaHint">Para leer solo una parte, arrastra un recuadro sobre ella. Si no, se lee toda la imagen.</p>
     <div class="row">
+      <label class="hint" for="script" data-i18n="scriptLabel">Idioma del texto</label>
+      <select id="script"><option value="" data-i18n="scrKo">Coreano, inglés, idiomas europeos</option><option value="ja">日本語</option><option value="zh">中文(简体)</option></select>
+    </div>
+    <div class="row">
       <button class="btn" id="go" type="button" data-i18n="go">Leer texto</button>
       <button class="btn ghost small" id="whole" type="button" data-i18n="whole">Toda la imagen</button>
       <button class="btn ghost small" id="other" type="button" data-i18n="other">Otra imagen</button>
@@ -76,12 +80,12 @@
 
   <section class="notes">
     <h2 data-i18n="noteTitle">Conviene saber</h2>
-    <ul><li data-i18n="note1">Lee coreano (hangul) impreso, letras latinas con tildes (á, ñ…) y de otros idiomas europeos y del vietnamita, números y símbolos comunes. La escritura a mano aún no se reconoce.</li><li data-i18n="note2">Revisa siempre el resultado. El texto pequeño o borroso, las fuentes decorativas y las fotos inclinadas causan más errores.</li><li data-i18n="note3">Tu imagen nunca sale de tu dispositivo. Este lector de texto lo creó PicShifter y funciona solo en tu navegador.</li></ul>
+    <ul><li data-i18n="note1">Lee español y otras letras latinas con tilde (alemán, francés, portugués, italiano, turco, polaco, vietnamita), inglés, coreano, números y símbolos. Para japonés o chino (simplificado), elígelo en Idioma del texto. La escritura a mano aún no se reconoce.</li><li data-i18n="note2">Revisa siempre el resultado. El texto pequeño o borroso, las fuentes decorativas y las fotos inclinadas causan más errores.</li><li data-i18n="note3">Tu imagen nunca sale de tu dispositivo. Este lector de texto lo creó PicShifter y funciona solo en tu navegador.</li></ul>
   </section>
   <section class="doc landing">
     <article>
 <h2>Qué lee</h2>
-<ul><li>Coreano: las 2.350 sílabas hangul más usadas (KS X 1001) y consonantes y vocales sueltas como ㅋㅋ.</li><li>Letras latinas con tildes y ñ, además de las letras acentuadas del alemán, francés, portugués, italiano, turco, polaco y vietnamita, números y símbolos comunes (. , ! ? ¿ ¡ ( ) / % € …).</li><li>Texto impreso en capturas, documentos escaneados, tiques y carteles fotografiados de frente.</li></ul>
+<ul><li>Coreano: las 2.350 sílabas hangul más usadas (KS X 1001) y consonantes y vocales sueltas como ㅋㅋ.</li><li>Letras latinas con tildes y ñ, además de las letras acentuadas del alemán, francés, portugués, italiano, turco, polaco y vietnamita, números y símbolos comunes (. , ! ? ¿ ¡ ( ) / % € …).</li><li>Texto impreso en capturas, documentos escaneados, tiques y carteles fotografiados de frente.</li><li>Japonés y chino (simplificado): elígelos en Idioma del texto. Solo se descarga el modelo del idioma elegido.</li></ul>
 <h2>Cómo obtener el mejor resultado</h2>
 <ol><li>Usa una captura o un escaneo si puedes; son mucho más nítidos que una foto.</li><li>En una foto, dispara de frente con buena luz y selecciona con el recuadro solo el texto.</li><li>El texto pequeño se amplía solo, pero por debajo de unos 12 píxeles de alto sigue habiendo errores.</li></ol>
 <h2>Cómo funciona</h2>
@@ -91,7 +95,7 @@
   </section>
 </main>
 
-<script src="/image-to-text/i18n.js?v=ce3e533d"></script>
+<script src="/image-to-text/i18n.js?v=79b471b3"></script>
 <script>window.PAGE_LANG="es";</script>
 <script src="/assets/site.js?v=d2f6b2d2"></script>
 <script>
@@ -167,7 +171,7 @@
       const k=base.width/ov.width, r=box?{x:Math.round(box.x*k),y:Math.round(box.y*k),w:Math.round(box.w*k),h:Math.round(box.h*k)}:{x:0,y:0,w:base.width,h:base.height};
       const c=canvas(r.w,r.h), x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,r.w,r.h); x.drawImage(base,r.x,r.y,r.w,r.h,0,0,r.w,r.h);
       const rgba=x.getImageData(0,0,r.w,r.h).data;
-      const text=await new Promise((resolve,reject)=>{ waiting={resolve,reject}; getWorker().postMessage({rgba,w:r.w,h:r.h},[rgba.buffer]); });
+      const text=await new Promise((resolve,reject)=>{ waiting={resolve,reject}; getWorker().postMessage({rgba,w:r.w,h:r.h,lang:$('script').value},[rgba.buffer]); });
       $('out').value=text; $('out').hidden=false; $('outBtns').hidden=false; $('status').hidden=true;
       $('msg').textContent=text.trim()?'':t('empty');
     }catch(e){ alertMsg(t(e.message==='eModel'?'eModel':'eGeneric')); }
@@ -179,7 +183,8 @@
   });
   $('saveTxt').addEventListener('click',()=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([$('out').value],{type:'text/plain;charset=utf-8'})); a.download=fname+'.txt'; document.body.append(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),60000); });
 
-  Site.onChange(l=>{ lang=l; applyLang(); });
+  let scriptTouched=false; $('script').addEventListener('change',()=>{ scriptTouched=true; });
+  Site.onChange(l=>{ lang=l; applyLang(); if(!scriptTouched) $('script').value=(l==='ja'||l==='zh')?l:''; });
 })();
 </script>
 </body>

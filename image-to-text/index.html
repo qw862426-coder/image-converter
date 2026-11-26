@@ -61,6 +61,10 @@
     <div class="stagebox"><canvas id="view"></canvas><canvas id="ov"></canvas></div>
     <p class="hint" data-i18n="areaHint">To read only part of the image, drag a box over it. Otherwise the whole image is read.</p>
     <div class="row">
+      <label class="hint" for="script" data-i18n="scriptLabel">Text language</label>
+      <select id="script"><option value="" data-i18n="scrKo">Korean, English, European languages</option><option value="ja">日本語</option><option value="zh">中文(简体)</option></select>
+    </div>
+    <div class="row">
       <button class="btn" id="go" type="button" data-i18n="go">Read text</button>
       <button class="btn ghost small" id="whole" type="button" data-i18n="whole">Whole image</button>
       <button class="btn ghost small" id="other" type="button" data-i18n="other">Other image</button>
@@ -76,25 +80,25 @@
 
   <section class="notes">
     <h2 data-i18n="noteTitle">Good to know</h2>
-    <ul><li data-i18n="note1">Reads printed Korean (Hangul), English and accented Latin letters (German, French, Spanish, Portuguese, Italian, Turkish, Polish, Vietnamese), numbers and common symbols. Clear screenshots and scans work best; handwriting, Chinese characters and Japanese are not supported yet.</li><li data-i18n="note2">Always check the result before using it. Small or blurry text, decorative fonts and photos taken at an angle cause more mistakes.</li><li data-i18n="note3">Your image never leaves your device. This text reader was built by PicShifter and runs entirely in your browser.</li></ul>
+    <ul><li data-i18n="note1">Reads printed Korean, English and accented Latin letters (German, French, Spanish, Portuguese, Italian, Turkish, Polish, Vietnamese), numbers and symbols. For Japanese or Chinese (simplified), choose it under Text language. Clear screenshots and scans work best; handwriting is not supported yet.</li><li data-i18n="note2">Always check the result before using it. Small or blurry text, decorative fonts and photos taken at an angle cause more mistakes.</li><li data-i18n="note3">Your image never leaves your device. This text reader was built by PicShifter and runs entirely in your browser.</li></ul>
   </section>
   <section class="doc landing">
     <article>
 <h2>What it reads</h2>
-<ul><li>Korean: all 2,350 common Hangul syllables (the KS X 1001 set) and single consonants and vowels such as ㅋㅋ.</li><li>English letters plus accented letters used in German, French, Spanish, Portuguese, Italian, Turkish, Polish and Vietnamese (é, ü, ñ, ç, ß, ế…), numbers and common symbols: . , ! ? ( ) / % ₩ € and more.</li><li>Printed text in screenshots, scanned documents, receipts and signs photographed straight on.</li></ul>
+<ul><li>Korean: all 2,350 common Hangul syllables (the KS X 1001 set) and single consonants and vowels such as ㅋㅋ.</li><li>English letters plus accented letters used in German, French, Spanish, Portuguese, Italian, Turkish, Polish and Vietnamese (é, ü, ñ, ç, ß, ế…), numbers and common symbols: . , ! ? ( ) / % ₩ € and more.</li><li>Printed text in screenshots, scanned documents, receipts and signs photographed straight on.</li><li>Japanese and Chinese (simplified): choose them under Text language to read Japanese (2,965 common kanji plus hiragana and katakana) or Chinese (3,755 common characters). Only the model for the chosen language is downloaded.</li></ul>
 <h2>How to get the best result</h2>
 <ol><li>Use a screenshot or a scan if you can. They are much sharper than photos.</li><li>For a photo, shoot straight on in good light, then crop with the box so only the text is read.</li><li>Very small text is enlarged automatically, but text under about 12 pixels tall still causes mistakes.</li></ol>
 <h2>How it works</h2>
 <p>This text reader was built by PicShifter. It finds the dark marks on the image, groups them into lines, tries different ways to split each line into letters, and compares each letter shape with a model and a small neural network trained on many Korean and Latin fonts. The best-fitting combination becomes the text. Nothing is sent to a server.</p>
 <h2>Frequently asked questions</h2>
-<h3>Can it read handwriting or Chinese characters?</h3><p>Not yet. It is designed for printed Korean and English.</p>
+<h3>Can it read handwriting or Chinese characters?</h3><p>Handwriting not yet. For Chinese characters, choose Japanese or Chinese (simplified) under Text language; it reads the common characters. Chinese characters mixed into Korean text are not read yet.</p>
 <h3>Is it as accurate as paid OCR apps?</h3><p>On clear screenshots it gets most characters right, but large commercial OCR systems are still more accurate on difficult photos. Always check the text before you use it.</p>
 <h2>More free tools</h2><ul class="related"><li><a href="/heic-to-jpg/">HEIC to JPG</a></li><li><a href="/png-to-jpg/">PNG to JPG</a></li><li><a href="/jpg-to-png/">JPG to PNG</a></li><li><a href="/webp-to-jpg/">WebP to JPG</a></li><li><a href="/jpg-to-pdf/">JPG to PDF</a></li><li><a href="/pdf-to-jpg/">PDF to JPG</a></li><li><a href="/compress-image/">Compress images</a></li><li><a href="/png-to-ico/">PNG to ICO</a></li><li><a href="/word-to-pdf/">Word to PDF</a></li><li><a href="/excel-to-pdf/">Excel to PDF</a></li><li><a href="/ppt-to-pdf/">PowerPoint to PDF</a></li><li><a href="/hwp-to-pdf/">HWP to PDF</a></li><li><a href="/scan/">Photo to scan</a></li><li><a href="/remove-background/">Remove background</a></li><li><a href="/photo-editor/">Photo editor</a></li><li><a href="/remove-object/">Remove objects from photos</a></li><li><a href="/id-photo/">Passport &amp; ID photo maker</a></li><li><a href="/merge-pdf/">Merge PDF</a></li><li><a href="/split-pdf/">Split PDF</a></li><li><a href="/guide/">How to use</a></li></ul>
     </article>
   </section>
 </main>
 
-<script src="/image-to-text/i18n.js?v=ce3e533d"></script>
+<script src="/image-to-text/i18n.js?v=79b471b3"></script>
 <script>window.PAGE_LANG="en";</script>
 <script src="/assets/site.js?v=d2f6b2d2"></script>
 <script>
@@ -170,7 +174,7 @@
       const k=base.width/ov.width, r=box?{x:Math.round(box.x*k),y:Math.round(box.y*k),w:Math.round(box.w*k),h:Math.round(box.h*k)}:{x:0,y:0,w:base.width,h:base.height};
       const c=canvas(r.w,r.h), x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,r.w,r.h); x.drawImage(base,r.x,r.y,r.w,r.h,0,0,r.w,r.h);
       const rgba=x.getImageData(0,0,r.w,r.h).data;
-      const text=await new Promise((resolve,reject)=>{ waiting={resolve,reject}; getWorker().postMessage({rgba,w:r.w,h:r.h},[rgba.buffer]); });
+      const text=await new Promise((resolve,reject)=>{ waiting={resolve,reject}; getWorker().postMessage({rgba,w:r.w,h:r.h,lang:$('script').value},[rgba.buffer]); });
       $('out').value=text; $('out').hidden=false; $('outBtns').hidden=false; $('status').hidden=true;
       $('msg').textContent=text.trim()?'':t('empty');
     }catch(e){ alertMsg(t(e.message==='eModel'?'eModel':'eGeneric')); }
@@ -182,7 +186,8 @@
   });
   $('saveTxt').addEventListener('click',()=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([$('out').value],{type:'text/plain;charset=utf-8'})); a.download=fname+'.txt'; document.body.append(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),60000); });
 
-  Site.onChange(l=>{ lang=l; applyLang(); });
+  let scriptTouched=false; $('script').addEventListener('change',()=>{ scriptTouched=true; });
+  Site.onChange(l=>{ lang=l; applyLang(); if(!scriptTouched) $('script').value=(l==='ja'||l==='zh')?l:''; });
 })();
 </script>
 </body>

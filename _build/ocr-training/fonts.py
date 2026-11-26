@@ -20,10 +20,25 @@ LAT_TRAIN=[(D+'dejavu/DejaVuSans.ttf',0),(D+'dejavu/DejaVuSans-Bold.ttf',0),(D+'
 KR_HOLD=[(F+'/x_wanted/ttf/WantedSans-%s.ttf'%w,0) for w in ['Regular','Bold']]
 LAT_HOLD=[(TG+'texgyreadventor-regular.otf',0),(TG+'texgyreadventor-bold.otf',0)]
 _cov={}
+def _pil_cover(path,idx):
+    # fallback when the font's character table cannot be parsed: a missing character draws the same box as U+E000
+    from PIL import ImageFont
+    from chars import charset as kc
+    import cjk
+    f=ImageFont.truetype(path,32,index=idx); nd=f.getmask(chr(0xE000)); ndb=(nd.size,bytes(nd))
+    cand=set(sum(kc(),[]))|set(cjk.charset('ja'))|set(cjk.charset('zh'))
+    out=set()
+    for ch in cand:
+        m=f.getmask(ch)
+        if m.size[0]>0 and (m.size,bytes(m))!=ndb: out.add(ord(ch))
+    return out
 def covers(path,idx):
     k=(path,idx)
     if k not in _cov:
-        f=TTFont(path,fontNumber=idx,lazy=True); _cov[k]=set(f.getBestCmap().keys()); f.close()
+        try:
+            f=TTFont(path,fontNumber=idx); _cov[k]=set(f.getBestCmap().keys()); f.close()
+        except Exception:
+            _cov[k]=_pil_cover(path,idx)
     return _cov[k]
 def has(path,idx,ch): return ord(ch) in covers(path,idx)
 if __name__=='__main__':

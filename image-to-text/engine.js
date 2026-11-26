@@ -15,7 +15,7 @@ function load(buf, meta) {
   var q = new Int8Array(buf.slice(o, o + C * D)); o += C * D;
   var P = new Float32Array(C * D), PP = new Float32Array(C);
   for (var c = 0; c < C; c++) { var s = 0; for (var d = 0; d < D; d++) { var v = q[c * D + d] * sc[d]; P[c * D + d] = v; s += v * v; } PP[c] = s; }
-  M = { dim: dim, D: D, C: C, mu: mu, W: W, P: P, PP: PP, chars: Array.from(meta.chars), med: meta.medDist, lang: meta.lang || '', gamma: meta.gamma };
+  M = { dim: dim, D: D, C: C, mu: mu, W: W, P: P, PP: PP, chars: Array.from(meta.chars), med: meta.medDist, lang: meta.lang || '', gamma: meta.gamma, netT: meta.netT };
   M.skip = M.chars.map(function (ch) { return '■●▲★'.indexOf(ch) >= 0; });
   /* which numbers are Korean letters (syllables or single jamo) and which are Latin letters */
   M.isKo = M.chars.map(function (ch) { var u = ch.charCodeAt(0); return (u >= 0xAC00 && u <= 0xD7A3) || (u >= 0x3131 && u <= 0x318E) || (u >= 0x3041 && u <= 0x30FF) || (u >= 0x4E00 && u <= 0x9FFF); });
@@ -350,7 +350,7 @@ function readLine(line, lab, w) {
     segs = runDP();
   }
   /* score of every character for each chosen piece (log-probability): the network and the prototypes together */
-  var BETA = (root.PicOCR && root.PicOCR.beta != null) ? root.PicOCR.beta : 2, med2 = M.med * M.med, NETT = (root.PicOCR && root.PicOCR.netT) || 3;
+  var BETA = (root.PicOCR && root.PicOCR.beta != null) ? root.PicOCR.beta : 2, med2 = M.med * M.med, NETT = (root.PicOCR && root.PicOCR.netT) || M.netT || 3;
   function scores(sg) {
     if (sg.lp) return sg.lp;
     var d2 = ldaAll(sg.f), t = N ? netClassify(normalize(sg.ink, sg.gw, sg.gh), sg.geo) : null, lp = new Float32Array(M.C), mx = -1e30, c;
@@ -394,6 +394,30 @@ function readLine(line, lab, w) {
     });
     var at = 0; for (var q = 1; q < prevV.length; q++) if (prevV[q] > prevV[at]) at = q;
     for (var k2 = segs.length - 1; k2 >= 0; k2--) { segs[k2].c = back[k2].c[at]; at = back[k2].b[at]; }
+  }
+  /* Japanese/Chinese: a lone Latin letter or half-width mark between their own characters is usually a misread
+     character (。 read as o); take the best Japanese/Chinese character instead when it is nearly as likely */
+  if ((M.lang === 'ja' || M.lang === 'zh') && (N || L)) {
+    var DELTA = (root.PicOCR && root.PicOCR.cjkDelta != null) ? root.PicOCR.cjkDelta : 5;
+    segs.forEach(function (sg, k) {
+      if (M.isCJK[sg.c] || /[0-9]/.test(M.chars[sg.c])) return;
+      var pc = k ? M.isCJK[segs[k - 1].c] : true, nc = k + 1 < segs.length ? M.isCJK[segs[k + 1].c] : true;
+      if (!(pc && nc) || (!k && k + 1 >= segs.length)) return;
+      var lp = scores(sg), b = -1;
+      for (var c = 0; c < M.C; c++) if (M.isCJK[c] && (b < 0 || lp[c] > lp[b])) b = c;
+      if (b >= 0 && lp[sg.c] - lp[b] < DELTA) sg.c = b;
+    });
+  }
+  /* Japanese/Chinese: punctuation next to their own characters is the full-width form (，：（ instead of , : ( ) */
+  if ((M.lang === 'ja' || M.lang === 'zh') && segs.length) {
+    var FW = { ',': '，', ':': '：', ';': '；', '(': '（', ')': '）', '!': '！', '?': '？' };
+    if (!M.fwIdx) { M.fwIdx = {}; for (var hk in FW) { var fi = M.chars.indexOf(FW[hk]); if (fi >= 0) M.fwIdx[hk] = fi; } }
+    segs.forEach(function (sg, k) {
+      var ch = M.chars[sg.c], fi = M.fwIdx[ch];
+      if (fi == null) return;
+      var near = (k && M.isCJK[segs[k - 1].c]) || (k + 1 < segs.length && M.isCJK[segs[k + 1].c]);
+      if (near) sg.c = fi;
+    });
   }
   var out = '';
   if (root.PicOCR && root.PicOCR.onSeg) segs.forEach(function (sg) { root.PicOCR.onSeg(sg, M.chars[sg.c], SCALE); });
