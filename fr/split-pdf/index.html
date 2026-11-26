@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="canonical" href="https://picshifter.pages.dev/fr/split-pdf/">
+<link rel="alternate" hreflang="en" href="https://picshifter.pages.dev/split-pdf/">
+<link rel="alternate" hreflang="ko" href="https://picshifter.pages.dev/ko/split-pdf/">
+<link rel="alternate" hreflang="ja" href="https://picshifter.pages.dev/ja/split-pdf/">
+<link rel="alternate" hreflang="zh-Hans" href="https://picshifter.pages.dev/zh/split-pdf/">
+<link rel="alternate" hreflang="es" href="https://picshifter.pages.dev/es/split-pdf/">
+<link rel="alternate" hreflang="pt" href="https://picshifter.pages.dev/pt/split-pdf/">
+<link rel="alternate" hreflang="fr" href="https://picshifter.pages.dev/fr/split-pdf/">
+<link rel="alternate" hreflang="de" href="https://picshifter.pages.dev/de/split-pdf/">
+<link rel="alternate" hreflang="x-default" href="https://picshifter.pages.dev/split-pdf/">
+<title>Diviser un PDF – Extraire ou supprimer des pages | PicShifter</title>
+<meta id="metaDesc" name="description" content="Gardez les pages utiles, supprimez des pages ou séparez chaque page en PDF. Gratuit, dans le navigateur, sans envoi.">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="PicShifter">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:url" content="https://picshifter.pages.dev/fr/split-pdf/">
+<meta property="og:title" content="Diviser un PDF – Extraire ou supprimer des pages | PicShifter">
+<meta property="og:description" content="Gardez les pages utiles, supprimez des pages ou séparez chaque page en PDF. Gratuit, dans le navigateur, sans envoi.">
+<meta name="twitter:card" content="summary">
+<link rel="stylesheet" href="/assets/base.css?v=d7c952cd">
+<style>
+.small{padding:8px 12px;font-size:.9rem}
+.hint{font-size:.85rem;color:var(--muted);margin:0}
+.mini{border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:6px;width:34px;height:34px;cursor:pointer;font:inherit}
+.mini:disabled{opacity:.35;cursor:default}
+.pages{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;margin:0;padding:0;list-style:none}
+.pages li button{width:100%;border:2px solid var(--line);border-radius:8px;background:var(--panel);padding:4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--fg);font:inherit;font-size:.8rem}
+.pages li button[aria-pressed="true"]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--panel))}
+.pages canvas{width:100%;height:auto;background:#fff;display:block;border-radius:4px}
+.pages .ph{width:100%;aspect-ratio:3/4;background:var(--bg);border-radius:4px}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:8px;overflow:hidden;max-width:100%}
+.seg button{border:0;background:transparent;color:var(--fg);font:inherit;font-size:.88rem;padding:8px 12px;cursor:pointer;text-align:left}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg);font-weight:500}
+.txt{font:inherit;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0;flex:1 1 180px}
+.notes{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 20px}
+.notes h2{margin:0 0 8px;font-size:1rem}
+.notes ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:.9rem}
+.switch{font-size:.9rem}
+</style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6213198663836411"
+     crossorigin="anonymous"></script>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <div>
+      <h1 id="h1" data-i18n="h1">Diviser un PDF</h1>
+      <p id="sub" data-i18n="sub">Gardez seulement les pages utiles, supprimez des pages ou enregistrez chaque page en PDF. Tout se passe sur votre appareil.</p>
+      <p class="switch"><a id="switch" href="/fr/split-pdf/" data-i18n="switch">Besoin de fusionner des PDF ? →</a></p>
+    </div>
+  </header>
+
+  <!-- merge -->
+  <section class="panel" id="merge" hidden>
+    <div class="drop" id="mdrop" tabindex="0" role="button" aria-label="Choisir des fichiers PDF" data-i18n-aria="mDropAria">
+      <strong data-i18n="mDropTitle">Cliquez pour choisir des PDF, ou glissez-les ici</strong>
+      <span data-i18n="mDropSub">PDF, et aussi images JPG et PNG en tant que pages · plusieurs à la fois</span>
+    </div>
+    <input type="file" id="mfile" multiple hidden accept=".pdf,application/pdf,image/jpeg,image/png">
+    <ul class="list" id="mlist"></ul>
+    <p class="empty" id="mempty" data-i18n="mEmpty">Aucun fichier pour l’instant.</p>
+    <div class="row"><button class="btn" id="mgo" type="button" data-i18n="mGo" disabled>Fusionner en un seul PDF</button><span class="hint" id="mtotal"></span></div>
+    <p class="hint" id="mmsg" aria-live="polite"></p>
+  </section>
+
+  <!-- split -->
+  <section class="panel" id="split" hidden>
+    <div class="drop" id="sdrop" tabindex="0" role="button" aria-label="Choisir un PDF" data-i18n-aria="sDropAria">
+      <strong data-i18n="sDropTitle">Cliquez pour choisir un PDF, ou glissez-le ici</strong>
+      <span data-i18n="sDropSub">Gardez les pages utiles, supprimez des pages ou séparez chaque page</span>
+    </div>
+    <input type="file" id="sfile" hidden accept=".pdf,application/pdf">
+    <div id="sbody" hidden style="display:flex;flex-direction:column;gap:14px">
+      <p class="hint" id="sinfo"></p>
+      <div class="row"><span class="label" data-i18n="sMode">Action</span>
+        <div class="seg" id="smode">
+          <button type="button" data-v="extract" aria-pressed="true" data-i18n="sExtract">Garder les pages choisies</button>
+          <button type="button" data-v="remove" aria-pressed="false" data-i18n="sRemove">Supprimer les pages choisies</button>
+          <button type="button" data-v="each" aria-pressed="false" data-i18n="sEach">Chaque page dans son propre PDF</button>
+        </div>
+      </div>
+      <div class="row" id="rangeRow">
+        <input class="txt" id="range" type="text" inputmode="numeric" placeholder="1-3, 5, 8-10" aria-label="Numéros de page" data-i18n-aria="sRangeAria">
+        <button class="btn ghost small" id="sall" type="button" data-i18n="sAll">Tout sélectionner</button>
+        <button class="btn ghost small" id="snone" type="button" data-i18n="sNone">Effacer</button>
+      </div>
+      <p class="hint" id="shint" data-i18n="sHint">Touchez les pages pour les choisir, ou tapez des numéros comme 1-3, 5.</p>
+      <ul class="pages" id="pages"></ul>
+      <div class="row"><button class="btn" id="sgo" type="button" data-i18n="sGo">Enregistrer le PDF</button><button class="btn ghost small" id="sother" type="button" data-i18n="sOther">Autre PDF</button></div>
+    </div>
+    <p class="hint" id="smsg" aria-live="polite"></p>
+  </section>
+
+  <section class="notes">
+    <h2 data-i18n="noteTitle">Bon à savoir</h2>
+    <ul><li data-i18n="note1">Les pages sont copiées telles quelles, le texte reste sélectionnable.</li><li data-i18n="note2">« Chaque page dans son propre PDF » produit un fichier ZIP contenant toutes les pages.</li><li data-i18n="note3">Votre fichier ne quitte jamais votre appareil.</li></ul>
+  </section>
+  <section class="doc landing">
+    <article>
+<h2>Quand diviser un PDF</h2>
+<ul><li>N’envoyer que les pages utiles d’un long rapport ou contrat.</li><li>Retirer pages blanches, couvertures ou pages contenant des infos personnelles avant de partager.</li><li>Séparer une pile scannée en un fichier par document ou par page.</li></ul>
+<h2>Comment diviser un PDF</h2>
+<ol><li>Choisissez votre PDF ; un aperçu de chaque page s’affiche.</li><li>Touchez les pages voulues ou tapez des numéros comme <b>1-3, 5, 8-</b> (8- signifie « de la 8 à la fin »).</li><li>Choisissez <b>Garder</b>, <b>Supprimer</b> ou <b>Chaque page dans son propre PDF</b>.</li><li>Appuyez sur <b>Enregistrer le PDF</b>.</li></ol>
+<h2>Questions fréquentes</h2>
+<h3>Le texte reste-t-il cherchable ?</h3><p>Oui. Les pages sont copiées telles quelles, pas transformées en images.</p>
+<h3>Qu’obtient-on avec « Chaque page dans son propre PDF » ?</h3><p>Un fichier ZIP contenant un PDF par page, numérotés dans l’ordre.</p>
+<h2>Autres outils gratuits</h2><ul class="related"><li><a href="/fr/heic-to-jpg/">HEIC en JPG</a></li><li><a href="/fr/png-to-jpg/">PNG en JPG</a></li><li><a href="/fr/jpg-to-png/">JPG en PNG</a></li><li><a href="/fr/webp-to-jpg/">WebP en JPG</a></li><li><a href="/fr/jpg-to-pdf/">JPG en PDF</a></li><li><a href="/fr/pdf-to-jpg/">PDF en JPG</a></li><li><a href="/fr/compress-image/">Compresser des images</a></li><li><a href="/fr/png-to-ico/">PNG en ICO</a></li><li><a href="/fr/word-to-pdf/">Word en PDF</a></li><li><a href="/fr/excel-to-pdf/">Excel en PDF</a></li><li><a href="/fr/ppt-to-pdf/">PowerPoint en PDF</a></li><li><a href="/fr/hwp-to-pdf/">HWP en PDF</a></li><li><a href="/fr/scan/">Photo en scan</a></li><li><a href="/fr/remove-background/">Supprimer l’arrière-plan</a></li><li><a href="/fr/photo-editor/">Éditeur photo</a></li><li><a href="/fr/remove-object/">Supprimer des objets d’une photo</a></li><li><a href="/fr/id-photo/">Photo d’identité et de passeport</a></li><li><a href="/fr/merge-pdf/">Fusionner des PDF</a></li><li><a href="/fr/guide/">Mode d’emploi</a></li></ul>
+    </article>
+  </section>
+</main>
+
+<script>window.PDF_MODE="split";</script>
+<script src="/pdf-tools/i18n.js?v=e0bba3f7"></script>
+<script>window.PAGE_LANG="fr";</script>
+<script src="/assets/site.js?v=8f0b104a"></script>
+<script>
+(function(){
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const MODE = window.PDF_MODE || 'merge';
+  const TABLE = MODE==='merge' ? PDFM_I18N : PDFS_I18N;
+  let lang='en';
+  function t(k,v){ let s=(TABLE[lang]&&TABLE[lang][k])||TABLE.en[k]||k; if(v) s=s.replace(/\{(\w+)\}/g,(m,x)=>x in v?v[x]:m); return s; }
+  function applyLang(){
+    document.title=t('title'); $('metaDesc').setAttribute('content',t('desc'));
+    $('h1').textContent=t('h1'); $('sub').textContent=t('sub'); $('switch').textContent=t('switch');
+    document.querySelectorAll('[data-i18n]').forEach(e=>{ e.textContent=t(e.dataset.i18n); });
+    document.querySelectorAll('[data-i18n-aria]').forEach(e=>e.setAttribute('aria-label',t(e.dataset.i18nAria)));
+    if(MODE==='merge') renderList(); else showInfo();
+  }
+  $('switch').href=(lang==='en'?'':'/'+lang)+(MODE==='merge'?'/split-pdf/':'/merge-pdf/');
+  $(MODE).hidden=false;
+
+  /* ---------- libraries (loaded on first use) ---------- */
+  const loaded={};
+  function script(src){ if(!loaded[src]) loaded[src]=new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=()=>{ delete loaded[src]; rej(new Error('eLib')); }; document.head.append(s); }); return loaded[src]; }
+  const pdfLib=()=>script('/vendor/pdf-lib.min.js').then(()=>window.PDFLib);
+  async function pdfjs(){ await script('/vendor/pdfjs/pdf.js'); pdfjsLib.GlobalWorkerOptions.workerSrc='/vendor/pdfjs/pdf.worker.js'; return pdfjsLib; }
+  const zip=()=>script('/vendor/jszip3.min.js').then(()=>window.JSZip);
+  function download(blob,name){ const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.append(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),60000); }
+  const isPdf=f=>/\.pdf$/i.test(f.name)||f.type==='application/pdf';
+  const isImg=f=>/^image\/(jpeg|png)$/.test(f.type)||/\.(jpe?g|png)$/i.test(f.name);
+  function wireDrop(drop,input,fn){
+    drop.addEventListener('click',()=>input.click());
+    drop.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); input.click(); } });
+    ['dragenter','dragover'].forEach(n=>drop.addEventListener(n,e=>{ e.preventDefault(); drop.classList.add('over'); }));
+    ['dragleave','drop'].forEach(n=>drop.addEventListener(n,e=>{ e.preventDefault(); drop.classList.remove('over'); }));
+    drop.addEventListener('drop',e=>fn([...e.dataTransfer.files]));
+    input.addEventListener('change',()=>{ const f=[...input.files]; input.value=''; fn(f); });
+  }
+  async function loadPdf(L,bytes){
+    try{ return await L.PDFDocument.load(bytes,{updateMetadata:false}); }
+    catch(e){ if(/encrypt/i.test(e&&e.message)) throw new Error('eLocked'); throw new Error('eBad'); }
+  }
+
+  /* ================= merge ================= */
+  let items=[], seq=0;
+  async function addMerge(files){
+    const L=await pdfLib();
+    for(const f of files){
+      const it={id:++seq,file:f,name:f.name,pages:null,err:null,kind:isPdf(f)?'pdf':isImg(f)?'img':null};
+      items.push(it); renderList();
+      if(!it.kind){ it.err='eType'; renderList(); continue; }
+      if(it.kind==='img'){ it.pages=1; renderList(); continue; }
+      try{ const d=await loadPdf(L,await f.arrayBuffer()); it.pages=d.getPageCount(); }catch(e){ it.err=e.message; }
+      renderList();
+    }
+  }
+  function renderList(){
+    if(MODE!=='merge') return;
+    const ul=$('mlist'); ul.innerHTML=''; $('mempty').hidden=items.length>0;
+    items.forEach((it,i)=>{
+      const li=document.createElement('li'); li.className='item';
+      const th=document.createElement('div'); th.className='thumb'; th.textContent=it.kind==='img'?'IMG':'PDF';
+      const meta=document.createElement('div'); meta.className='meta';
+      const nm=document.createElement('div'); nm.className='name'; nm.textContent=it.name;
+      const sz=document.createElement('div'); sz.className='size'+(it.err?' err':'');
+      sz.textContent=it.err?t(it.err):it.pages==null?t('reading'):t('pagesN',{n:it.pages});
+      meta.append(nm,sz);
+      const acts=document.createElement('div'); acts.className='acts';
+      const mk=(txt,aria,fn,dis)=>{ const b=document.createElement('button'); b.className='mini'; b.type='button'; b.textContent=txt; b.setAttribute('aria-label',t(aria)); b.disabled=!!dis; b.addEventListener('click',fn); return b; };
+      acts.append(
+        mk('↑','up',()=>{ items.splice(i-1,0,items.splice(i,1)[0]); renderList(); },i===0),
+        mk('↓','down',()=>{ items.splice(i+1,0,items.splice(i,1)[0]); renderList(); },i===items.length-1),
+        mk('×','remove',()=>{ items.splice(i,1); renderList(); }));
+      li.append(th,meta,acts); ul.append(li);
+    });
+    const ok=items.filter(x=>!x.err&&x.pages);
+    $('mgo').disabled=ok.length<1||items.some(x=>x.pages==null&&!x.err);
+    $('mtotal').textContent=ok.length?t('total',{files:ok.length,pages:ok.reduce((a,b)=>a+b.pages,0)}):'';
+  }
+  if(MODE==='merge'){
+    wireDrop($('mdrop'),$('mfile'),addMerge);
+    $('mgo').addEventListener('click',async()=>{
+      const ok=items.filter(x=>!x.err&&x.pages); if(!ok.length) return;
+      $('mgo').disabled=true; $('mmsg').textContent=t('working');
+      try{
+        const L=await pdfLib(), out=await L.PDFDocument.create();
+        for(const it of ok){
+          const bytes=await it.file.arrayBuffer();
+          if(it.kind==='pdf'){ const d=await loadPdf(L,bytes); const ps=await out.copyPages(d,d.getPageIndices()); ps.forEach(p=>out.addPage(p)); }
+          else { const img=/png$/i.test(it.file.type)||/\.png$/i.test(it.name)?await out.embedPng(bytes):await out.embedJpg(bytes); const w=img.width*0.75, h=img.height*0.75; const p=out.addPage([w,h]); p.drawImage(img,{x:0,y:0,width:w,height:h}); }
+        }
+        const data=await out.save();
+        download(new Blob([data],{type:'application/pdf'}),(ok[0].name.replace(/\.[^.]+$/,'')||'merged')+'_merged.pdf');
+        $('mmsg').textContent=t('doneMerge',{n:out.getPageCount()});
+      }catch(e){ $('mmsg').textContent=t(e.message&&TABLE.en[e.message]?e.message:'eGeneric'); }
+      renderList();
+    });
+  }
+
+  /* ================= split ================= */
+  let sfile=null, sbytes=null, count=0, sel=new Set(), smode='extract', renderToken=0;
+  function showInfo(){ if(MODE==='split'&&sfile) $('sinfo').textContent=t('sInfo',{name:sfile.name,n:count}); }
+  async function openSplit(files){
+    const f=files.find(isPdf); if(!f){ $('smsg').textContent=t('eType'); return; }
+    $('smsg').textContent=t('reading');
+    try{
+      const L=await pdfLib(); const bytes=new Uint8Array(await f.arrayBuffer()); const d=await loadPdf(L,bytes.slice());
+      sfile=f; sbytes=bytes; count=d.getPageCount(); sel=new Set();
+      $('sdrop').hidden=true; $('sbody').hidden=false; $('smsg').textContent=''; showInfo(); buildPages(); syncRange();
+    }catch(e){ $('smsg').textContent=t(e.message&&TABLE.en[e.message]?e.message:'eBad'); }
+  }
+  function buildPages(){
+    const ul=$('pages'); ul.innerHTML='';
+    for(let i=1;i<=count;i++){
+      const li=document.createElement('li'), b=document.createElement('button'); b.type='button'; b.dataset.p=i; b.setAttribute('aria-pressed','false');
+      const ph=document.createElement('div'); ph.className='ph'; const cap=document.createElement('span'); cap.textContent=i;
+      b.append(ph,cap); b.addEventListener('click',()=>{ sel.has(i)?sel.delete(i):sel.add(i); syncRange(); }); li.append(b); ul.append(li);
+    }
+    thumbs(++renderToken);
+  }
+  async function thumbs(token){
+    try{
+      const J=await pdfjs(); const base=['','vendor','pdfjs',''].join('/');
+      const doc=await J.getDocument({data:sbytes.slice(),cMapUrl:base+'cmaps/',cMapPacked:true,standardFontDataUrl:base+'standard_fonts/'}).promise;
+      for(let i=1;i<=Math.min(count,400);i++){
+        if(token!==renderToken) return;
+        const page=await doc.getPage(i), vp0=page.getViewport({scale:1}), vp=page.getViewport({scale:180/vp0.width});
+        const c=document.createElement('canvas'); c.width=Math.round(vp.width); c.height=Math.round(vp.height);
+        await page.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;
+        const b=document.querySelector('#pages button[data-p="'+i+'"]'); if(b) b.replaceChild(c,b.firstChild);
+      }
+    }catch(e){ /* thumbnails are optional */ }
+  }
+  function syncRange(){
+    document.querySelectorAll('#pages button').forEach(b=>b.setAttribute('aria-pressed',String(sel.has(+b.dataset.p))));
+    const a=[...sel].sort((x,y)=>x-y), parts=[]; for(let i=0;i<a.length;i++){ let j=i; while(j+1<a.length&&a[j+1]===a[j]+1) j++; parts.push(j>i?a[i]+'-'+a[j]:''+a[i]); i=j; }
+    if(document.activeElement!==$('range')) $('range').value=parts.join(', ');
+  }
+  function parseRange(s){
+    const out=new Set();
+    s.split(/[,\s]+/).filter(Boolean).forEach(p=>{ const m=p.match(/^(\d+)(?:-(\d*))?$/); if(!m) return; let a=+m[1], b=m[2]===undefined?a:(m[2]===''?count:+m[2]); if(a>b) [a,b]=[b,a]; for(let i=Math.max(1,a);i<=Math.min(count,b);i++) out.add(i); });
+    return out;
+  }
+  if(MODE==='split'){
+    wireDrop($('sdrop'),$('sfile'),openSplit);
+    $('sother').addEventListener('click',()=>$('sfile').click());
+    $('range').addEventListener('input',()=>{ sel=parseRange($('range').value); syncRange(); });
+    $('sall').addEventListener('click',()=>{ sel=new Set(Array.from({length:count},(_,i)=>i+1)); syncRange(); });
+    $('snone').addEventListener('click',()=>{ sel=new Set(); syncRange(); });
+    document.querySelectorAll('#smode button').forEach(b=>b.addEventListener('click',()=>{
+      document.querySelectorAll('#smode button').forEach(x=>x.setAttribute('aria-pressed',String(x===b))); smode=b.dataset.v;
+      const each=smode==='each'; $('rangeRow').hidden=each; $('shint').hidden=each; $('pages').hidden=each;
+    }));
+    $('sgo').addEventListener('click',async()=>{
+      if(!sbytes) return;
+      const base=sfile.name.replace(/\.[^.]+$/,'')||'document';
+      const pick=[...sel].sort((a,b)=>a-b);
+      if(smode!=='each'&&!pick.length){ $('smsg').textContent=t('sNoSel'); return; }
+      if(smode==='remove'&&pick.length===count){ $('smsg').textContent=t('sAllGone'); return; }
+      $('sgo').disabled=true; $('smsg').textContent=t('working');
+      try{
+        const L=await pdfLib(), src=await loadPdf(L,sbytes.slice());
+        async function make(idx){ const d=await L.PDFDocument.create(); const ps=await d.copyPages(src,idx); ps.forEach(p=>d.addPage(p)); return d.save(); }
+        if(smode==='each'){
+          const Z=new (await zip())(), w=String(count).length;
+          for(let i=0;i<count;i++){ Z.file(base+'_p'+String(i+1).padStart(w,'0')+'.pdf', await make([i])); }
+          download(await Z.generateAsync({type:'blob'}),base+'_pages.zip'); $('smsg').textContent=t('doneEach',{n:count});
+        } else {
+          const idx=smode==='extract'?pick.map(p=>p-1):Array.from({length:count},(_,i)=>i).filter(i=>!sel.has(i+1));
+          download(new Blob([await make(idx)],{type:'application/pdf'}),base+(smode==='extract'?'_pages':'_edited')+'.pdf');
+          $('smsg').textContent=t('doneSplit',{n:idx.length});
+        }
+      }catch(e){ $('smsg').textContent=t(e.message&&TABLE.en[e.message]?e.message:'eGeneric'); }
+      $('sgo').disabled=false;
+    });
+  }
+
+  Site.onChange(l=>{ lang=l; $('switch').href=(l==='en'?'':'/'+l)+(MODE==='merge'?'/split-pdf/':'/merge-pdf/'); applyLang(); });
+})();
+</script>
+</body>
+</html>
