@@ -7,13 +7,14 @@ en: {
   dropAria: 'Choose a photo', dropTitle: 'Click to choose a photo, or drag it here', dropSub: 'JPG, PNG, WebP, HEIC',
   undo: 'Undo', reset: 'Start over', other: 'Other photo', hold: 'Hold to see the original',
   brush: 'Brush', hint: 'Paint over everything you want to remove, including its shadow, then press Erase.',
+  detail: "Rebuild fine texture from the photo (sharper, takes a few seconds longer)", refine: "Rebuilding texture from your photo… {p}%",
   erase: 'Erase', clear: 'Clear painting', none: 'Paint over what you want to remove first.',
   dl: 'Downloading the AI model… {p}% (first time only, 27 MB)', prep: 'Preparing the AI model…', run: 'Filling in the background…',
   saveAs: 'Save as', save: 'Save',
   loading: 'Opening the photo…', eOpen: 'This file can’t be opened as a picture.', eModel: 'The AI model couldn’t be downloaded. Check your connection and try again.', eGeneric: 'Something went wrong. Try a smaller area or another photo.',
   noteTitle: 'Good to know',
   note1: 'The first erase downloads a 27 MB AI model. After that your browser keeps it, so it starts quickly. Use Wi-Fi if you can.',
-  note2: 'Small things (wires, litter, people in the distance, text, logos) disappear best. Large people in front of busy backgrounds may leave a smudge; erase them in two or three smaller passes.',
+  note2: "Small things disappear best. For people in front of busy backgrounds, keep “Rebuild fine texture” on: it refills the area with real patterns copied from your photo, so walls, grass and paving stay sharp.",
   note3: 'Your photo never leaves your device. The AI (MI-GAN by Picsart AI Research, MIT License) runs in your browser.'
 },
 ko: {
@@ -23,13 +24,14 @@ ko: {
   dropAria: '사진 선택', dropTitle: '여기를 눌러 사진을 고르거나 끌어다 놓으세요', dropSub: 'JPG, PNG, WebP, HEIC',
   undo: '되돌리기', reset: '처음으로', other: '다른 사진', hold: '누르고 있으면 원본 보기',
   brush: '붓 크기', hint: '지울 것을 그림자까지 모두 칠한 다음 지우기를 누르세요.',
+  detail: "사진 속 질감으로 다시 채우기 (더 선명해요, 몇 초 더 걸려요)", refine: "사진 속 질감으로 다듬는 중… {p}%",
   erase: '지우기', clear: '칠한 것 지우기', none: '먼저 지울 부분을 칠해 주세요.',
   dl: 'AI 모델 받는 중… {p}% (처음 한 번만, 27MB)', prep: 'AI 모델 준비 중…', run: '배경으로 채우는 중…',
   saveAs: '저장 형식', save: '저장',
   loading: '사진 여는 중…', eOpen: '이 파일을 그림으로 열 수 없어요.', eModel: 'AI 모델을 받지 못했어요. 인터넷 연결을 확인하고 다시 해 보세요.', eGeneric: '문제가 생겼어요. 더 작게 칠하거나 다른 사진으로 해 보세요.',
   noteTitle: '알아두세요',
   note1: '처음 지울 때 27MB짜리 AI 모델을 받아요. 그다음부터는 브라우저에 저장돼서 빨리 시작해요. 가능하면 와이파이에서 쓰세요.',
-  note2: '전선, 쓰레기, 멀리 있는 사람, 글자, 로고처럼 작은 것이 가장 깔끔하게 지워져요. 복잡한 배경 앞의 큰 사람은 번진 자국이 남을 수 있어요. 두세 번에 나눠서 지우면 더 나아요.',
+  note2: "작은 것일수록 가장 깔끔하게 지워져요. 복잡한 배경 앞의 사람을 지울 때는 \"사진 속 질감으로 다시 채우기\"를 켜 두세요. 사진에 있는 실제 무늬를 가져와 채워서 벽, 잔디, 바닥이 흐려지지 않아요.",
   note3: '사진은 내 기기 밖으로 나가지 않아요. AI(Picsart AI Research의 MI-GAN, MIT 라이선스)가 브라우저 안에서 작동해요.'
 },
 ja: {
@@ -39,13 +41,14 @@ ja: {
   dropAria: '写真を選ぶ', dropTitle: 'ここをクリックして写真を選ぶか、ドラッグしてください', dropSub: 'JPG、PNG、WebP、HEIC',
   undo: '元に戻す', reset: '最初から', other: '別の写真', hold: '押している間は元の写真を表示',
   brush: 'ブラシ', hint: '消したい物を影まで含めてなぞり、「消す」を押してください。',
+  detail: "写真の質感で埋め直す(よりくっきり・数秒長くかかります)", refine: "写真の質感で仕上げています… {p}%",
   erase: '消す', clear: 'なぞった跡を消す', none: '先に消したい部分をなぞってください。',
   dl: 'AIモデルをダウンロード中… {p}%(初回のみ・27MB)', prep: 'AIモデルを準備中…', run: '背景で埋めています…',
   saveAs: '保存形式', save: '保存',
   loading: '写真を開いています…', eOpen: 'このファイルは画像として開けません。', eModel: 'AIモデルをダウンロードできませんでした。接続を確認してもう一度お試しください。', eGeneric: '問題が発生しました。範囲を小さくするか、別の写真でお試しください。',
   noteTitle: '知っておきたいこと',
   note1: '初めて消すときに27MBのAIモデルをダウンロードします。その後はブラウザに保存されるのですぐに始まります。できればWi-Fiでお使いください。',
-  note2: '電線、ゴミ、遠くの人、文字、ロゴなど小さな物ほどきれいに消えます。複雑な背景の前の大きな人物は跡が残ることがあります。2〜3回に分けて消すと改善します。',
+  note2: "小さな物ほどきれいに消えます。複雑な背景の前の人物を消すときは「写真の質感で埋め直す」をオンにしてください。写真の実際の模様で埋めるので、壁や芝生、床がぼやけません。",
   note3: '写真が端末の外に送られることはありません。AI(Picsart AI ResearchのMI-GAN、MITライセンス)はブラウザ内で動きます。'
 },
 zh: {
@@ -55,13 +58,14 @@ zh: {
   dropAria: '选择照片', dropTitle: '点击选择照片,或拖到这里', dropSub: 'JPG、PNG、WebP、HEIC',
   undo: '撤销', reset: '重新开始', other: '换一张', hold: '按住查看原图',
   brush: '画笔', hint: '把要去掉的东西连同影子一起涂满,然后点击“消除”。',
+  detail: "用照片中的纹理重建细节(更清晰,多花几秒)", refine: "正在用照片纹理细化… {p}%",
   erase: '消除', clear: '清除涂抹', none: '请先涂抹要去掉的部分。',
   dl: '正在下载 AI 模型… {p}%(仅首次,27 MB)', prep: '正在准备 AI 模型…', run: '正在用背景填补…',
   saveAs: '保存格式', save: '保存',
   loading: '正在打开照片…', eOpen: '无法将此文件作为图片打开。', eModel: '无法下载 AI 模型,请检查网络后重试。', eGeneric: '出了点问题,请缩小涂抹范围或换一张照片。',
   noteTitle: '须知',
   note1: '第一次消除时会下载 27 MB 的 AI 模型,之后浏览器会保存它,下次启动更快。建议使用 Wi-Fi。',
-  note2: '电线、垃圾、远处的人、文字和标志等小东西去除效果最好。复杂背景前的大个人物可能留下痕迹,分两三次去除效果更好。',
+  note2: "越小的东西去除得越干净。去除复杂背景前的人物时,请保持“用照片中的纹理重建细节”开启:它会用照片里真实的纹理填补,墙面、草地和地面不会变模糊。",
   note3: '照片不会离开你的设备。AI(Picsart AI Research 的 MI-GAN,MIT 许可)在浏览器中运行。'
 },
 es: {
@@ -71,13 +75,14 @@ es: {
   dropAria: 'Elegir una foto', dropTitle: 'Haz clic para elegir una foto o arrástrala aquí', dropSub: 'JPG, PNG, WebP, HEIC',
   undo: 'Deshacer', reset: 'Empezar de nuevo', other: 'Otra foto', hold: 'Mantén pulsado para ver el original',
   brush: 'Pincel', hint: 'Pinta todo lo que quieras quitar, incluida su sombra, y pulsa Borrar.',
+  detail: "Reconstruir la textura con la propia foto (más nítido, tarda unos segundos más)", refine: "Reconstruyendo la textura con tu foto… {p}%",
   erase: 'Borrar', clear: 'Borrar lo pintado', none: 'Primero pinta lo que quieres quitar.',
   dl: 'Descargando el modelo de IA… {p}% (solo la primera vez, 27 MB)', prep: 'Preparando el modelo de IA…', run: 'Rellenando el fondo…',
   saveAs: 'Guardar como', save: 'Guardar',
   loading: 'Abriendo la foto…', eOpen: 'Este archivo no se puede abrir como imagen.', eModel: 'No se pudo descargar el modelo de IA. Revisa la conexión e inténtalo de nuevo.', eGeneric: 'Algo salió mal. Prueba con una zona más pequeña u otra foto.',
   noteTitle: 'Conviene saber',
   note1: 'La primera vez se descarga un modelo de IA de 27 MB. Después el navegador lo guarda y empieza enseguida. Usa wifi si puedes.',
-  note2: 'Las cosas pequeñas (cables, basura, gente a lo lejos, textos, logotipos) se borran mejor. Personas grandes delante de fondos complejos pueden dejar una mancha; bórralas en dos o tres pasadas.',
+  note2: "Las cosas pequeñas se borran mejor. Para personas delante de fondos complejos, deja activado «Reconstruir la textura»: rellena con patrones reales copiados de tu foto, así paredes, césped y suelos quedan nítidos.",
   note3: 'Tu foto nunca sale de tu dispositivo. La IA (MI-GAN de Picsart AI Research, licencia MIT) funciona en el navegador.'
 },
 pt: {
@@ -87,13 +92,14 @@ pt: {
   dropAria: 'Escolher uma foto', dropTitle: 'Clique para escolher uma foto ou arraste-a para cá', dropSub: 'JPG, PNG, WebP, HEIC',
   undo: 'Desfazer', reset: 'Recomeçar', other: 'Outra foto', hold: 'Segure para ver o original',
   brush: 'Pincel', hint: 'Pinte tudo o que quer remover, inclusive a sombra, e toque em Apagar.',
+  detail: "Reconstruir a textura com a própria foto (mais nítido, leva alguns segundos a mais)", refine: "Reconstruindo a textura com sua foto… {p}%",
   erase: 'Apagar', clear: 'Limpar pintura', none: 'Primeiro pinte o que quer remover.',
   dl: 'Baixando o modelo de IA… {p}% (só na primeira vez, 27 MB)', prep: 'Preparando o modelo de IA…', run: 'Preenchendo o fundo…',
   saveAs: 'Salvar como', save: 'Salvar',
   loading: 'Abrindo a foto…', eOpen: 'Este arquivo não pode ser aberto como imagem.', eModel: 'Não foi possível baixar o modelo de IA. Verifique a conexão e tente de novo.', eGeneric: 'Algo deu errado. Tente uma área menor ou outra foto.',
   noteTitle: 'Bom saber',
   note1: 'Na primeira vez é baixado um modelo de IA de 27 MB. Depois o navegador o guarda e tudo começa rápido. Use Wi-Fi se puder.',
-  note2: 'Coisas pequenas (fios, lixo, pessoas ao longe, textos, logos) somem melhor. Pessoas grandes na frente de fundos complexos podem deixar uma mancha; apague em duas ou três etapas.',
+  note2: "Coisas pequenas somem melhor. Para pessoas na frente de fundos complexos, mantenha “Reconstruir a textura” ligado: ele preenche com padrões reais copiados da sua foto, e paredes, grama e pisos ficam nítidos.",
   note3: 'Sua foto nunca sai do seu dispositivo. A IA (MI-GAN da Picsart AI Research, licença MIT) roda no navegador.'
 },
 fr: {
@@ -103,13 +109,14 @@ fr: {
   dropAria: 'Choisir une photo', dropTitle: 'Cliquez pour choisir une photo, ou glissez-la ici', dropSub: 'JPG, PNG, WebP, HEIC',
   undo: 'Annuler', reset: 'Recommencer', other: 'Autre photo', hold: 'Maintenir pour voir l’original',
   brush: 'Pinceau', hint: 'Peignez tout ce qu’il faut retirer, ombre comprise, puis appuyez sur Effacer.',
+  detail: "Recréer la texture à partir de la photo (plus net, quelques secondes de plus)", refine: "Reconstruction de la texture à partir de votre photo… {p} %",
   erase: 'Effacer', clear: 'Effacer le tracé', none: 'Peignez d’abord ce qu’il faut retirer.',
   dl: 'Téléchargement du modèle d’IA… {p} % (la première fois seulement, 27 Mo)', prep: 'Préparation du modèle d’IA…', run: 'Remplissage du décor…',
   saveAs: 'Enregistrer en', save: 'Enregistrer',
   loading: 'Ouverture de la photo…', eOpen: 'Ce fichier ne peut pas être ouvert comme image.', eModel: 'Le modèle d’IA n’a pas pu être téléchargé. Vérifiez votre connexion et réessayez.', eGeneric: 'Un problème est survenu. Essayez une zone plus petite ou une autre photo.',
   noteTitle: 'Bon à savoir',
   note1: 'Le premier effacement télécharge un modèle d’IA de 27 Mo. Ensuite, le navigateur le garde et tout démarre vite. Utilisez le Wi-Fi si possible.',
-  note2: 'Les petits éléments (câbles, déchets, passants au loin, textes, logos) disparaissent le mieux. Une grande personne devant un décor chargé peut laisser une trace ; effacez-la en deux ou trois fois.',
+  note2: "Les petits éléments disparaissent le mieux. Pour une personne devant un décor chargé, gardez « Recréer la texture » activé : la zone est remplie avec de vrais motifs copiés de votre photo, murs, herbe et pavés restent nets.",
   note3: 'Votre photo ne quitte jamais votre appareil. L’IA (MI-GAN de Picsart AI Research, licence MIT) fonctionne dans le navigateur.'
 },
 de: {
@@ -119,13 +126,14 @@ de: {
   dropAria: 'Foto auswählen', dropTitle: 'Klicke, um ein Foto zu wählen, oder ziehe es hierher', dropSub: 'JPG, PNG, WebP, HEIC',
   undo: 'Rückgängig', reset: 'Neu beginnen', other: 'Anderes Foto', hold: 'Gedrückt halten für das Original',
   brush: 'Pinsel', hint: 'Male alles, was weg soll, samt Schatten an und tippe dann auf Entfernen.',
+  detail: "Feine Struktur aus dem Foto nachbilden (schärfer, dauert ein paar Sekunden länger)", refine: "Struktur wird aus deinem Foto nachgebildet… {p} %",
   erase: 'Entfernen', clear: 'Bemalung löschen', none: 'Male zuerst über das, was entfernt werden soll.',
   dl: 'KI-Modell wird geladen… {p} % (nur beim ersten Mal, 27 MB)', prep: 'KI-Modell wird vorbereitet…', run: 'Hintergrund wird aufgefüllt…',
   saveAs: 'Speichern als', save: 'Speichern',
   loading: 'Foto wird geöffnet…', eOpen: 'Diese Datei lässt sich nicht als Bild öffnen.', eModel: 'Das KI-Modell konnte nicht geladen werden. Prüfe die Verbindung und versuch es erneut.', eGeneric: 'Etwas ist schiefgelaufen. Versuch einen kleineren Bereich oder ein anderes Foto.',
   noteTitle: 'Gut zu wissen',
   note1: 'Beim ersten Entfernen wird ein 27 MB großes KI-Modell geladen. Danach behält der Browser es, und es startet schnell. Nutze möglichst WLAN.',
-  note2: 'Kleine Dinge (Kabel, Müll, Menschen in der Ferne, Text, Logos) verschwinden am besten. Große Personen vor unruhigem Hintergrund können Spuren hinterlassen; entferne sie in zwei, drei Schritten.',
+  note2: "Kleine Dinge verschwinden am besten. Bei Personen vor unruhigem Hintergrund lass „Feine Struktur nachbilden“ an: Die Stelle wird mit echten Mustern aus deinem Foto gefüllt, sodass Wände, Rasen und Pflaster scharf bleiben.",
   note3: 'Dein Foto verlässt nie dein Gerät. Die KI (MI-GAN von Picsart AI Research, MIT-Lizenz) läuft im Browser.'
 }
 };

@@ -1,5 +1,5 @@
 /* Object-removal worker: downloads the MI-GAN model once (kept in the Cache API), then fills painted areas. */
-importScripts('/vendor/ort/ort-wasm.js', '/vendor/ort/mini-ort.js');
+importScripts('/vendor/ort/ort-wasm.js', '/vendor/ort/mini-ort.js', '/remove-object/patchfill.js');
 
 var MDIR = ['', 'models', ''].join('/'); /* built in pieces: not a page for search robots */
 var MODEL = { parts: [MDIR + 'migan.onnx.part0', MDIR + 'migan.onnx.part1'], size: 26762424 };
@@ -49,6 +49,14 @@ function getSession() {
 /* rgba: 512*512*4 bytes of the area to fix; hole: 512*512 bytes, 1 = paint over. Returns rgba of the filled area. */
 onmessage = async function (e) {
   var msg = e.data;
+  if (msg.type === 'refine') {
+    try {
+      var last = 0;
+      var res = PatchFill.fill(msg.img, msg.w, msg.h, msg.hole, msg.init, { onProgress: function (p) { if (p - last > 0.05 || p === 1) { last = p; postMessage({ type: 'progress', stage: 'refine', value: p }); } } });
+      if (res) postMessage({ type: 'done', rgb: res }, [res.buffer]); else postMessage({ type: 'done', rgb: null });
+    } catch (err) { postMessage({ type: 'error', message: 'eGeneric' }); }
+    return;
+  }
   try {
     var s = await getSession();
     postMessage({ type: 'progress', stage: 'run', value: 0 });
