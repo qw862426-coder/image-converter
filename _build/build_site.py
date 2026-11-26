@@ -29,10 +29,10 @@ MORE = {'en': 'More free tools', 'ko': '다른 무료 도구', 'ja': 'ほかの�
         'pt': 'Mais ferramentas grátis', 'fr': 'Autres outils gratuits', 'de': 'Weitere kostenlose Tools'}
 
 I18N = json.loads(subprocess.check_output(['node', os.path.join(HERE, 'dump_i18n.js')]))
-TOOLS = [('/', 'image'), ('/document-to-pdf/', 'doc'), ('/scan/', 'scan'), ('/remove-background/', 'bg'), ('/photo-editor/', 'edit'), ('/remove-object/', 'erase')]
+TOOLS = [('/', 'image'), ('/document-to-pdf/', 'doc'), ('/scan/', 'scan'), ('/remove-background/', 'bg'), ('/photo-editor/', 'edit'), ('/remove-object/', 'erase'), ('/id-photo/', 'idphoto')]
 ARTICLES = ['guide', 'about', 'privacy', 'contact']
 ALL_PATHS = [p for p, _ in TOOLS] + ['/%s/' % p['slug'] for p in PAGES] + ['/%s/' % a for a in ARTICLES]
-LANDING_ORDER = [p['slug'] for p in PAGES] + ['scan', 'remove-background', 'photo-editor', 'remove-object']
+LANDING_ORDER = [p['slug'] for p in PAGES] + ['scan', 'remove-background', 'photo-editor', 'remove-object', 'id-photo']
 
 # Articles ("읽을거리"): English and Korean only. _build/posts/posts.json lists them with a publish date;
 # a post goes live only when the site is built on or after that date (Korea time).
@@ -152,6 +152,8 @@ def landing_name(lang, slug):
         return I18N['edit'][lang].get('h1') or I18N['edit']['en']['h1']
     if slug == 'remove-object':
         return I18N['erase'][lang].get('h1') or I18N['erase']['en']['h1']
+    if slug == 'id-photo':
+        return I18N['idphoto'][lang].get('h1') or I18N['idphoto']['en']['h1']
     p = next(p for p in PAGES if p['slug'] == slug)
     return p['meta'].get(lang, p['meta']['en'])['h1']
 
@@ -192,7 +194,7 @@ def write(lang, path, s):
 
 
 def build():
-    tpl = {k: read(os.path.join(HERE, 'templates', k + '.html')) for k in ['image', 'doc', 'scan', 'bg', 'edit', 'erase', 'article']}
+    tpl = {k: read(os.path.join(HERE, 'templates', k + '.html')) for k in ['image', 'doc', 'scan', 'bg', 'edit', 'erase', 'idphoto', 'article']}
     count = 0
     for lang in LANGS:
         for path, kind in TOOLS:

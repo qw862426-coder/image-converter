@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="canonical" href="https://picshifter.pages.dev/de/id-photo/">
+<link rel="alternate" hreflang="en" href="https://picshifter.pages.dev/id-photo/">
+<link rel="alternate" hreflang="ko" href="https://picshifter.pages.dev/ko/id-photo/">
+<link rel="alternate" hreflang="ja" href="https://picshifter.pages.dev/ja/id-photo/">
+<link rel="alternate" hreflang="zh-Hans" href="https://picshifter.pages.dev/zh/id-photo/">
+<link rel="alternate" hreflang="es" href="https://picshifter.pages.dev/es/id-photo/">
+<link rel="alternate" hreflang="pt" href="https://picshifter.pages.dev/pt/id-photo/">
+<link rel="alternate" hreflang="fr" href="https://picshifter.pages.dev/fr/id-photo/">
+<link rel="alternate" hreflang="de" href="https://picshifter.pages.dev/de/id-photo/">
+<link rel="alternate" hreflang="x-default" href="https://picshifter.pages.dev/id-photo/">
+<title>Passbild &amp; Ausweisfoto – auf Maß zuschneiden, 10×15 drucken | PicShifter</title>
+<meta id="metaDesc" name="description" content="Schneide ein Foto auf Pass- und Ausweisformate (35×45 mm, 2×2 Zoll u. a.) zu und erstelle einen 10×15-Druckbogen. Kostenlos.">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="PicShifter">
+<meta property="og:locale" content="de_DE">
+<meta property="og:url" content="https://picshifter.pages.dev/de/id-photo/">
+<meta property="og:title" content="Passbild &amp; Ausweisfoto – auf Maß zuschneiden, 10×15 drucken | PicShifter">
+<meta property="og:description" content="Schneide ein Foto auf Pass- und Ausweisformate (35×45 mm, 2×2 Zoll u. a.) zu und erstelle einen 10×15-Druckbogen. Kostenlos.">
+<meta name="twitter:card" content="summary">
+<link rel="stylesheet" href="/assets/base.css?v=d7c952cd">
+<style>
+.ed{display:flex;flex-direction:column;gap:14px}
+.stagebox{position:relative;align-self:center;max-width:100%;line-height:0;touch-action:none;user-select:none;-webkit-user-select:none;border-radius:6px;overflow:hidden;background:var(--bg)}
+#view{display:block;max-width:100%;max-height:60vh;width:auto;height:auto}
+#ov{position:absolute;inset:0;width:100%;height:100%;cursor:move}
+.sl{display:grid;grid-template-columns:minmax(64px,auto) 1fr 44px;gap:10px;align-items:center}
+.sl input{min-width:0}
+.sl output{font-variant-numeric:tabular-nums;text-align:right;font-size:.85rem;color:var(--muted)}
+.hint{font-size:.85rem;color:var(--muted);margin:0}
+.spec{font-size:.88rem;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:0}
+.prevs{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end}
+.prevs figure{margin:0;display:flex;flex-direction:column;gap:4px;align-items:center;font-size:.8rem;color:var(--muted)}
+.prevs canvas{border:1px solid var(--line);background:#fff;max-width:100%;height:auto}
+#one{width:120px}
+#sheet{width:240px}
+.notes{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 20px}
+.notes h2{margin:0 0 8px;font-size:1rem}
+.notes ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:.9rem}
+.small{padding:8px 12px;font-size:.9rem}
+</style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6213198663836411"
+     crossorigin="anonymous"></script>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <div>
+      <h1 data-i18n="h1">Passbild &amp; Ausweisfoto erstellen</h1>
+      <p data-i18n="sub">Schneide dein Foto aufs richtige Maß zu und speichere es einzeln oder als 10×15-Druckbogen. Alles passiert auf deinem Gerät.</p>
+    </div>
+  </header>
+
+  <section class="panel">
+    <div class="row"><span class="label" data-i18n="size">Format</span><select id="preset" class="grow"></select></div>
+    <p class="spec" id="spec"></p>
+    <div class="drop" id="drop" tabindex="0" role="button" aria-label="Foto auswählen" data-i18n-aria="dropAria">
+      <strong data-i18n="dropTitle">Klicke, um ein Foto zu wählen, oder ziehe es hierher</strong>
+      <span data-i18n="dropSub">Am besten ein Foto von vorne vor einfarbigem Hintergrund</span>
+    </div>
+    <input type="file" id="file" hidden accept="image/*,.heic,.heif">
+  </section>
+
+  <section class="panel ed" id="ed" hidden>
+    <div class="stagebox"><canvas id="view"></canvas><canvas id="ov"></canvas></div>
+    <p class="hint" data-i18n="hint">Zieh den Rahmen, um ihn zu verschieben, und ändere die Größe mit dem Regler. Richte Scheitel und Kinn an den gelben Streifen aus.</p>
+    <label class="sl"><span data-i18n="zoom">Rahmengröße</span><input type="range" min="10" max="100" value="60" id="zoom"><output id="zoomOut">60</output></label>
+    <div class="row"><button class="btn ghost small" id="other" type="button" data-i18n="other">Anderes Foto</button></div>
+    <div class="prevs">
+      <figure><canvas id="one"></canvas><figcaption id="oneCap"></figcaption></figure>
+      <figure><canvas id="sheet"></canvas><figcaption id="sheetCap"></figcaption></figure>
+    </div>
+    <div class="row">
+      <button class="btn" id="saveOne" type="button" data-i18n="saveOne">Foto speichern</button>
+      <button class="btn ghost" id="saveSheet" type="button" data-i18n="saveSheet">10×15-Druckbogen speichern</button>
+    </div>
+    <p class="hint" id="msg" aria-live="polite"></p>
+  </section>
+
+  <section class="notes">
+    <h2 data-i18n="noteTitle">Gut zu wissen</h2>
+    <ul><li data-i18n="note1">Die Regeln unterscheiden sich je nach Land und Dokument und können sich ändern. Prüfe vor dem Einreichen immer die offiziellen Vorgaben. Viele Behörden nehmen keine Fotos mit bearbeitetem Hintergrund oder Gesicht an.</li><li data-i18n="note2">Der Bogen kommt in exakter Größe heraus, wenn du ihn auf 10×15-cm-Fotopapier mit 100 % druckst. Schalte „an Seite anpassen“ beim Drucken aus.</li><li data-i18n="note3">Dein Foto verlässt nie dein Gerät.</li></ul>
+  </section>
+  <section class="doc landing">
+    <article>
+<h2>Gängige Formate</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>Verwendung</th><th>Format</th><th>Pixel bei 300 dpi</th></tr></thead>
+<tbody>
+<tr><td>Deutschland, Großbritannien, Japan, großer Teil Europas</td><td>35×45 mm</td><td>413×531</td></tr>
+<tr><td>US-Reisepass und Visum</td><td>2×2 Zoll (51×51 mm)</td><td>600×600</td></tr>
+<tr><td>Chinesischer Reisepass und Visum</td><td>33×48 mm</td><td>390×567</td></tr>
+<tr><td>Kanadischer Reisepass</td><td>50×70 mm</td><td>591×827</td></tr>
+</tbody></table></div>
+<h2>So erstellst du dein Foto</h2>
+<ol><li>Wähle das Format deines Dokuments.</li><li>Nimm ein Foto von vorne, auf Augenhöhe, vor hellem, einfarbigem Hintergrund.</li><li>Verschiebe und skaliere den Rahmen, bis Scheitel und Kinn in den gelben Streifen liegen (nur bei Formaten mit veröffentlichter Vorgabe).</li><li>Speichere das Einzelfoto für Online-Anträge oder den 10×15-Bogen zum Drucken.</li></ol>
+<h2>Tipps für ein Foto, das angenommen wird</h2>
+<ul><li>Stell dich 1–1,5 m vor die Kamera und lass jemanden mit der Rückkamera fotografieren. Selfies verzerren das Gesicht.</li><li>Beleuchte das Gesicht gleichmäßig von vorne, ohne Schatten im Gesicht oder dahinter.</li><li>Neutraler Ausdruck, Augen offen, Mund geschlossen, Haare aus den Augen.</li></ul>
+<h2>Häufige Fragen</h2>
+<h3>Kann ich hier einen weißen Hintergrund machen?</h3><p>Der <a href="/de/remove-background/">Hintergrund-Entferner</a> kann das, aber viele Behörden nehmen keine Fotos mit bearbeitetem Hintergrund an. Sicherer ist ein Foto vor einer weißen Wand.</p>
+<h3>Warum hat das gedruckte Foto die falsche Größe?</h3><p>Drucke den Bogen mit 100 % und schalte „an Seite anpassen“ aus.</p>
+<h2>Weitere kostenlose Tools</h2><ul class="related"><li><a href="/de/heic-to-jpg/">HEIC zu JPG</a></li><li><a href="/de/png-to-jpg/">PNG zu JPG</a></li><li><a href="/de/jpg-to-png/">JPG zu PNG</a></li><li><a href="/de/webp-to-jpg/">WebP zu JPG</a></li><li><a href="/de/jpg-to-pdf/">JPG zu PDF</a></li><li><a href="/de/pdf-to-jpg/">PDF zu JPG</a></li><li><a href="/de/compress-image/">Bilder komprimieren</a></li><li><a href="/de/png-to-ico/">PNG zu ICO</a></li><li><a href="/de/word-to-pdf/">Word zu PDF</a></li><li><a href="/de/excel-to-pdf/">Excel zu PDF</a></li><li><a href="/de/ppt-to-pdf/">PowerPoint zu PDF</a></li><li><a href="/de/hwp-to-pdf/">HWP zu PDF</a></li><li><a href="/de/scan/">Foto zu Scan</a></li><li><a href="/de/remove-background/">Hintergrund entfernen</a></li><li><a href="/de/photo-editor/">Foto-Editor</a></li><li><a href="/de/remove-object/">Objekte aus Fotos entfernen</a></li><li><a href="/de/guide/">Anleitung</a></li></ul>
+    </article>
+  </section>
+</main>
+
+<script src="/id-photo/i18n.js?v=954d83cb"></script>
+<script>window.PAGE_LANG="de";</script>
+<script src="/assets/site.js?v=4efff1ed"></script>
+<script>
+(function(){
+  'use strict';
+  const $ = id => document.getElementById(id);
+  /* w,h in mm; head = [min,max] crown-to-chin in mm where an official rule is published */
+  const PRESETS=[
+    {id:'kr', w:35, h:45, head:[32,36]},
+    {id:'krHalf', w:30, h:40},
+    {id:'krCard', w:50, h:70},
+    {id:'us', w:50.8, h:50.8, head:[25,35]},
+    {id:'s3545', w:35, h:45},
+    {id:'cn', w:33, h:48},
+    {id:'ca', w:50, h:70}
+  ];
+  const DPI=300, MAX_SRC=4000, PREV=1000, SHEET=[1800,1200];
+  const view=$('view'), ov=$('ov'), vctx=view.getContext('2d'), octx=ov.getContext('2d');
+  let lang='en', P=PRESETS[0], base=null, prev=null, box=null, drag=null, fname='photo';
+
+  function t(k,v){ let s=(ID_I18N[lang]&&ID_I18N[lang][k])||ID_I18N.en[k]||k; if(v) s=s.replace(/\{(\w+)\}/g,(m,x)=>x in v?v[x]:m); return s; }
+  function px(mm){ return Math.round(mm/25.4*DPI); }
+  function applyLang(){
+    document.title=t('title'); $('metaDesc').setAttribute('content',t('desc'));
+    document.querySelectorAll('[data-i18n]').forEach(e=>{ e.textContent=t(e.dataset.i18n); });
+    document.querySelectorAll('[data-i18n-aria]').forEach(e=>e.setAttribute('aria-label',t(e.dataset.i18nAria)));
+    const sel=$('preset'), cur=P.id; sel.innerHTML='';
+    PRESETS.forEach(p=>{ const o=document.createElement('option'); o.value=p.id; o.textContent=t('p_'+p.id); sel.append(o); }); sel.value=cur;
+    showSpec(); render();
+  }
+  function showSpec(){
+    let s=t('specSize',{w:P.w,h:P.h,pw:px(P.w),ph:px(P.h)});
+    if(P.head) s+=' '+t('specHead',{a:P.head[0],b:P.head[1]});
+    $('spec').textContent=s;
+  }
+  $('preset').addEventListener('change',()=>{ P=PRESETS.find(p=>p.id===$('preset').value)||PRESETS[0]; showSpec(); if(base){ fitBox(); render(); } });
+
+  /* ---------- open ---------- */
+  function canvas(w,h){ const c=document.createElement('canvas'); c.width=Math.max(1,Math.round(w)); c.height=Math.max(1,Math.round(h)); return c; }
+  function scaled(src,max){ const k=Math.min(1,max/Math.max(src.width,src.height)); const c=canvas(src.width*k,src.height*k); const x=c.getContext('2d'); x.imageSmoothingQuality='high'; x.drawImage(src,0,0,c.width,c.height); return c; }
+  let heicLoad=null;
+  function loadHeic(){ if(!heicLoad) heicLoad=new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='/vendor/heic2any.min.js'; s.onload=res; s.onerror=()=>{ heicLoad=null; rej(new Error('eOpen')); }; document.head.append(s); }); return heicLoad; }
+  async function decode(blob){
+    if(window.createImageBitmap){ try{ const b=await createImageBitmap(blob,{imageOrientation:'from-image'}); const c=scaled(b,MAX_SRC); b.close&&b.close(); return c; }catch(e){} }
+    const url=URL.createObjectURL(blob);
+    try{ const im=await new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=()=>rej(new Error('eOpen')); i.src=url; }); return scaled(im,MAX_SRC); }
+    finally{ URL.revokeObjectURL(url); }
+  }
+  async function open(f){
+    if(!f) return; $('msg').textContent=t('loading');
+    try{
+      let c;
+      if(/\.(heic|heif)$/i.test(f.name)||/hei[cf]/i.test(f.type)){ try{ c=await decode(f); }catch(e){ await loadHeic(); const r=await window.heic2any({blob:f,toType:'image/jpeg',quality:0.95}); c=await decode(Array.isArray(r)?r[0]:r); } }
+      else c=await decode(f);
+      fname=(f.name||'photo').replace(/\.[^.]+$/,'')||'photo';
+      base=c; prev=scaled(c,PREV); view.width=ov.width=prev.width; view.height=ov.height=prev.height; vctx.drawImage(prev,0,0);
+      $('ed').hidden=false; $('msg').textContent=''; fitBox(); render();
+    }catch(e){ $('msg').textContent=t('eOpen'); }
+  }
+  const drop=$('drop'), file=$('file');
+  drop.addEventListener('click',()=>file.click());
+  drop.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); file.click(); } });
+  ['dragenter','dragover'].forEach(n=>drop.addEventListener(n,e=>{ e.preventDefault(); drop.classList.add('over'); }));
+  ['dragleave','drop'].forEach(n=>drop.addEventListener(n,e=>{ e.preventDefault(); drop.classList.remove('over'); }));
+  drop.addEventListener('drop',e=>open(e.dataTransfer.files[0]));
+  file.addEventListener('change',()=>{ const f=file.files[0]; file.value=''; open(f); });
+  $('other').addEventListener('click',()=>file.click());
+
+  /* ---------- frame ---------- */
+  function fitBox(){
+    const W=ov.width, H=ov.height, r=P.w/P.h, z=+$('zoom').value/100;
+    let h=H*z, w=h*r; if(w>W){ w=W; h=w/r; }
+    const cx=box?box.x+box.w/2:W/2, cy=box?box.y+box.h/2:H*0.45;
+    box={w,h,x:clamp(cx-w/2,0,W-w),y:clamp(cy-h/2,0,H-h)};
+  }
+  function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
+  $('zoom').addEventListener('input',()=>{ $('zoomOut').textContent=$('zoom').value; if(base){ fitBox(); render(); } });
+  function pt(e){ const r=ov.getBoundingClientRect(); return {x:(e.clientX-r.left)*ov.width/r.width, y:(e.clientY-r.top)*ov.height/r.height}; }
+  ov.addEventListener('pointerdown',e=>{ if(!box) return; ov.setPointerCapture(e.pointerId); const p=pt(e); drag={sx:p.x,sy:p.y,bx:box.x,by:box.y}; });
+  ov.addEventListener('pointermove',e=>{ if(!drag) return; const p=pt(e); box.x=clamp(drag.bx+p.x-drag.sx,0,ov.width-box.w); box.y=clamp(drag.by+p.y-drag.sy,0,ov.height-box.h); drawOverlay(); });
+  ['pointerup','pointercancel'].forEach(n=>ov.addEventListener(n,()=>{ if(drag){ drag=null; render(); } }));
+  ov.addEventListener('wheel',e=>{ if(!box) return; e.preventDefault(); const z=$('zoom'); z.value=clamp(+z.value+(e.deltaY<0?2:-2),10,100); $('zoomOut').textContent=z.value; fitBox(); render(); },{passive:false});
+
+  function guides(ctx,x,y,w,h,scale){
+    // dashed head guide: crown and chin band, oval and centre line
+    ctx.save(); ctx.lineWidth=Math.max(1,scale); ctx.setLineDash([6*scale,4*scale]); ctx.strokeStyle='rgba(255,255,255,.9)';
+    ctx.beginPath(); ctx.moveTo(x+w/2,y); ctx.lineTo(x+w/2,y+h); ctx.stroke();
+    if(P.head){
+      const mm=h/P.h, hd=(P.head[0]+P.head[1])/2, top=y+((P.h-P.head[1])/2)*mm, crown=top, chin=crown+hd*mm;
+      ctx.strokeStyle='rgba(255,214,10,.95)';
+      ctx.beginPath(); ctx.ellipse(x+w/2,(crown+chin)/2,hd*mm*0.36,hd*mm/2,0,0,Math.PI*2); ctx.stroke();
+      ctx.setLineDash([]); ctx.globalAlpha=.25; ctx.fillStyle='#ffd60a';
+      ctx.fillRect(x,y+((P.h-P.head[1])/2)*mm,w,(P.head[1]-P.head[0])/2*mm);
+      ctx.fillRect(x,y+((P.h-P.head[1])/2+P.head[0]+(P.head[1]-P.head[0])/2)*mm,w,(P.head[1]-P.head[0])/2*mm);
+    }
+    ctx.restore();
+  }
+  function drawOverlay(){
+    octx.clearRect(0,0,ov.width,ov.height); if(!box) return;
+    octx.fillStyle='rgba(0,0,0,.55)'; octx.fillRect(0,0,ov.width,ov.height); octx.clearRect(box.x,box.y,box.w,box.h);
+    octx.strokeStyle='#fff'; octx.lineWidth=2; octx.strokeRect(box.x+1,box.y+1,box.w-2,box.h-2);
+    guides(octx,box.x,box.y,box.w,box.h,1);
+  }
+  function single(){
+    const W=px(P.w), H=px(P.h), k=base.width/ov.width, c=canvas(W,H), x=c.getContext('2d');
+    x.fillStyle='#fff'; x.fillRect(0,0,W,H); x.imageSmoothingQuality='high';
+    x.drawImage(base,box.x*k,box.y*k,box.w*k,box.h*k,0,0,W,H); return c;
+  }
+  function sheet(one){
+    const [SW,SH]=SHEET, c=canvas(SW,SH), x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,SW,SH);
+    const w=one.width, h=one.height;
+    const fit=g=>Math.max(Math.floor((SW+g)/(w+g))*Math.floor((SH+g)/(h+g)), Math.floor((SH+g)/(w+g))*Math.floor((SW+g)/(h+g)));
+    const gap=[px(2),px(1),0].reduce((best,g)=>fit(g)>fit(best)?g:best, px(2));
+    let cols=Math.floor((SW+gap)/(w+gap)), rows=Math.floor((SH+gap)/(h+gap)), land=true;
+    const cols2=Math.floor((SH+gap)/(w+gap)), rows2=Math.floor((SW+gap)/(h+gap));
+    if(cols2*rows2>cols*rows){ land=false; }
+    const cw=land?SW:SH, ch=land?SH:SW, nc=land?cols:cols2, nr=land?rows:rows2;
+    const out=land?c:canvas(SH,SW), ox=out.getContext('2d'); if(!land){ ox.fillStyle='#fff'; ox.fillRect(0,0,SH,SW); }
+    const offX=Math.round((cw-(nc*w+(nc-1)*gap))/2), offY=Math.round((ch-(nr*h+(nr-1)*gap))/2);
+    ox.strokeStyle='#bbb'; ox.lineWidth=1;
+    for(let r=0;r<nr;r++) for(let q=0;q<nc;q++){ const X=offX+q*(w+gap), Y=offY+r*(h+gap); ox.drawImage(one,X,Y); ox.strokeRect(X-.5,Y-.5,w+1,h+1); }
+    return {canvas:out,count:nc*nr};
+  }
+  function render(){
+    if(!base) return; drawOverlay();
+    const one=single(), sh=sheet(one);
+    const a=$('one'); a.width=one.width; a.height=one.height; a.getContext('2d').drawImage(one,0,0);
+    const b=$('sheet'); b.width=sh.canvas.width; b.height=sh.canvas.height; b.getContext('2d').drawImage(sh.canvas,0,0);
+    $('oneCap').textContent=t('oneCap',{w:one.width,h:one.height});
+    $('sheetCap').textContent=t('sheetCap',{n:sh.count});
+  }
+  function save(c,name){ c.toBlob(b=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=name; document.body.append(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),60000); },'image/jpeg',0.95); }
+  $('saveOne').addEventListener('click',()=>{ if(base) save(single(),fname+'_'+P.w+'x'+P.h+'mm.jpg'); });
+  $('saveSheet').addEventListener('click',()=>{ if(base) save(sheet(single()).canvas,fname+'_4x6_'+P.w+'x'+P.h+'mm.jpg'); });
+
+  Site.onChange(l=>{ lang=l; applyLang(); });
+})();
+</script>
+</body>
+</html>

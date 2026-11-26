@@ -46,6 +46,14 @@ https://picshifter.pages.dev/es/remove-object/
 https://picshifter.pages.dev/pt/remove-object/
 https://picshifter.pages.dev/fr/remove-object/
 https://picshifter.pages.dev/de/remove-object/
+https://picshifter.pages.dev/id-photo/
+https://picshifter.pages.dev/ko/id-photo/
+https://picshifter.pages.dev/ja/id-photo/
+https://picshifter.pages.dev/zh/id-photo/
+https://picshifter.pages.dev/es/id-photo/
+https://picshifter.pages.dev/pt/id-photo/
+https://picshifter.pages.dev/fr/id-photo/
+https://picshifter.pages.dev/de/id-photo/
 https://picshifter.pages.dev/heic-to-jpg/
 https://picshifter.pages.dev/ko/heic-to-jpg/
 https://picshifter.pages.dev/ja/heic-to-jpg/
