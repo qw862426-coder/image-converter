@@ -21,3 +21,22 @@ held-back samples) -> gen3.py pages + extract.js (pieces cut by the real reader)
 86.5%) -> export_cnn.py -> ocr-net.bin/.json (8-bit, 954 KB). engine.js uses it when those files exist
 (BETA=network/prototype mix). It reaches 2.5% on the rendered tests but 7.6-8.1% on the real screenshot:
 it only saw Noto/WQY fonts, so it needs more font variety before it goes live.
+
+--- 2026-11-27 (v2, deployed): accented Latin letters + more Korean typefaces + neural network on ---
+Characters: 2,721 = old 2,518 + 203 accented letters/symbols (German, French, Spanish, Portuguese, Italian,
+Turkish, Polish, Vietnamese; see chars.py latin_ext). New ones are appended, so old numbers keep their meaning.
+Fonts (fonts.py): Noto CJK, WQY, Pretendard, IBM Plex Sans KR, Spoqa Han Sans Neo, D2Coding (GitHub release
+downloads, all OFL) + Latin fonts (DejaVu, Free*, Carlito/Caladea, Inter, TeX Gyre). Kept out of training for
+honest tests: Wanted Sans (Korean) and TeX Gyre Adventor (Latin). fonts.has() skips characters a font lacks.
+Steps: gen_v2.py train|hold -> lda2.py (out2/ocr-model.bin, ocr-meta.json)
+       gen2b.py train2g 3 300000 ; gen3b.py tr 1800 200000 ; gen3b.py va 150 990000 ; extract.js (MD=out2)
+       cnn_v2.py cnn_ft.npz 4 cnn_v2a.npz 1e-3 -> export_cnn.py cnn_v2a.npz out2
+       corpus2.py all|held ; lm2.py all|held   (site text in ko/en/de/es/fr/pt)
+Engine: lines that are mostly Latin are read again without Korean letters, measured from baseline to tall-letter
+tops, and prefer splitting pieces (latLambda -2). Network scores are softened (netT 3) and mixed with the prototype
+distance (beta 2), then sentence context (gamma 0.4).
+Results (errors per 100 characters):            before v2   v2 (deployed)
+  8 rendered tests (Noto/WQY)                        3.0        1.8
+  unseen typefaces + European/Vietnamese (mktest2)  35.0       14.4
+  real screenshot (Apple font, HEIC article)         6.8        4.8
+Long screenshot in a browser: about 4.6 s (was about 2 s). Files: model 615 KB, network 1.0 MB, counts 67 KB.

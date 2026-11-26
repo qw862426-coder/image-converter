@@ -305,6 +305,7 @@ function readLine(line, lab, w) {
     if (N && NETDP) { var t = netClassify(normalize(ink, gw, gh), r.geo); r.nc = t.c; r.nll = t.nll; }
     cache[key] = r; return r;
   }
+  var LATLAMBDA = (root.PicOCR && root.PicOCR.latLambda != null) ? root.PicOCR.latLambda : -2;
   var LAMBDA = (root.PicOCR && root.PicOCR.lambda) || 0.4, CUT = (root.PicOCR && root.PicOCR.cut != null) ? root.PicOCR.cut : 0.6;
   function runDP() {
     var best = new Float64Array(n + 1).fill(1e30), from = new Int32Array(n + 1).fill(-1); best[0] = 0;
@@ -319,7 +320,7 @@ function readLine(line, lab, w) {
         if (okGap && i < j) for (k = i; k <= j; k++) { var pk = pieces[k]; if (!pk.sub && (pk.y1 - pk.y0) < 0.42 * H0 && (pk.x1 - pk.x0) < 0.3 * H0 && (pk.y0 > T0 + 0.55 * H0 || pk.y1 < T0 + 0.5 * H0)) { okGap = false; break; } }
         if (!okGap) break;
         if (best[i] >= 1e30) continue;
-        var r = seg(i, j), q = r.d / M.med, cost = best[i] + (r.nll != null ? NW * Math.min(r.nll, 6) : q * q) + LAMBDA + (pieces[i].cut ? CUT : 0) + (j + 1 < n && pieces[j + 1].cut ? CUT : 0);
+        var r = seg(i, j), q = r.d / M.med, cost = best[i] + (r.nll != null ? NW * Math.min(r.nll, 6) : q * q) + (NOKO ? LATLAMBDA : LAMBDA) + (pieces[i].cut ? CUT : 0) + (j + 1 < n && pieces[j + 1].cut ? CUT : 0);
         if (cost < best[j + 1]) { best[j + 1] = cost; from[j + 1] = i; }
       }
     }
@@ -345,11 +346,11 @@ function readLine(line, lab, w) {
     segs = runDP();
   }
   /* score of every character for each chosen piece (log-probability): the network and the prototypes together */
-  var BETA = (root.PicOCR && root.PicOCR.beta != null) ? root.PicOCR.beta : 4, med2 = M.med * M.med;
+  var BETA = (root.PicOCR && root.PicOCR.beta != null) ? root.PicOCR.beta : 2, med2 = M.med * M.med, NETT = (root.PicOCR && root.PicOCR.netT) || 3;
   function scores(sg) {
     if (sg.lp) return sg.lp;
     var d2 = ldaAll(sg.f), t = N ? netClassify(normalize(sg.ink, sg.gw, sg.gh), sg.geo) : null, lp = new Float32Array(M.C), mx = -1e30, c;
-    for (c = 0; c < M.C; c++) { lp[c] = (M.skip[c] || (sg.noKo && M.isKo[c])) ? -1e9 : (t ? t.s[c] - BETA * d2[c] / med2 : -ldaT() * d2[c] / med2); if (lp[c] > mx) mx = lp[c]; }
+    for (c = 0; c < M.C; c++) { lp[c] = (M.skip[c] || (sg.noKo && M.isKo[c])) ? -1e9 : (t ? t.s[c] / NETT - BETA * d2[c] / med2 : -ldaT() * d2[c] / med2); if (lp[c] > mx) mx = lp[c]; }
     var sum = 0; for (c = 0; c < M.C; c++) sum += Math.exp(lp[c] - mx);
     var z = mx + Math.log(sum); for (c = 0; c < M.C; c++) lp[c] -= z;
     sg.lp = lp; return lp;

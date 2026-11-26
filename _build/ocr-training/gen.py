@@ -30,7 +30,9 @@ def boxes(font,text,size):
         if len(ys): out.append((ys.min(),ys.max()+1))
     return out
 def ref(font,size,which):
-    b=boxes(font,REFS[which],size); hs=[y1-y0 for y0,y1 in b]; mh=max(hs)
+    b=boxes(font,REFS[which],size)
+    if not b: b=boxes(font,REFS[1],size)  # font without Hangul: use the Latin reference
+    hs=[y1-y0 for y0,y1 in b]; mh=max(hs)
     tall=[(y0,y1) for (y0,y1) in b if y1-y0>=0.55*mh]
     T0=float(np.median([t for t,_ in tall])); B0=float(np.median([b_ for _,b_ in tall])); return T0,B0-T0
 def sample(args):

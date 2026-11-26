@@ -1,6 +1,6 @@
 // Cut generated pages with the real reader and label each cut piece from the recorded character boxes.
 const fs=require('fs'); const E=require('/home/claude/image-converter/image-to-text/engine.js');
-const meta=JSON.parse(fs.readFileSync('out/ocr-meta.json')); const mb=fs.readFileSync('out/ocr-model.bin'); E.load(mb.buffer.slice(mb.byteOffset,mb.byteOffset+mb.length),meta);
+const meta=JSON.parse(fs.readFileSync((process.env.MD||'out')+'/ocr-meta.json')); const mb=fs.readFileSync((process.env.MD||'out')+'/ocr-model.bin'); E.load(mb.buffer.slice(mb.byteOffset,mb.byteOffset+mb.length),meta);
 const M=E._M();
 let tot=0,lab=0,ldaOk=0,missed=0; const Xs=[],Gs=[],Ys=[];
 for(const pre of process.argv.slice(3)){

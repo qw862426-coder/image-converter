@@ -11,7 +11,7 @@ for k,b in names:
     fl+=[sc.astype(np.float32),p[b].astype(np.float32)]; qs.append(q)
     deq[k]=(q.astype(np.float32)*sc).astype(np.float32); deq[b]=p[b]
 buf=b''.join(a.tobytes() for a in fl)+b''.join(q.tobytes() for q in qs)
-open('out/ocr-net.bin','wb').write(buf); json.dump({'layers':layers},open('out/ocr-net.json','w'))
+open((sys.argv[2] if len(sys.argv)>2 else 'out')+'/ocr-net.bin','wb').write(buf); json.dump({'layers':layers},open((sys.argv[2] if len(sys.argv)>2 else 'out')+'/ocr-net.json','w'))
 print('bytes',len(buf))
 va=np.load('val.npz'); Xv=va['X'][:20000].astype(np.float32)/255; Gv=va['G'][:20000]; Yv=va['Y'][:20000]
 for tag,P in (('float',p),('int8',deq)):
