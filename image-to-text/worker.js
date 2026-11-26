@@ -4,8 +4,16 @@ var ready = null;
 function init() {
   if (!ready) ready = Promise.all([
     fetch('/image-to-text/ocr-model.bin').then(function (r) { if (!r.ok) throw new Error('eModel'); return r.arrayBuffer(); }),
-    fetch('/image-to-text/ocr-meta.json').then(function (r) { if (!r.ok) throw new Error('eModel'); return r.json(); })
-  ]).then(function (a) { PicOCR.load(a[0], a[1]); });
+    fetch('/image-to-text/ocr-meta.json').then(function (r) { if (!r.ok) throw new Error('eModel'); return r.json(); }),
+    /* neural network + character counts: optional extras; reading still works without them */
+    fetch('/image-to-text/ocr-net.bin').then(function (r) { return r.ok ? r.arrayBuffer() : null; }).catch(function () { return null; }),
+    fetch('/image-to-text/ocr-net.json').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
+    fetch('/image-to-text/ocr-lm.json').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
+  ]).then(function (a) {
+    PicOCR.load(a[0], a[1]);
+    if (a[2] && a[3]) PicOCR.loadNet(a[2], a[3]);
+    if (a[4]) PicOCR.loadLM(a[4]);
+  });
   ready.catch(function () { ready = null; });
   return ready;
 }
