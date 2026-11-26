@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="canonical" href="https://picshifter.pages.dev/ja/photo-editor/">
+<link rel="alternate" hreflang="en" href="https://picshifter.pages.dev/photo-editor/">
+<link rel="alternate" hreflang="ko" href="https://picshifter.pages.dev/ko/photo-editor/">
+<link rel="alternate" hreflang="ja" href="https://picshifter.pages.dev/ja/photo-editor/">
+<link rel="alternate" hreflang="zh-Hans" href="https://picshifter.pages.dev/zh/photo-editor/">
+<link rel="alternate" hreflang="es" href="https://picshifter.pages.dev/es/photo-editor/">
+<link rel="alternate" hreflang="pt" href="https://picshifter.pages.dev/pt/photo-editor/">
+<link rel="alternate" hreflang="fr" href="https://picshifter.pages.dev/fr/photo-editor/">
+<link rel="alternate" hreflang="de" href="https://picshifter.pages.dev/de/photo-editor/">
+<link rel="alternate" hreflang="x-default" href="https://picshifter.pages.dev/photo-editor/">
+<title>無料写真編集 – 切り抜き・フィルター・モザイク・文字 | PicShifter</title>
+<meta id="metaDesc" name="description" content="写真の切り抜き、回転、色調整、フィルター、モザイク、文字入れをブラウザで無料で。アップロード不要。">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="PicShifter">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:url" content="https://picshifter.pages.dev/ja/photo-editor/">
+<meta property="og:title" content="無料写真編集 – 切り抜き・フィルター・モザイク・文字 | PicShifter">
+<meta property="og:description" content="写真の切り抜き、回転、色調整、フィルター、モザイク、文字入れをブラウザで無料で。アップロード不要。">
+<meta name="twitter:card" content="summary">
+<link rel="stylesheet" href="/assets/base.css?v=d7c952cd">
+<style>
+.ed{display:flex;flex-direction:column;gap:14px}
+.stagebox{position:relative;align-self:center;max-width:100%;line-height:0;touch-action:none;user-select:none;-webkit-user-select:none;
+  background-color:#fff;background-image:linear-gradient(45deg,#d9dde2 25%,transparent 25%),linear-gradient(-45deg,#d9dde2 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#d9dde2 75%),linear-gradient(-45deg,transparent 75%,#d9dde2 75%);
+  background-size:20px 20px;background-position:0 0,0 10px,10px -10px,-10px 0;border-radius:6px;overflow:hidden}
+#view{display:block;max-width:100%;max-height:62vh;width:auto;height:auto}
+#ov{position:absolute;inset:0;width:100%;height:100%;cursor:crosshair}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:thin}
+.tabs button{flex:0 0 auto;border:1px solid var(--line);background:var(--panel);color:var(--fg);font:inherit;font-size:.9rem;padding:7px 12px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.tabs button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-fg);font-weight:500}
+.pane{display:flex;flex-direction:column;gap:12px;min-width:0}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:8px;overflow:hidden;max-width:100%}
+.seg button{border:0;background:transparent;color:var(--fg);font:inherit;font-size:.88rem;padding:7px 11px;cursor:pointer}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg);font-weight:500}
+.sl{display:grid;grid-template-columns:minmax(64px,auto) 1fr 44px;gap:10px;align-items:center}
+.sl input{min-width:0}
+.sl output{font-variant-numeric:tabular-nums;text-align:right;font-size:.85rem;color:var(--muted)}
+.filters{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
+.filters button{flex:0 0 76px;border:2px solid transparent;background:none;padding:0;cursor:pointer;color:var(--fg);font:inherit;font-size:.78rem;display:flex;flex-direction:column;gap:4px;align-items:center;border-radius:10px;white-space:nowrap}
+.filters canvas{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:8px;display:block;background:var(--bg)}
+.filters button[aria-pressed="true"]{border-color:var(--accent)}
+.filters button span{padding-bottom:4px}
+.small{padding:8px 12px;font-size:.9rem}
+.grow{flex:1 1 auto}
+.txt{font:inherit;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%;min-width:0}
+.num{font:inherit;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px;width:96px}
+.swatch{width:40px;height:36px;border:1px solid var(--line);border-radius:8px;padding:2px;background:var(--panel);cursor:pointer}
+.hint{font-size:.85rem;color:var(--muted);margin:0}
+.savebar{border-top:1px solid var(--line);padding-top:14px}
+.notes{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 20px}
+.notes h2{margin:0 0 8px;font-size:1rem}
+.notes ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:.9rem}
+.busy{opacity:.6;pointer-events:none}
+</style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6213198663836411"
+     crossorigin="anonymous"></script>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <div>
+      <h1 data-i18n="h1">写真編集</h1>
+      <p data-i18n="sub">切り抜き、色調整、フィルター、モザイク、文字入れまで。処理はすべて端末内で行われます。</p>
+    </div>
+  </header>
+
+  <section class="panel" id="pick">
+    <div class="drop" id="drop" tabindex="0" role="button" aria-label="写真を選ぶ" data-i18n-aria="dropAria">
+      <strong data-i18n="dropTitle">ここをクリックして写真を選ぶか、ドラッグしてください</strong>
+      <span data-i18n="dropSub">JPG、PNG、WebP、HEIC</span>
+    </div>
+    <input type="file" id="file" hidden accept="image/*,.heic,.heif">
+  </section>
+
+  <section class="panel ed" id="ed" hidden>
+    <div class="row">
+      <button class="btn ghost small" id="undo" type="button" data-i18n="undo">元に戻す</button>
+      <button class="btn ghost small" id="reset" type="button" data-i18n="reset">最初から</button>
+      <button class="btn ghost small" id="other" type="button" data-i18n="other">別の写真</button>
+      <span class="hint grow" id="dims" style="text-align:right"></span>
+    </div>
+    <div class="stagebox" id="stagebox"><canvas id="view"></canvas><canvas id="ov"></canvas></div>
+
+    <div class="tabs" role="tablist" id="tabs">
+      <button type="button" role="tab" data-tab="crop" aria-selected="true" data-i18n="tCrop">切り抜き・回転</button>
+      <button type="button" role="tab" data-tab="adjust" aria-selected="false" data-i18n="tAdjust">調整</button>
+      <button type="button" role="tab" data-tab="filter" aria-selected="false" data-i18n="tFilter">フィルター</button>
+      <button type="button" role="tab" data-tab="mosaic" aria-selected="false" data-i18n="tMosaic">モザイク・ぼかし</button>
+      <button type="button" role="tab" data-tab="text" aria-selected="false" data-i18n="tText">文字</button>
+      <button type="button" role="tab" data-tab="resize" aria-selected="false" data-i18n="tResize">サイズ</button>
+    </div>
+
+    <div class="pane" data-pane="crop">
+      <div class="row"><span class="label" data-i18n="ratio">比率</span>
+        <div class="seg" id="ratio">
+          <button type="button" data-v="0" aria-pressed="true" data-i18n="free">自由</button>
+          <button type="button" data-v="1">1:1</button><button type="button" data-v="0.8">4:5</button>
+          <button type="button" data-v="0.75">3:4</button><button type="button" data-v="1.7778">16:9</button><button type="button" data-v="0.5625">9:16</button>
+        </div>
+      </div>
+      <p class="hint" data-i18n="cropHint">写真の上をドラッグして残す範囲を選びます。枠の中をドラッグすると移動できます。</p>
+      <div class="row">
+        <button class="btn small" id="cropApply" type="button" data-i18n="cropApply">切り抜く</button>
+        <button class="btn ghost small" id="rotL" type="button" data-i18n="rotL">左に回転</button>
+        <button class="btn ghost small" id="rotR" type="button" data-i18n="rotR">右に回転</button>
+        <button class="btn ghost small" id="flipH" type="button" data-i18n="flipH">左右反転</button>
+        <button class="btn ghost small" id="flipV" type="button" data-i18n="flipV">上下反転</button>
+      </div>
+    </div>
+
+    <div class="pane" data-pane="adjust" hidden>
+      <label class="sl"><span data-i18n="aBright">明るさ</span><input type="range" min="-100" max="100" value="0" data-adj="bright"><output>0</output></label>
+      <label class="sl"><span data-i18n="aContrast">コントラスト</span><input type="range" min="-100" max="100" value="0" data-adj="contrast"><output>0</output></label>
+      <label class="sl"><span data-i18n="aSat">彩度</span><input type="range" min="-100" max="100" value="0" data-adj="sat"><output>0</output></label>
+      <label class="sl"><span data-i18n="aWarm">色温度</span><input type="range" min="-100" max="100" value="0" data-adj="warm"><output>0</output></label>
+      <label class="sl"><span data-i18n="aFade">フェード</span><input type="range" min="0" max="100" value="0" data-adj="fade"><output>0</output></label>
+      <label class="sl"><span data-i18n="aVig">周辺減光</span><input type="range" min="0" max="100" value="0" data-adj="vig"><output>0</output></label>
+      <label class="sl"><span data-i18n="aGrain">粒子</span><input type="range" min="0" max="100" value="0" data-adj="grain"><output>0</output></label>
+      <div class="row"><button class="btn ghost small" id="adjReset" type="button" data-i18n="adjReset">調整をリセット</button></div>
+    </div>
+
+    <div class="pane" data-pane="filter" hidden>
+      <div class="filters" id="filters"></div>
+      <label class="sl"><span data-i18n="fStrength">強さ</span><input type="range" min="0" max="100" value="100" id="fstr"><output id="fstrOut">100</output></label>
+    </div>
+
+    <div class="pane" data-pane="mosaic" hidden>
+      <div class="row"><span class="label" data-i18n="mKind">効果</span>
+        <div class="seg" id="mkind"><button type="button" data-v="pixel" aria-pressed="true" data-i18n="mPixel">モザイク</button><button type="button" data-v="blur" aria-pressed="false" data-i18n="mBlur">ぼかし</button></div>
+      </div>
+      <label class="sl"><span data-i18n="mBrush">ブラシ</span><input type="range" min="2" max="30" value="8" id="brush"><output id="brushOut">8</output></label>
+      <label class="sl"><span data-i18n="mPower">強さ</span><input type="range" min="1" max="10" value="5" id="mpow"><output id="mpowOut">5</output></label>
+      <p class="hint" data-i18n="mHint">顔、ナンバープレート、個人情報の上をなぞってから「適用」を押してください。</p>
+      <div class="row"><button class="btn small" id="mApply" type="button" data-i18n="mApply">適用</button><button class="btn ghost small" id="mClear" type="button" data-i18n="mClear">なぞった跡を消す</button></div>
+    </div>
+
+    <div class="pane" data-pane="text" hidden>
+      <input class="txt" id="ttext" type="text" maxlength="200" placeholder="Type your text" data-i18n-ph="tPh">
+      <div class="row">
+        <select id="tfont" aria-label="フォント" data-i18n-aria="tFont">
+          <option value="sans" data-i18n="fSans">ゴシック</option><option value="serif" data-i18n="fSerif">明朝</option><option value="mono" data-i18n="fMono">等幅</option><option value="hand" data-i18n="fHand">手書き風</option>
+        </select>
+        <select id="tstyle" aria-label="文字のスタイル" data-i18n-aria="tStyleAria">
+          <option value="plain" data-i18n="sPlain">標準</option><option value="outline" data-i18n="sOutline">縁取り</option><option value="box" data-i18n="sBox">背景ボックス</option><option value="shadow" data-i18n="sShadow">影</option>
+        </select>
+        <input type="color" id="tcolor" class="swatch" value="#ffffff" aria-label="文字の色" data-i18n-aria="tColor">
+        <label class="check"><input type="checkbox" id="tbold" checked><span data-i18n="tBold">太字</span></label>
+      </div>
+      <label class="sl"><span data-i18n="tSize">サイズ</span><input type="range" min="2" max="30" value="8" id="tsize"><output id="tsizeOut">8</output></label>
+      <label class="sl"><span data-i18n="tOpacity">不透明度</span><input type="range" min="10" max="100" value="100" id="topa"><output id="topaOut">100</output></label>
+      <label class="check"><input type="checkbox" id="ttile"><span data-i18n="tTile">写真全体に繰り返す(透かし)</span></label>
+      <p class="hint" data-i18n="tHint">写真の上をタップまたはドラッグして文字の位置を決めます。</p>
+      <div class="row"><button class="btn small" id="tApply" type="button" data-i18n="tApply">文字を入れる</button></div>
+    </div>
+
+    <div class="pane" data-pane="resize" hidden>
+      <div class="row">
+        <label class="row" style="gap:6px"><span class="label" data-i18n="rW">幅</span><input class="num" type="number" id="rw" min="1" max="10000"></label>
+        <label class="row" style="gap:6px"><span class="label" data-i18n="rH">高さ</span><input class="num" type="number" id="rh" min="1" max="10000"></label>
+        <label class="check"><input type="checkbox" id="rlock" checked><span data-i18n="rLock">比率を保つ</span></label>
+      </div>
+      <div class="row"><div class="seg" id="rpct"><button type="button" data-v="25">25%</button><button type="button" data-v="50">50%</button><button type="button" data-v="75">75%</button></div>
+        <button class="btn small" id="rApply" type="button" data-i18n="rApply">サイズ変更</button></div>
+      <p class="hint" data-i18n="rHint">写真を小さくするとファイルも小さくなります。大きくしても細部は増えません。</p>
+    </div>
+
+    <div class="row savebar">
+      <span class="label" data-i18n="saveAs">保存形式</span>
+      <select id="fmt"><option value="image/jpeg">JPG</option><option value="image/png">PNG</option><option value="image/webp">WebP</option></select>
+      <label class="sl grow" id="qbox" style="grid-template-columns:auto 1fr 44px"><span data-i18n="quality">画質</span><input type="range" min="40" max="100" value="92" id="q"><output id="qOut">92</output></label>
+      <button class="btn" id="save" type="button" data-i18n="save">保存</button>
+    </div>
+    <p class="hint" id="msg" aria-live="polite"></p>
+  </section>
+
+  <section class="notes">
+    <h2 data-i18n="noteTitle">知っておきたいこと</h2>
+    <ul><li data-i18n="note1">写真が端末の外に送られることはありません。編集はすべてブラウザ内で行われます。</li><li data-i18n="note2">切り抜き、回転、モザイク、文字、サイズ変更は「元に戻す」で取り消せます。色調整とフィルターは、それらの操作をするまで何度でも変更できます。</li><li data-i18n="note3">とても大きな写真は、スマホでも快適に編集できるよう長辺4,000ピクセルに縮小して開きます。</li></ul>
+  </section>
+  <section class="doc landing">
+    <article>
+<h2>できること</h2>
+<ul><li><b>切り抜き・回転:</b>プロフィール用の1:1、Instagram投稿用の4:5、ストーリー用の9:16など、好きな形に切り抜けます。回転と反転もワンタップ。</li><li><b>調整:</b>明るさ、コントラスト、彩度、色温度、フェード、周辺減光、粒子。</li><li><b>フィルター:</b>クラシック、ポップ、フィルム、レトロ、オーラ、ヴィンテージ、シネマなど。強さも調整できます。</li><li><b>モザイク・ぼかし:</b>投稿前に顔、ナンバープレート、住所、電話番号をなぞって隠せます。</li><li><b>文字・透かし:</b>写真に文字を入れたり、名前を写真全体に繰り返して無断転用を防いだりできます。</li><li><b>サイズ:</b>ピクセルを指定するか、25%・50%・75%に縮小します。</li></ul>
+<h2>フィルター早見表</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>フィルター</th><th>雰囲気</th><th>合う写真</th></tr></thead>
+<tbody>
+<tr><td>クラシック</td><td>少し暖かく落ち着いた色、周辺がほんのり暗い</td><td>人物、旅行</td></tr>
+<tr><td>ポップ</td><td>明るく鮮やかな色</td><td>料理、商品、晴れの日</td></tr>
+<tr><td>フィルム</td><td>やわらかい黒、暖かいハイライト、細かな粒子</td><td>フィルムカメラ風の日常写真</td></tr>
+<tr><td>レトロ</td><td>色あせたピンクブラウン、強い周辺減光</td><td>昔の写真風、80年代風</td></tr>
+<tr><td>オーラ</td><td>やわらかな光のにじみとピンク〜水色のパステル</td><td>自撮り、夢のようなプロフィール写真</td></tr>
+<tr><td>シネマ</td><td>青緑の影とオレンジのハイライト</td><td>夜景、風景</td></tr>
+<tr><td>モノクロ・ノワール</td><td>グレーの階調。ノワールはコントラストが強め</td><td>スナップ、印象的な人物</td></tr>
+</tbody></table></div>
+<h2>顔や個人情報を隠す方法</h2>
+<ol><li><b>モザイク・ぼかし</b>タブを開きます。</li><li><b>モザイク</b>か<b>ぼかし</b>を選び、ブラシの大きさを決めます。</li><li>隠したい所をなぞります。なぞった所は赤く表示されます。</li><li><b>適用</b>を押してから<b>保存</b>します。</li></ol>
+<p>保存したファイルではモザイクの下の画素が置き換わるため、隠した内容は元に戻せません。</p>
+<h2>よくある質問</h2>
+<h3>元に戻せますか?</h3><p>はい。<b>元に戻す</b>で直近の数ステップを取り消せ、<b>最初から</b>で元の写真に戻れます。</p>
+<h3>画質は落ちますか?</h3><p>PNGで保存するとすべての画素が保たれます。JPGとWebPは画質90%以上ならほとんど見分けがつきません。</p>
+<h2>ほかの無料ツール</h2><ul class="related"><li><a href="/ja/heic-to-jpg/">HEICをJPGに</a></li><li><a href="/ja/png-to-jpg/">PNGをJPGに</a></li><li><a href="/ja/jpg-to-png/">JPGをPNGに</a></li><li><a href="/ja/webp-to-jpg/">WebPをJPGに</a></li><li><a href="/ja/jpg-to-pdf/">JPGをPDFに</a></li><li><a href="/ja/pdf-to-jpg/">PDFをJPGに</a></li><li><a href="/ja/compress-image/">画像を圧縮</a></li><li><a href="/ja/png-to-ico/">PNGをICOに</a></li><li><a href="/ja/word-to-pdf/">WordをPDFに</a></li><li><a href="/ja/excel-to-pdf/">ExcelをPDFに</a></li><li><a href="/ja/ppt-to-pdf/">PowerPointをPDFに</a></li><li><a href="/ja/hwp-to-pdf/">HWPをPDFに</a></li><li><a href="/ja/scan/">写真をスキャンに</a></li><li><a href="/ja/remove-background/">背景を削除</a></li><li><a href="/ja/guide/">使い方</a></li></ul>
+    </article>
+  </section>
+</main>
+
+<script src="/photo-editor/i18n.js?v=ed8c6539"></script>
+<script src="/photo-editor/filters.js?v=aa3f1f0e"></script>
+<script>window.PAGE_LANG="ja";</script>
+<script src="/assets/site.js?v=5f143ad8"></script>
+<script>
+(function(){
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const view=$('view'), ov=$('ov'), vctx=view.getContext('2d'), octx=ov.getContext('2d');
+  const MAX_SRC=4000, PREV=1200, HIST=4;
+  let lang='en', tab='crop', fname='photo';
+  let base=null, prev=null, hist=[], first=null;
+  let adj=Fx.zeroAdj(), filter='none', fstr=100;
+  let crop=null, ratio=0, drag=null;
+  let mask=null, mkind='pixel', painting=false, lastPt=null;
+  let tpos={x:.5,y:.5};
+  let renderQueued=false;
+
+  function t(k,v){ let s=(EDIT_I18N[lang]&&EDIT_I18N[lang][k])||EDIT_I18N.en[k]||k; if(v) s=s.replace(/\{(\w+)\}/g,(m,x)=>x in v?v[x]:m); return s; }
+  function applyLang(){
+    document.title=t('title'); $('metaDesc').setAttribute('content',t('desc'));
+    document.querySelectorAll('[data-i18n]').forEach(e=>{ e.textContent=t(e.dataset.i18n); });
+    document.querySelectorAll('[data-i18n-aria]').forEach(e=>e.setAttribute('aria-label',t(e.dataset.i18nAria)));
+    document.querySelectorAll('[data-i18n-ph]').forEach(e=>e.setAttribute('placeholder',t(e.dataset.i18nPh)));
+    buildFilters(); showDims();
+  }
+  const tick=()=>new Promise(r=>setTimeout(r,16));
+  function canvas(w,h){ const c=document.createElement('canvas'); c.width=Math.max(1,Math.round(w)); c.height=Math.max(1,Math.round(h)); return c; }
+  function copy(src){ const c=canvas(src.width,src.height); c.getContext('2d').drawImage(src,0,0); return c; }
+  function scaled(src,max){ const k=Math.min(1,max/Math.max(src.width,src.height)); const c=canvas(src.width*k,src.height*k); const x=c.getContext('2d'); x.imageSmoothingQuality='high'; x.drawImage(src,0,0,c.width,c.height); return c; }
+  function msg(s){ $('msg').textContent=s||''; }
+
+  /* ---------- open ---------- */
+  let heicLoad=null;
+  function loadHeic(){ if(!heicLoad) heicLoad=new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='/vendor/heic2any.min.js'; s.onload=res; s.onerror=()=>{ heicLoad=null; rej(new Error('eOpen')); }; document.head.append(s); }); return heicLoad; }
+  async function decode(blob){
+    if(window.createImageBitmap){ try{ const b=await createImageBitmap(blob,{imageOrientation:'from-image'}); const c=scaled(b,MAX_SRC); b.close&&b.close(); return c; }catch(e){} }
+    const url=URL.createObjectURL(blob);
+    try{ const im=await new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=()=>rej(new Error('eOpen')); i.src=url; }); return scaled(im,MAX_SRC); }
+    finally{ URL.revokeObjectURL(url); }
+  }
+  async function readFile(f){
+    if(/\.(heic|heif)$/i.test(f.name)||/hei[cf]/i.test(f.type)){
+      try{ return await decode(f); }catch(e){}
+      await loadHeic(); const r=await window.heic2any({blob:f,toType:'image/jpeg',quality:0.95}); return decode(Array.isArray(r)?r[0]:r);
+    }
+    return decode(f);
+  }
+  async function open(f){
+    if(!f) return;
+    msg(t('loading'));
+    try{
+      const c=await readFile(f);
+      fname=(f.name||'photo').replace(/\.[^.]+$/,'')||'photo';
+      first=c; setBase(copy(c)); hist=[]; adj=Fx.zeroAdj(); filter='none'; fstr=100; syncControls();
+      $('pick').hidden=true; $('ed').hidden=false; msg('');
+      const p=window.EDIT_PRESET&&window.EDIT_PRESET.tab; selectTab(p||tab);
+      if(f.type==='image/png') $('fmt').value='image/png';
+    }catch(e){ msg(t('eOpen')); }
+  }
+  const drop=$('drop'), file=$('file');
+  drop.addEventListener('click',()=>file.click());
+  drop.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); file.click(); } });
+  ['dragenter','dragover'].forEach(n=>drop.addEventListener(n,e=>{ e.preventDefault(); drop.classList.add('over'); }));
+  ['dragleave','drop'].forEach(n=>drop.addEventListener(n,e=>{ e.preventDefault(); drop.classList.remove('over'); }));
+  drop.addEventListener('drop',e=>open(e.dataTransfer.files[0]));
+  file.addEventListener('change',()=>{ const f=file.files[0]; file.value=''; open(f); });
+  $('other').addEventListener('click',()=>file.click());
+
+  /* ---------- state ---------- */
+  function setBase(c){
+    base=c; prev=scaled(c,PREV); view.width=prev.width; view.height=prev.height; ov.width=prev.width; ov.height=prev.height;
+    mask=null; crop=null; resetCrop(); showDims(); fillResize(); thumbs=null; buildFilters(); queue();
+  }
+  function showDims(){ if(base) $('dims').textContent=base.width+' × '+base.height+' px'; }
+  function snapshot(){ hist.push({c:base, adj:Object.assign({},adj), filter, fstr}); if(hist.length>HIST) hist.shift(); }
+  /* Destructive edits first bake the current colour look into the photo, so text and crops aren't re-coloured later. */
+  async function commit(fn){
+    $('ed').classList.add('busy'); msg(t('working')); await tick();
+    try{
+      snapshot();
+      let c=base;
+      if(!Fx.isIdentity(adj,filter,fstr)) c=Fx.render(base,adj,filter,fstr);
+      else c=copy(base);
+      c=await fn(c)||c;
+      adj=Fx.zeroAdj(); filter='none'; fstr=100; syncControls(); setBase(c); msg('');
+    }catch(e){ hist.pop(); msg(t('eGeneric')); }
+    $('ed').classList.remove('busy');
+  }
+  $('undo').addEventListener('click',()=>{ const h=hist.pop(); if(!h) return; adj=h.adj; filter=h.filter; fstr=h.fstr; syncControls(); setBase(h.c); });
+  $('reset').addEventListener('click',()=>{ if(!first) return; hist=[]; adj=Fx.zeroAdj(); filter='none'; fstr=100; syncControls(); setBase(copy(first)); });
+
+  /* ---------- render ---------- */
+  function queue(){ if(renderQueued) return; renderQueued=true; requestAnimationFrame(()=>{ renderQueued=false; draw(); }); }
+  function draw(){
+    if(!prev) return;
+    const out=Fx.isIdentity(adj,filter,fstr)?prev:Fx.render(prev,adj,filter,fstr);
+    vctx.clearRect(0,0,view.width,view.height); vctx.drawImage(out,0,0);
+    drawOverlay();
+  }
+  function drawOverlay(){
+    octx.clearRect(0,0,ov.width,ov.height);
+    if(tab==='crop'&&crop){
+      octx.fillStyle='rgba(0,0,0,.5)'; octx.fillRect(0,0,ov.width,ov.height);
+      octx.clearRect(crop.x,crop.y,crop.w,crop.h);
+      octx.strokeStyle='#fff'; octx.lineWidth=2; octx.strokeRect(crop.x+1,crop.y+1,crop.w-2,crop.h-2);
+      octx.strokeStyle='rgba(255,255,255,.5)'; octx.lineWidth=1; octx.beginPath();
+      for(let i=1;i<3;i++){ octx.moveTo(crop.x+crop.w*i/3,crop.y); octx.lineTo(crop.x+crop.w*i/3,crop.y+crop.h); octx.moveTo(crop.x,crop.y+crop.h*i/3); octx.lineTo(crop.x+crop.w,crop.y+crop.h*i/3); }
+      octx.stroke();
+    } else if(tab==='mosaic'&&mask){
+      octx.globalAlpha=.45; octx.drawImage(maskTinted(),0,0,ov.width,ov.height); octx.globalAlpha=1;
+    } else if(tab==='text'){
+      const s=$('ttext').value.trim(); if(s) Fx.drawText(octx,ov.width,ov.height,textOpts(s));
+    }
+  }
+  function maskTinted(){ const c=canvas(mask.width,mask.height), x=c.getContext('2d'); x.drawImage(mask,0,0); x.globalCompositeOperation='source-in'; x.fillStyle='#ff2d55'; x.fillRect(0,0,c.width,c.height); return c; }
+
+  /* ---------- pointer ---------- */
+  function pt(e){ const r=ov.getBoundingClientRect(); return {x:(e.clientX-r.left)*ov.width/r.width, y:(e.clientY-r.top)*ov.height/r.height}; }
+  ov.addEventListener('pointerdown',e=>{
+    if(!base) return; ov.setPointerCapture(e.pointerId); const p=pt(e);
+    if(tab==='crop'){
+      if(crop&&p.x>crop.x&&p.x<crop.x+crop.w&&p.y>crop.y&&p.y<crop.y+crop.h) drag={mode:'move',sx:p.x,sy:p.y,c:Object.assign({},crop)};
+      else drag={mode:'new',sx:p.x,sy:p.y};
+    } else if(tab==='mosaic'){ painting=true; lastPt=p; paint(p,p); }
+    else if(tab==='text'){ tpos={x:p.x/ov.width,y:p.y/ov.height}; drag={mode:'text'}; drawOverlay(); }
+  });
+  ov.addEventListener('pointermove',e=>{
+    if(!base) return; const p=pt(e);
+    if(tab==='crop'&&drag){
+      if(drag.mode==='move'){ crop.x=clamp(drag.c.x+p.x-drag.sx,0,ov.width-crop.w); crop.y=clamp(drag.c.y+p.y-drag.sy,0,ov.height-crop.h); }
+      else { let x0=drag.sx,y0=drag.sy,w=p.x-x0,h=p.y-y0;
+        let x=w<0?x0+w:x0, y=h<0?y0+h:y0; w=Math.abs(w); h=Math.abs(h);
+        x=clamp(x,0,ov.width); y=clamp(y,0,ov.height); w=Math.min(w,ov.width-x); h=Math.min(h,ov.height-y);
+        if(ratio){ if(w/h>ratio) w=h*ratio; else h=w/ratio; }
+        if(w>8&&h>8) crop={x,y,w,h};
+      }
+      drawOverlay();
+    } else if(tab==='mosaic'&&painting){ paint(lastPt,p); lastPt=p; }
+    else if(tab==='text'&&drag){ tpos={x:clamp(p.x/ov.width,0,1),y:clamp(p.y/ov.height,0,1)}; drawOverlay(); }
+  });
+  ['pointerup','pointercancel'].forEach(n=>ov.addEventListener(n,()=>{ drag=null; painting=false; }));
+  function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
+
+  /* ---------- crop & rotate ---------- */
+  function resetCrop(){
+    if(!prev) return; const W=ov.width,H=ov.height;
+    if(!ratio){ crop={x:0,y:0,w:W,h:H}; return; }
+    let w=W,h=W/ratio; if(h>H){ h=H; w=H*ratio; } crop={x:(W-w)/2,y:(H-h)/2,w,h};
+  }
+  document.querySelectorAll('#ratio button').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#ratio button').forEach(x=>x.setAttribute('aria-pressed',String(x===b))); ratio=+b.dataset.v; resetCrop(); drawOverlay();
+  }));
+  $('cropApply').addEventListener('click',()=>{
+    if(!crop) return; const k=base.width/ov.width;
+    const x=Math.round(crop.x*k), y=Math.round(crop.y*k), w=Math.round(crop.w*k), h=Math.round(crop.h*k);
+    if(w>=base.width-1&&h>=base.height-1) return;
+    commit(c=>{ const o=canvas(w,h); o.getContext('2d').drawImage(c,x,y,w,h,0,0,w,h); return o; });
+  });
+  function rot(dir){ commit(c=>{ const o=canvas(c.height,c.width), x=o.getContext('2d'); x.translate(o.width/2,o.height/2); x.rotate(dir*Math.PI/2); x.drawImage(c,-c.width/2,-c.height/2); return o; }); }
+  function flip(h){ commit(c=>{ const o=canvas(c.width,c.height), x=o.getContext('2d'); if(h){ x.translate(o.width,0); x.scale(-1,1); } else { x.translate(0,o.height); x.scale(1,-1); } x.drawImage(c,0,0); return o; }); }
+  $('rotL').addEventListener('click',()=>rot(-1)); $('rotR').addEventListener('click',()=>rot(1));
+  $('flipH').addEventListener('click',()=>flip(true)); $('flipV').addEventListener('click',()=>flip(false));
+
+  /* ---------- adjust ---------- */
+  document.querySelectorAll('[data-adj]').forEach(inp=>inp.addEventListener('input',()=>{ adj[inp.dataset.adj]=+inp.value; inp.nextElementSibling.textContent=inp.value; queue(); }));
+  $('adjReset').addEventListener('click',()=>{ adj=Fx.zeroAdj(); syncControls(); queue(); });
+  function syncControls(){
+    document.querySelectorAll('[data-adj]').forEach(inp=>{ inp.value=adj[inp.dataset.adj]; inp.nextElementSibling.textContent=inp.value; });
+    $('fstr').value=fstr; $('fstrOut').textContent=fstr;
+    document.querySelectorAll('#filters button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.f===filter)));
+  }
+
+  /* ---------- filters ---------- */
+  let thumbs=null;
+  function buildFilters(){
+    const box=$('filters'); box.innerHTML='';
+    if(!prev) return;
+    if(!thumbs){ const s=Math.min(prev.width,prev.height), c=canvas(120,120); c.getContext('2d').drawImage(prev,(prev.width-s)/2,(prev.height-s)/2,s,s,0,0,120,120); thumbs=c; }
+    Fx.LIST.forEach(id=>{
+      const b=document.createElement('button'); b.type='button'; b.dataset.f=id; b.setAttribute('aria-pressed',String(id===filter));
+      const c=id==='none'?copy(thumbs):Fx.render(thumbs,Fx.zeroAdj(),id,100);
+      const sp=document.createElement('span'); sp.textContent=t('f_'+id);
+      b.append(c,sp); b.addEventListener('click',()=>{ filter=id; if(fstr===0) fstr=100; syncControls(); queue(); });
+      box.append(b);
+    });
+  }
+  $('fstr').addEventListener('input',()=>{ fstr=+$('fstr').value; $('fstrOut').textContent=fstr; queue(); });
+
+  /* ---------- mosaic ---------- */
+  document.querySelectorAll('#mkind button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#mkind button').forEach(x=>x.setAttribute('aria-pressed',String(x===b))); mkind=b.dataset.v; }));
+  ['brush','mpow','tsize','topa','q'].forEach(id=>$(id).addEventListener('input',()=>{ $(id+'Out').textContent=$(id).value; if(id==='tsize'||id==='topa') drawOverlay(); }));
+  function paint(a,b){
+    if(!mask) mask=canvas(ov.width,ov.height);
+    const x=mask.getContext('2d'), r=(+$('brush').value/100)*Math.max(ov.width,ov.height)/2;
+    x.strokeStyle='#000'; x.fillStyle='#000'; x.lineCap='round'; x.lineWidth=r*2;
+    x.beginPath(); x.moveTo(a.x,a.y); x.lineTo(b.x+.01,b.y); x.stroke();
+    drawOverlay();
+  }
+  $('mClear').addEventListener('click',()=>{ mask=null; drawOverlay(); });
+  $('mApply').addEventListener('click',()=>{
+    if(!mask) { msg(t('mNone')); return; }
+    const m=mask, kind=mkind, pow=+$('mpow').value;
+    commit(c=>{
+      const long=Math.max(c.width,c.height);
+      let fx;
+      if(kind==='pixel'){ const blk=Math.max(4,Math.round(long/(140-pow*12))); const s=canvas(c.width/blk,c.height/blk); s.getContext('2d').drawImage(c,0,0,s.width,s.height); fx=canvas(c.width,c.height); const fxx=fx.getContext('2d'); fxx.imageSmoothingEnabled=false; fxx.drawImage(s,0,0,fx.width,fx.height); }
+      else { fx=Fx.blur(c,Math.max(3,Math.round(long*pow/400))); }
+      const mm=canvas(c.width,c.height), mx=mm.getContext('2d'); mx.drawImage(m,0,0,c.width,c.height);
+      const fxx=fx.getContext('2d'); fxx.globalCompositeOperation='destination-in'; fxx.drawImage(mm,0,0);
+      c.getContext('2d').drawImage(fx,0,0); return c;
+    });
+  });
+
+  /* ---------- text ---------- */
+  const FONTS={sans:'system-ui,"Apple SD Gothic Neo","Malgun Gothic",sans-serif', serif:'Georgia,"Nanum Myeongjo","Batang",serif', mono:'ui-monospace,Menlo,Consolas,monospace', hand:'"Comic Sans MS","Segoe Print","Nanum Pen Script",cursive'};
+  function textOpts(s){ return {text:s, x:tpos.x, y:tpos.y, size:+$('tsize').value/100, font:FONTS[$('tfont').value], bold:$('tbold').checked, color:$('tcolor').value, style:$('tstyle').value, alpha:+$('topa').value/100, tile:$('ttile').checked}; }
+  ['ttext','tfont','tstyle','tcolor','tbold','ttile'].forEach(id=>$(id).addEventListener('input',drawOverlay));
+  $('tApply').addEventListener('click',()=>{
+    const s=$('ttext').value.trim(); if(!s){ msg(t('tNone')); return; }
+    const o=textOpts(s);
+    commit(c=>{ Fx.drawText(c.getContext('2d'),c.width,c.height,o); return c; });
+  });
+
+  /* ---------- resize ---------- */
+  function fillResize(){ if(!base) return; $('rw').value=base.width; $('rh').value=base.height; }
+  $('rw').addEventListener('input',()=>{ if($('rlock').checked&&base) $('rh').value=Math.max(1,Math.round(+$('rw').value*base.height/base.width)); });
+  $('rh').addEventListener('input',()=>{ if($('rlock').checked&&base) $('rw').value=Math.max(1,Math.round(+$('rh').value*base.width/base.height)); });
+  document.querySelectorAll('#rpct button').forEach(b=>b.addEventListener('click',()=>{ if(!base) return; const k=+b.dataset.v/100; $('rw').value=Math.max(1,Math.round(base.width*k)); $('rh').value=Math.max(1,Math.round(base.height*k)); }));
+  $('rApply').addEventListener('click',()=>{
+    const w=Math.round(+$('rw').value), h=Math.round(+$('rh').value);
+    if(!(w>0&&h>0)||w>10000||h>10000){ msg(t('rBad')); return; }
+    if(w===base.width&&h===base.height) return;
+    commit(c=>Fx.resize(c,w,h));
+  });
+
+  /* ---------- tabs ---------- */
+  function selectTab(name){
+    tab=name;
+    document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===name)));
+    document.querySelectorAll('[data-pane]').forEach(p=>p.hidden=p.dataset.pane!==name);
+    ov.style.cursor=name==='crop'?'crosshair':name==='mosaic'?'cell':name==='text'?'move':'default';
+    ov.style.pointerEvents=(name==='crop'||name==='mosaic'||name==='text')?'auto':'none';
+    drawOverlay();
+  }
+  document.querySelectorAll('#tabs button').forEach(b=>b.addEventListener('click',()=>selectTab(b.dataset.tab)));
+
+  /* ---------- save ---------- */
+  function syncQ(){ $('qbox').hidden=$('fmt').value==='image/png'; }
+  $('fmt').addEventListener('change',syncQ);
+  $('save').addEventListener('click',async()=>{
+    if(!base) return; $('ed').classList.add('busy'); msg(t('working')); await tick();
+    try{
+      const out=Fx.isIdentity(adj,filter,fstr)?base:Fx.render(base,adj,filter,fstr);
+      let type=$('fmt').value; const q=+$('q').value/100;
+      let blob=await new Promise(r=>out.toBlob(r,type,q));
+      if(!blob||(type==='image/webp'&&blob.type!=='image/webp')){ type='image/jpeg'; blob=await new Promise(r=>out.toBlob(r,type,q)); msg(t('noWebp')); } else msg('');
+      const ext=type==='image/png'?'png':type==='image/webp'?'webp':'jpg';
+      const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=fname+'_edit.'+ext; document.body.append(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),60000);
+    }catch(e){ msg(t('eGeneric')); }
+    $('ed').classList.remove('busy');
+  });
+
+  window.addEventListener('resize',drawOverlay);
+  syncQ();
+  Site.onChange(l=>{ lang=l; applyLang(); });
+})();
+</script>
+</body>
+</html>

@@ -30,6 +30,14 @@ https://picshifter.pages.dev/es/remove-background/
 https://picshifter.pages.dev/pt/remove-background/
 https://picshifter.pages.dev/fr/remove-background/
 https://picshifter.pages.dev/de/remove-background/
+https://picshifter.pages.dev/photo-editor/
+https://picshifter.pages.dev/ko/photo-editor/
+https://picshifter.pages.dev/ja/photo-editor/
+https://picshifter.pages.dev/zh/photo-editor/
+https://picshifter.pages.dev/es/photo-editor/
+https://picshifter.pages.dev/pt/photo-editor/
+https://picshifter.pages.dev/fr/photo-editor/
+https://picshifter.pages.dev/de/photo-editor/
 https://picshifter.pages.dev/heic-to-jpg/
 https://picshifter.pages.dev/ko/heic-to-jpg/
 https://picshifter.pages.dev/ja/heic-to-jpg/
