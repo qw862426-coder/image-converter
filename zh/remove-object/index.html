@@ -74,6 +74,8 @@
     <button class="btn ghost small cmp act" id="hold" type="button" data-i18n="hold">按住查看原图</button>
     <label class="sl act"><span data-i18n="brush">画笔</span><input type="range" min="1" max="20" value="5" id="brush"><output id="brushOut">5</output></label>
     <p class="hint" data-i18n="hint">把要去掉的东西连同影子一起涂满,然后点击“消除”。</p>
+    <div class="row act"><label class="hint" for="quality" data-i18n="qLabel">AI 模型</label>
+      <select id="quality"><option value="lama" data-i18n="qHigh">高画质(首次约 71 MB,较慢)</option><option value="migan" data-i18n="qFast">快速(约 27 MB,适合小物体)</option></select></div>
     <label class="check act"><input type="checkbox" id="detail" checked><span data-i18n="detail">用照片中的纹理重建细节(更清晰,多花几秒)</span></label>
     <div class="row act">
       <button class="btn" id="erase" type="button" data-i18n="erase">消除</button>
@@ -90,7 +92,7 @@
 
   <section class="notes">
     <h2 data-i18n="noteTitle">须知</h2>
-    <ul><li data-i18n="note1">第一次消除时会下载 27 MB 的 AI 模型,之后浏览器会保存它,下次启动更快。建议使用 Wi-Fi。</li><li data-i18n="note2">越小的东西去除得越干净。去除复杂背景前的人物时,请保持“用照片中的纹理重建细节”开启:它会用照片里真实的纹理填补,墙面、草地和地面不会变模糊。</li><li data-i18n="note3">照片不会离开你的设备。AI(Picsart AI Research 的 MI-GAN,MIT 许可)在浏览器中运行。</li></ul>
+    <ul><li data-i18n="note1">第一次消除时会下载 AI 模型(高画质约 71 MB,快速约 27 MB),之后浏览器会保存它,下次启动更快。建议使用 Wi-Fi。</li><li data-i18n="note2">越小的东西去除得越干净。去除复杂背景前的人物时,请保持“用照片中的纹理重建细节”开启:它会用照片里真实的纹理填补,墙面、草地和地面不会变模糊。</li><li data-i18n="note3">照片不会离开你的设备。AI(Picsart AI Research 的 MI-GAN,MIT 许可)在浏览器中运行。</li></ul>
   </section>
   <section class="doc landing">
     <article>
@@ -99,7 +101,7 @@
 <h2>去得干净的技巧</h2>
 <ol><li><b>涂得比物体稍大一点。</b>残留的边缘和影子是留下淡淡轮廓的最常见原因。</li><li><b>大的东西分几次去除。</b>大个人物先涂一半消除,再处理剩下的部分,每一步 AI 都能参考更多背景。</li><li><b>先裁剪。</b>大照片里的小物体,先用<a href="/zh/photo-editor/">照片编辑器</a>裁剪,去除效果更清晰。</li><li><b>对比一下。</b>按住“查看原图”对比前后,不满意就撤销。</li></ol>
 <h2>工作原理</h2>
-<p>页面会在涂抹区域周围裁出一个正方形,缩小到 512 × 512 像素,交给 Picsart AI Research 为手机设计的 MI-GAN 模型。模型根据周围未涂抹的像素,画出那里最可能的背景。之后只把涂抹的部分柔化边缘后贴回原尺寸照片,其他部分保持不变。</p>
+<p>页面会在涂抹区域周围裁出一个正方形,缩小到 512 × 512 像素,交给 AI 模型(高画质使用三星 AI 研究团队公开的 Big LaMa,擅长填补大面积;快速模式使用 Picsart AI Research 为手机设计的 MI-GAN)。模型根据周围未涂抹的像素,画出那里最可能的背景。之后只把涂抹的部分柔化边缘后贴回原尺寸照片,其他部分保持不变。</p>
 <h2>常见问题</h2>
 <h3>大面积区域看起来模糊?</h3><p>模型以 512 像素工作,高分辨率照片中的大区域需要放大贴回,可能比周围更柔和。分成小块去除会更好。</p>
 <h3>照片会上传吗?</h3><p>不会。AI 模型下载到浏览器后在本地运行。</p>
@@ -108,7 +110,7 @@
   </section>
 </main>
 
-<script src="/remove-object/i18n.js?v=60ac2db1"></script>
+<script src="/remove-object/i18n.js?v=1e152fe5"></script>
 <script>window.PAGE_LANG="zh";</script>
 <script src="/assets/site.js?v=d2f6b2d2"></script>
 <script>
@@ -198,6 +200,10 @@
   $('brush').addEventListener('input',()=>{ $('brushOut').textContent=$('brush').value; });
   $('clear').addEventListener('click',()=>{ mask=null; draw(); });
 
+  /* high quality (LaMa) already draws real structure, so the texture pass is off by default there; the fast model needs it */
+  let detailTouched=false; $('detail').addEventListener('change',()=>{ detailTouched=true; });
+  function syncDetail(){ if(!detailTouched) $('detail').checked=$('quality').value!=='lama'; }
+  $('quality').addEventListener('change',syncDetail); syncDetail();
   /* ---------- worker ---------- */
   let worker=null, waiting=null;
   function getWorker(){
@@ -242,7 +248,7 @@
       for(let y=0;y<N;y++) for(let x=0;x<N;x++) if(hole[y*N+x]) for(let dy=-R;dy<=R;dy++){ const yy=y+dy; if(yy<0||yy>=N) continue; for(let dx=-R;dx<=R;dx++){ if(dx*dx+dy*dy>R*R) continue; const xx=x+dx; if(xx>=0&&xx<N) grown[yy*N+xx]=1; } }
       const rgba=new Uint8ClampedArray(px.getImageData(0,0,N,N).data);
       const keep=new Uint8Array(grown);
-      const out=await ask({rgba,hole:grown},[rgba.buffer,grown.buffer]);
+      const out=await ask({rgba,hole:grown,model:$('quality').value},[rgba.buffer,grown.buffer]);
       const oc=canvas(N,N); oc.getContext('2d').putImageData(new ImageData(out,N,N),0,0);
       const gm=canvas(N,N), gx=gm.getContext('2d'), gid=gx.createImageData(N,N); for(let i=0;i<N*N;i++) gid.data[i*4+3]=keep[i]*255; gx.putImageData(gid,0,0);
       let fillC=oc;

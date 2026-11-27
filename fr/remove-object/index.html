@@ -74,6 +74,8 @@
     <button class="btn ghost small cmp act" id="hold" type="button" data-i18n="hold">Maintenir pour voir l’original</button>
     <label class="sl act"><span data-i18n="brush">Pinceau</span><input type="range" min="1" max="20" value="5" id="brush"><output id="brushOut">5</output></label>
     <p class="hint" data-i18n="hint">Peignez tout ce qu’il faut retirer, ombre comprise, puis appuyez sur Effacer.</p>
+    <div class="row act"><label class="hint" for="quality" data-i18n="qLabel">Modèle d’IA</label>
+      <select id="quality"><option value="lama" data-i18n="qHigh">Haute qualité (environ 71 Mo la première fois, plus lent)</option><option value="migan" data-i18n="qFast">Rapide (environ 27 Mo, pour les petits objets)</option></select></div>
     <label class="check act"><input type="checkbox" id="detail" checked><span data-i18n="detail">Recréer la texture à partir de la photo (plus net, quelques secondes de plus)</span></label>
     <div class="row act">
       <button class="btn" id="erase" type="button" data-i18n="erase">Effacer</button>
@@ -90,7 +92,7 @@
 
   <section class="notes">
     <h2 data-i18n="noteTitle">Bon à savoir</h2>
-    <ul><li data-i18n="note1">Le premier effacement télécharge un modèle d’IA de 27 Mo. Ensuite, le navigateur le garde et tout démarre vite. Utilisez le Wi-Fi si possible.</li><li data-i18n="note2">Les petits éléments disparaissent le mieux. Pour une personne devant un décor chargé, gardez « Recréer la texture » activé : la zone est remplie avec de vrais motifs copiés de votre photo, murs, herbe et pavés restent nets.</li><li data-i18n="note3">Votre photo ne quitte jamais votre appareil. L’IA (MI-GAN de Picsart AI Research, licence MIT) fonctionne dans le navigateur.</li></ul>
+    <ul><li data-i18n="note1">Le premier effacement télécharge le modèle d’IA (environ 71 Mo en haute qualité, 27 Mo en mode rapide). Ensuite, le navigateur le garde et tout démarre vite. Utilisez le Wi-Fi si possible.</li><li data-i18n="note2">Les petits éléments disparaissent le mieux. Pour une personne devant un décor chargé, gardez « Recréer la texture » activé : la zone est remplie avec de vrais motifs copiés de votre photo, murs, herbe et pavés restent nets.</li><li data-i18n="note3">Votre photo ne quitte jamais votre appareil. L’IA (MI-GAN de Picsart AI Research, licence MIT) fonctionne dans le navigateur.</li></ul>
   </section>
   <section class="doc landing">
     <article>
@@ -99,7 +101,7 @@
 <h2>Pour un résultat propre</h2>
 <ol><li><b>Peignez un peu plus large que l’objet.</b> Les bords et ombres oubliés sont la cause la plus fréquente d’un contour visible.</li><li><b>Effacez les grands éléments en plusieurs fois.</b> Peignez la moitié d’une grande personne, effacez, puis continuez. Chaque étape donne plus de décor à l’IA.</li><li><b>Recadrez d’abord.</b> Pour un petit objet dans une très grande photo, le résultat est plus net si vous recadrez avant dans l’<a href="/fr/photo-editor/">éditeur photo</a>.</li><li><b>Comparez.</b> Maintenez « voir l’original » et utilisez Annuler si besoin.</li></ol>
 <h2>Comment ça marche</h2>
-<p>La page découpe un carré autour de la zone peinte, le réduit à 512 × 512 pixels et le confie à MI-GAN, un modèle de Picsart AI Research conçu pour les téléphones. Le modèle observe les pixels non peints autour du trou et dessine ce qui s’y trouvait probablement. Seule la zone peinte est replacée dans la photo en taille réelle, avec des bords adoucis.</p>
+<p>La page découpe un carré autour de la zone peinte, le réduit à 512 × 512 pixels et le confie à l’IA : en haute qualité Big LaMa, de chercheurs de Samsung AI (efficace sur les grandes zones), en mode rapide MI-GAN de Picsart AI Research, conçu pour les téléphones. Le modèle observe les pixels non peints autour du trou et dessine ce qui s’y trouvait probablement. Seule la zone peinte est replacée dans la photo en taille réelle, avec des bords adoucis.</p>
 <h2>Questions fréquentes</h2>
 <h3>Pourquoi une grande zone paraît floue ?</h3><p>Le modèle travaille en 512 pixels ; dans une photo haute résolution, une grande zone est agrandie ensuite et peut paraître plus douce. Effacer par petits morceaux aide.</p>
 <h3>Ma photo est-elle envoyée ?</h3><p>Non. Le modèle d’IA est téléchargé une fois dans le navigateur et fonctionne sur place.</p>
@@ -108,7 +110,7 @@
   </section>
 </main>
 
-<script src="/remove-object/i18n.js?v=60ac2db1"></script>
+<script src="/remove-object/i18n.js?v=1e152fe5"></script>
 <script>window.PAGE_LANG="fr";</script>
 <script src="/assets/site.js?v=d2f6b2d2"></script>
 <script>
@@ -198,6 +200,10 @@
   $('brush').addEventListener('input',()=>{ $('brushOut').textContent=$('brush').value; });
   $('clear').addEventListener('click',()=>{ mask=null; draw(); });
 
+  /* high quality (LaMa) already draws real structure, so the texture pass is off by default there; the fast model needs it */
+  let detailTouched=false; $('detail').addEventListener('change',()=>{ detailTouched=true; });
+  function syncDetail(){ if(!detailTouched) $('detail').checked=$('quality').value!=='lama'; }
+  $('quality').addEventListener('change',syncDetail); syncDetail();
   /* ---------- worker ---------- */
   let worker=null, waiting=null;
   function getWorker(){
@@ -242,7 +248,7 @@
       for(let y=0;y<N;y++) for(let x=0;x<N;x++) if(hole[y*N+x]) for(let dy=-R;dy<=R;dy++){ const yy=y+dy; if(yy<0||yy>=N) continue; for(let dx=-R;dx<=R;dx++){ if(dx*dx+dy*dy>R*R) continue; const xx=x+dx; if(xx>=0&&xx<N) grown[yy*N+xx]=1; } }
       const rgba=new Uint8ClampedArray(px.getImageData(0,0,N,N).data);
       const keep=new Uint8Array(grown);
-      const out=await ask({rgba,hole:grown},[rgba.buffer,grown.buffer]);
+      const out=await ask({rgba,hole:grown,model:$('quality').value},[rgba.buffer,grown.buffer]);
       const oc=canvas(N,N); oc.getContext('2d').putImageData(new ImageData(out,N,N),0,0);
       const gm=canvas(N,N), gx=gm.getContext('2d'), gid=gx.createImageData(N,N); for(let i=0;i<N*N;i++) gid.data[i*4+3]=keep[i]*255; gx.putImageData(gid,0,0);
       let fillC=oc;

@@ -74,6 +74,8 @@
     <button class="btn ghost small cmp act" id="hold" type="button" data-i18n="hold">Gedrückt halten für das Original</button>
     <label class="sl act"><span data-i18n="brush">Pinsel</span><input type="range" min="1" max="20" value="5" id="brush"><output id="brushOut">5</output></label>
     <p class="hint" data-i18n="hint">Male alles, was weg soll, samt Schatten an und tippe dann auf Entfernen.</p>
+    <div class="row act"><label class="hint" for="quality" data-i18n="qLabel">KI-Modell</label>
+      <select id="quality"><option value="lama" data-i18n="qHigh">Hohe Qualität (beim ersten Mal ca. 71 MB, langsamer)</option><option value="migan" data-i18n="qFast">Schnell (ca. 27 MB, für kleine Objekte)</option></select></div>
     <label class="check act"><input type="checkbox" id="detail" checked><span data-i18n="detail">Feine Struktur aus dem Foto nachbilden (schärfer, dauert ein paar Sekunden länger)</span></label>
     <div class="row act">
       <button class="btn" id="erase" type="button" data-i18n="erase">Entfernen</button>
@@ -90,7 +92,7 @@
 
   <section class="notes">
     <h2 data-i18n="noteTitle">Gut zu wissen</h2>
-    <ul><li data-i18n="note1">Beim ersten Entfernen wird ein 27 MB großes KI-Modell geladen. Danach behält der Browser es, und es startet schnell. Nutze möglichst WLAN.</li><li data-i18n="note2">Kleine Dinge verschwinden am besten. Bei Personen vor unruhigem Hintergrund lass „Feine Struktur nachbilden“ an: Die Stelle wird mit echten Mustern aus deinem Foto gefüllt, sodass Wände, Rasen und Pflaster scharf bleiben.</li><li data-i18n="note3">Dein Foto verlässt nie dein Gerät. Die KI (MI-GAN von Picsart AI Research, MIT-Lizenz) läuft im Browser.</li></ul>
+    <ul><li data-i18n="note1">Beim ersten Entfernen wird das KI-Modell (ca. 71 MB in hoher Qualität, 27 MB im schnellen Modus) geladen. Danach behält der Browser es, und es startet schnell. Nutze möglichst WLAN.</li><li data-i18n="note2">Kleine Dinge verschwinden am besten. Bei Personen vor unruhigem Hintergrund lass „Feine Struktur nachbilden“ an: Die Stelle wird mit echten Mustern aus deinem Foto gefüllt, sodass Wände, Rasen und Pflaster scharf bleiben.</li><li data-i18n="note3">Dein Foto verlässt nie dein Gerät. Die KI (MI-GAN von Picsart AI Research, MIT-Lizenz) läuft im Browser.</li></ul>
   </section>
   <section class="doc landing">
     <article>
@@ -99,7 +101,7 @@
 <h2>So wird es sauber</h2>
 <ol><li><b>Male etwas breiter als das Objekt.</b> Übrig gebliebene Ränder und Schatten sind der häufigste Grund für sichtbare Umrisse.</li><li><b>Große Dinge schrittweise entfernen.</b> Male die Hälfte einer großen Person an, entferne sie und mach dann weiter. Jeder Schritt gibt der KI mehr Hintergrund zum Kopieren.</li><li><b>Vorher zuschneiden.</b> Bei einem kleinen Objekt in einem riesigen Foto wird das Ergebnis schärfer, wenn du zuerst im <a href="/de/photo-editor/">Foto-Editor</a> zuschneidest.</li><li><b>Vergleichen.</b> Halte „Original anzeigen“ gedrückt und nutze Rückgängig, wenn es dir nicht gefällt.</li></ol>
 <h2>So funktioniert es</h2>
-<p>Die Seite schneidet ein Quadrat um die bemalte Stelle aus, verkleinert es auf 512 × 512 Pixel und gibt es an MI-GAN, ein Modell von Picsart AI Research, das für Handys gebaut wurde. Das Modell betrachtet die unbemalten Pixel ringsum und zeichnet, was dort wahrscheinlich war. Nur die bemalte Stelle wird mit weichen Kanten in dein Foto in voller Größe zurückgesetzt.</p>
+<p>Die Seite schneidet ein Quadrat um die bemalte Stelle aus, verkleinert es auf 512 × 512 Pixel und gibt es an die KI: in hoher Qualität Big LaMa von Samsung-AI-Forschern (stark bei großen Flächen), im schnellen Modus MI-GAN von Picsart AI Research, das für Handys gebaut wurde. Das Modell betrachtet die unbemalten Pixel ringsum und zeichnet, was dort wahrscheinlich war. Nur die bemalte Stelle wird mit weichen Kanten in dein Foto in voller Größe zurückgesetzt.</p>
 <h2>Häufige Fragen</h2>
 <h3>Warum wirkt eine große Fläche unscharf?</h3><p>Das Modell arbeitet mit 512 Pixeln; in einem hochauflösenden Foto wird eine große Fläche danach vergrößert und kann weicher wirken. In kleineren Stücken entfernen hilft.</p>
 <h3>Wird mein Foto hochgeladen?</h3><p>Nein. Das KI-Modell wird einmal in den Browser geladen und läuft dort.</p>
@@ -108,7 +110,7 @@
   </section>
 </main>
 
-<script src="/remove-object/i18n.js?v=60ac2db1"></script>
+<script src="/remove-object/i18n.js?v=1e152fe5"></script>
 <script>window.PAGE_LANG="de";</script>
 <script src="/assets/site.js?v=d2f6b2d2"></script>
 <script>
@@ -198,6 +200,10 @@
   $('brush').addEventListener('input',()=>{ $('brushOut').textContent=$('brush').value; });
   $('clear').addEventListener('click',()=>{ mask=null; draw(); });
 
+  /* high quality (LaMa) already draws real structure, so the texture pass is off by default there; the fast model needs it */
+  let detailTouched=false; $('detail').addEventListener('change',()=>{ detailTouched=true; });
+  function syncDetail(){ if(!detailTouched) $('detail').checked=$('quality').value!=='lama'; }
+  $('quality').addEventListener('change',syncDetail); syncDetail();
   /* ---------- worker ---------- */
   let worker=null, waiting=null;
   function getWorker(){
@@ -242,7 +248,7 @@
       for(let y=0;y<N;y++) for(let x=0;x<N;x++) if(hole[y*N+x]) for(let dy=-R;dy<=R;dy++){ const yy=y+dy; if(yy<0||yy>=N) continue; for(let dx=-R;dx<=R;dx++){ if(dx*dx+dy*dy>R*R) continue; const xx=x+dx; if(xx>=0&&xx<N) grown[yy*N+xx]=1; } }
       const rgba=new Uint8ClampedArray(px.getImageData(0,0,N,N).data);
       const keep=new Uint8Array(grown);
-      const out=await ask({rgba,hole:grown},[rgba.buffer,grown.buffer]);
+      const out=await ask({rgba,hole:grown,model:$('quality').value},[rgba.buffer,grown.buffer]);
       const oc=canvas(N,N); oc.getContext('2d').putImageData(new ImageData(out,N,N),0,0);
       const gm=canvas(N,N), gx=gm.getContext('2d'), gid=gx.createImageData(N,N); for(let i=0;i<N*N;i++) gid.data[i*4+3]=keep[i]*255; gx.putImageData(gid,0,0);
       let fillC=oc;

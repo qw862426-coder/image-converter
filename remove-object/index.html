@@ -74,6 +74,8 @@
     <button class="btn ghost small cmp act" id="hold" type="button" data-i18n="hold">Hold to see the original</button>
     <label class="sl act"><span data-i18n="brush">Brush</span><input type="range" min="1" max="20" value="5" id="brush"><output id="brushOut">5</output></label>
     <p class="hint" data-i18n="hint">Paint over everything you want to remove, including its shadow, then press Erase.</p>
+    <div class="row act"><label class="hint" for="quality" data-i18n="qLabel">AI model</label>
+      <select id="quality"><option value="lama" data-i18n="qHigh">High quality (about 71 MB the first time, slower)</option><option value="migan" data-i18n="qFast">Fast (about 27 MB, for small objects)</option></select></div>
     <label class="check act"><input type="checkbox" id="detail" checked><span data-i18n="detail">Rebuild fine texture from the photo (sharper, takes a few seconds longer)</span></label>
     <div class="row act">
       <button class="btn" id="erase" type="button" data-i18n="erase">Erase</button>
@@ -90,7 +92,7 @@
 
   <section class="notes">
     <h2 data-i18n="noteTitle">Good to know</h2>
-    <ul><li data-i18n="note1">The first erase downloads a 27 MB AI model. After that your browser keeps it, so it starts quickly. Use Wi-Fi if you can.</li><li data-i18n="note2">Small things disappear best. For people in front of busy backgrounds, keep “Rebuild fine texture” on: it refills the area with real patterns copied from your photo, so walls, grass and paving stay sharp.</li><li data-i18n="note3">Your photo never leaves your device. The AI (MI-GAN by Picsart AI Research, MIT License) runs in your browser.</li></ul>
+    <ul><li data-i18n="note1">The first erase downloads the AI model (about 71 MB in high quality, 27 MB in fast mode). After that your browser keeps it, so it starts quickly. Use Wi-Fi if you can.</li><li data-i18n="note2">Small things disappear best. For people in front of busy backgrounds, keep “Rebuild fine texture” on: it refills the area with real patterns copied from your photo, so walls, grass and paving stay sharp.</li><li data-i18n="note3">Your photo never leaves your device. The AI (MI-GAN by Picsart AI Research, MIT License) runs in your browser.</li></ul>
   </section>
   <section class="doc landing">
     <article>
@@ -99,7 +101,7 @@
 <h2>How to get a clean result</h2>
 <ol><li><b>Paint a little wider than the object.</b> Leftover edges and shadows are the most common reason a faint outline stays behind.</li><li><b>Remove big things in steps.</b> Paint half of a large person, press Erase, then do the rest. Each step gives the AI more background to copy from.</li><li><b>Zoom by cropping.</b> For a tiny object in a huge photo, results are sharper if you crop first in the <a href="/photo-editor/">photo editor</a>.</li><li><b>Compare.</b> Hold “See the original” to check the change, and use Undo if you don’t like it.</li></ol>
 <h2>How it works</h2>
-<p>The page cuts out a square around what you painted, shrinks it to 512 × 512 pixels and gives it to MI-GAN, an inpainting model from Picsart AI Research built to run on phones. The model looks at the unpainted pixels around the hole and draws what most likely belongs there. Only the painted area is pasted back into your full-size photo, with softened edges, so the rest of the picture stays untouched.</p>
+<p>The page cuts out a square around what you painted, shrinks it to 512 × 512 pixels and gives it to the AI: in high quality mode Big LaMa from Samsung AI researchers (strong at filling large areas), in fast mode MI-GAN from Picsart AI Research, built to run on phones. The model looks at the unpainted pixels around the hole and draws what most likely belongs there. Only the painted area is pasted back into your full-size photo, with softened edges, so the rest of the picture stays untouched.</p>
 <h2>Frequently asked questions</h2>
 <h3>Why does a large area look blurry?</h3><p>The model works at 512 pixels. A big area in a high-resolution photo is enlarged afterwards, so it can look softer than the rest. Erasing in smaller pieces helps.</p>
 <h3>Is my photo uploaded?</h3><p>No. The AI model is downloaded to your browser once and runs there.</p>
@@ -109,7 +111,7 @@
   </section>
 </main>
 
-<script src="/remove-object/i18n.js?v=60ac2db1"></script>
+<script src="/remove-object/i18n.js?v=1e152fe5"></script>
 <script>window.PAGE_LANG="en";</script>
 <script src="/assets/site.js?v=d2f6b2d2"></script>
 <script>
@@ -199,6 +201,10 @@
   $('brush').addEventListener('input',()=>{ $('brushOut').textContent=$('brush').value; });
   $('clear').addEventListener('click',()=>{ mask=null; draw(); });
 
+  /* high quality (LaMa) already draws real structure, so the texture pass is off by default there; the fast model needs it */
+  let detailTouched=false; $('detail').addEventListener('change',()=>{ detailTouched=true; });
+  function syncDetail(){ if(!detailTouched) $('detail').checked=$('quality').value!=='lama'; }
+  $('quality').addEventListener('change',syncDetail); syncDetail();
   /* ---------- worker ---------- */
   let worker=null, waiting=null;
   function getWorker(){
@@ -243,7 +249,7 @@
       for(let y=0;y<N;y++) for(let x=0;x<N;x++) if(hole[y*N+x]) for(let dy=-R;dy<=R;dy++){ const yy=y+dy; if(yy<0||yy>=N) continue; for(let dx=-R;dx<=R;dx++){ if(dx*dx+dy*dy>R*R) continue; const xx=x+dx; if(xx>=0&&xx<N) grown[yy*N+xx]=1; } }
       const rgba=new Uint8ClampedArray(px.getImageData(0,0,N,N).data);
       const keep=new Uint8Array(grown);
-      const out=await ask({rgba,hole:grown},[rgba.buffer,grown.buffer]);
+      const out=await ask({rgba,hole:grown,model:$('quality').value},[rgba.buffer,grown.buffer]);
       const oc=canvas(N,N); oc.getContext('2d').putImageData(new ImageData(out,N,N),0,0);
       const gm=canvas(N,N), gx=gm.getContext('2d'), gid=gx.createImageData(N,N); for(let i=0;i<N*N;i++) gid.data[i*4+3]=keep[i]*255; gx.putImageData(gid,0,0);
       let fillC=oc;

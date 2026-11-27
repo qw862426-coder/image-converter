@@ -74,6 +74,8 @@
     <button class="btn ghost small cmp act" id="hold" type="button" data-i18n="hold">누르고 있으면 원본 보기</button>
     <label class="sl act"><span data-i18n="brush">붓 크기</span><input type="range" min="1" max="20" value="5" id="brush"><output id="brushOut">5</output></label>
     <p class="hint" data-i18n="hint">지울 것을 그림자까지 모두 칠한 다음 지우기를 누르세요.</p>
+    <div class="row act"><label class="hint" for="quality" data-i18n="qLabel">AI 모델</label>
+      <select id="quality"><option value="lama" data-i18n="qHigh">고화질 (처음 한 번 약 71MB, 더 느려요)</option><option value="migan" data-i18n="qFast">빠르게 (약 27MB, 작은 물건용)</option></select></div>
     <label class="check act"><input type="checkbox" id="detail" checked><span data-i18n="detail">사진 속 질감으로 다시 채우기 (더 선명해요, 몇 초 더 걸려요)</span></label>
     <div class="row act">
       <button class="btn" id="erase" type="button" data-i18n="erase">지우기</button>
@@ -90,7 +92,7 @@
 
   <section class="notes">
     <h2 data-i18n="noteTitle">알아두세요</h2>
-    <ul><li data-i18n="note1">처음 지울 때 27MB짜리 AI 모델을 받아요. 그다음부터는 브라우저에 저장돼서 빨리 시작해요. 가능하면 와이파이에서 쓰세요.</li><li data-i18n="note2">작은 것일수록 가장 깔끔하게 지워져요. 복잡한 배경 앞의 사람을 지울 때는 "사진 속 질감으로 다시 채우기"를 켜 두세요. 사진에 있는 실제 무늬를 가져와 채워서 벽, 잔디, 바닥이 흐려지지 않아요.</li><li data-i18n="note3">사진은 내 기기 밖으로 나가지 않아요. AI(Picsart AI Research의 MI-GAN, MIT 라이선스)가 브라우저 안에서 작동해요.</li></ul>
+    <ul><li data-i18n="note1">처음 지울 때 AI 모델(고화질 약 71MB, 빠르게 약 27MB)을 받아요. 그다음부터는 브라우저에 저장돼서 빨리 시작해요. 가능하면 와이파이에서 쓰세요.</li><li data-i18n="note2">작은 것일수록 가장 깔끔하게 지워져요. 복잡한 배경 앞의 사람을 지울 때는 "사진 속 질감으로 다시 채우기"를 켜 두세요. 사진에 있는 실제 무늬를 가져와 채워서 벽, 잔디, 바닥이 흐려지지 않아요.</li><li data-i18n="note3">사진은 내 기기 밖으로 나가지 않아요. AI(Picsart AI Research의 MI-GAN, MIT 라이선스)가 브라우저 안에서 작동해요.</li></ul>
   </section>
   <section class="doc landing">
     <article>
@@ -99,7 +101,7 @@
 <h2>깔끔하게 지우는 요령</h2>
 <ol><li><b>물건보다 조금 넓게 칠하세요.</b> 가장자리나 그림자가 남으면 희미한 윤곽이 남는 가장 흔한 이유가 돼요.</li><li><b>큰 것은 나눠서 지우세요.</b> 큰 사람은 반쯤 칠해서 지우고, 나머지를 다시 칠해서 지우세요. 단계마다 AI가 참고할 배경이 늘어나요.</li><li><b>잘라서 크게 보세요.</b> 아주 큰 사진 속 작은 물건이라면 <a href="/ko/photo-editor/">사진 편집기</a>에서 먼저 잘라 내면 더 선명하게 지워져요.</li><li><b>비교해 보세요.</b> "누르고 있으면 원본 보기"로 전후를 비교하고, 마음에 안 들면 되돌리기를 누르세요.</li></ol>
 <h2>이렇게 작동해요</h2>
-<p>칠한 곳 주변을 정사각형으로 잘라 512 × 512 픽셀로 줄인 다음, Picsart AI Research가 휴대폰에서 돌아가도록 만든 MI-GAN이라는 AI에 넣어요. AI는 칠하지 않은 주변 모습을 보고 그 자리에 있었을 법한 배경을 그려요. 그다음 칠한 부분만 가장자리를 부드럽게 해서 원래 크기의 사진에 붙여 넣어요. 나머지 부분은 그대로예요.</p>
+<p>칠한 곳 주변을 정사각형으로 잘라 512 × 512 픽셀로 줄인 다음, AI에 넣어요. 고화질은 Samsung AI 연구진이 공개한 Big LaMa(넓은 곳을 채우는 데 강해요), 빠르게는 Picsart AI Research가 휴대폰용으로 만든 MI-GAN을 써요. AI는 칠하지 않은 주변 모습을 보고 그 자리에 있었을 법한 배경을 그려요. 그다음 칠한 부분만 가장자리를 부드럽게 해서 원래 크기의 사진에 붙여 넣어요. 나머지 부분은 그대로예요.</p>
 <h2>자주 묻는 질문</h2>
 <h3>넓게 지운 곳이 흐릿해 보여요</h3><p>AI는 512픽셀 크기로 작업해요. 고화질 사진에서 넓은 곳을 지우면 결과를 다시 키워서 붙이기 때문에 주변보다 흐려 보일 수 있어요. 작게 나눠서 지우면 나아져요.</p>
 <h3>사진이 업로드되나요?</h3><p>아니요. AI 모델을 브라우저로 한 번 받아서 내 기기 안에서 실행해요.</p>
@@ -109,7 +111,7 @@
   </section>
 </main>
 
-<script src="/remove-object/i18n.js?v=60ac2db1"></script>
+<script src="/remove-object/i18n.js?v=1e152fe5"></script>
 <script>window.PAGE_LANG="ko";</script>
 <script src="/assets/site.js?v=d2f6b2d2"></script>
 <script>
@@ -199,6 +201,10 @@
   $('brush').addEventListener('input',()=>{ $('brushOut').textContent=$('brush').value; });
   $('clear').addEventListener('click',()=>{ mask=null; draw(); });
 
+  /* high quality (LaMa) already draws real structure, so the texture pass is off by default there; the fast model needs it */
+  let detailTouched=false; $('detail').addEventListener('change',()=>{ detailTouched=true; });
+  function syncDetail(){ if(!detailTouched) $('detail').checked=$('quality').value!=='lama'; }
+  $('quality').addEventListener('change',syncDetail); syncDetail();
   /* ---------- worker ---------- */
   let worker=null, waiting=null;
   function getWorker(){
@@ -243,7 +249,7 @@
       for(let y=0;y<N;y++) for(let x=0;x<N;x++) if(hole[y*N+x]) for(let dy=-R;dy<=R;dy++){ const yy=y+dy; if(yy<0||yy>=N) continue; for(let dx=-R;dx<=R;dx++){ if(dx*dx+dy*dy>R*R) continue; const xx=x+dx; if(xx>=0&&xx<N) grown[yy*N+xx]=1; } }
       const rgba=new Uint8ClampedArray(px.getImageData(0,0,N,N).data);
       const keep=new Uint8Array(grown);
-      const out=await ask({rgba,hole:grown},[rgba.buffer,grown.buffer]);
+      const out=await ask({rgba,hole:grown,model:$('quality').value},[rgba.buffer,grown.buffer]);
       const oc=canvas(N,N); oc.getContext('2d').putImageData(new ImageData(out,N,N),0,0);
       const gm=canvas(N,N), gx=gm.getContext('2d'), gid=gx.createImageData(N,N); for(let i=0;i<N*N;i++) gid.data[i*4+3]=keep[i]*255; gx.putImageData(gid,0,0);
       let fillC=oc;

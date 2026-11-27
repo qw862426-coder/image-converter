@@ -74,6 +74,8 @@
     <button class="btn ghost small cmp act" id="hold" type="button" data-i18n="hold">Mantén pulsado para ver el original</button>
     <label class="sl act"><span data-i18n="brush">Pincel</span><input type="range" min="1" max="20" value="5" id="brush"><output id="brushOut">5</output></label>
     <p class="hint" data-i18n="hint">Pinta todo lo que quieras quitar, incluida su sombra, y pulsa Borrar.</p>
+    <div class="row act"><label class="hint" for="quality" data-i18n="qLabel">Modelo de IA</label>
+      <select id="quality"><option value="lama" data-i18n="qHigh">Alta calidad (unos 71 MB la primera vez, más lento)</option><option value="migan" data-i18n="qFast">Rápido (unos 27 MB, para objetos pequeños)</option></select></div>
     <label class="check act"><input type="checkbox" id="detail" checked><span data-i18n="detail">Reconstruir la textura con la propia foto (más nítido, tarda unos segundos más)</span></label>
     <div class="row act">
       <button class="btn" id="erase" type="button" data-i18n="erase">Borrar</button>
@@ -90,7 +92,7 @@
 
   <section class="notes">
     <h2 data-i18n="noteTitle">Conviene saber</h2>
-    <ul><li data-i18n="note1">La primera vez se descarga un modelo de IA de 27 MB. Después el navegador lo guarda y empieza enseguida. Usa wifi si puedes.</li><li data-i18n="note2">Las cosas pequeñas se borran mejor. Para personas delante de fondos complejos, deja activado «Reconstruir la textura»: rellena con patrones reales copiados de tu foto, así paredes, césped y suelos quedan nítidos.</li><li data-i18n="note3">Tu foto nunca sale de tu dispositivo. La IA (MI-GAN de Picsart AI Research, licencia MIT) funciona en el navegador.</li></ul>
+    <ul><li data-i18n="note1">La primera vez se descarga el modelo de IA (unos 71 MB en alta calidad, 27 MB en modo rápido). Después el navegador lo guarda y empieza enseguida. Usa wifi si puedes.</li><li data-i18n="note2">Las cosas pequeñas se borran mejor. Para personas delante de fondos complejos, deja activado «Reconstruir la textura»: rellena con patrones reales copiados de tu foto, así paredes, césped y suelos quedan nítidos.</li><li data-i18n="note3">Tu foto nunca sale de tu dispositivo. La IA (MI-GAN de Picsart AI Research, licencia MIT) funciona en el navegador.</li></ul>
   </section>
   <section class="doc landing">
     <article>
@@ -99,7 +101,7 @@
 <h2>Cómo conseguir un resultado limpio</h2>
 <ol><li><b>Pinta un poco más ancho que el objeto.</b> Los bordes y sombras que quedan son la causa más común de un contorno visible.</li><li><b>Borra lo grande por partes.</b> Pinta la mitad de una persona grande, borra y luego sigue. Cada paso da a la IA más fondo del que copiar.</li><li><b>Recorta primero.</b> Para un objeto pequeño en una foto enorme, el resultado es más nítido si recortas antes en el <a href="/es/photo-editor/">editor de fotos</a>.</li><li><b>Compara.</b> Mantén pulsado “ver el original” y usa Deshacer si no te gusta.</li></ol>
 <h2>Cómo funciona</h2>
-<p>La página recorta un cuadrado alrededor de lo pintado, lo reduce a 512 × 512 píxeles y se lo pasa a MI-GAN, un modelo de Picsart AI Research pensado para móviles. El modelo mira los píxeles no pintados alrededor y dibuja lo que probablemente había. Solo la zona pintada vuelve a tu foto a tamaño completo, con bordes suavizados.</p>
+<p>La página recorta un cuadrado alrededor de lo pintado, lo reduce a 512 × 512 píxeles y se lo pasa a la IA: en alta calidad, Big LaMa de investigadores de Samsung AI (buena con zonas grandes); en modo rápido, MI-GAN de Picsart AI Research, pensado para móviles. El modelo mira los píxeles no pintados alrededor y dibuja lo que probablemente había. Solo la zona pintada vuelve a tu foto a tamaño completo, con bordes suavizados.</p>
 <h2>Preguntas frecuentes</h2>
 <h3>¿Por qué una zona grande se ve borrosa?</h3><p>El modelo trabaja a 512 píxeles; en una foto de alta resolución, una zona grande se amplía después y puede verse más suave. Borrar por partes ayuda.</p>
 <h3>¿Se sube mi foto?</h3><p>No. El modelo de IA se descarga una vez en tu navegador y funciona allí.</p>
@@ -108,7 +110,7 @@
   </section>
 </main>
 
-<script src="/remove-object/i18n.js?v=60ac2db1"></script>
+<script src="/remove-object/i18n.js?v=1e152fe5"></script>
 <script>window.PAGE_LANG="es";</script>
 <script src="/assets/site.js?v=d2f6b2d2"></script>
 <script>
@@ -198,6 +200,10 @@
   $('brush').addEventListener('input',()=>{ $('brushOut').textContent=$('brush').value; });
   $('clear').addEventListener('click',()=>{ mask=null; draw(); });
 
+  /* high quality (LaMa) already draws real structure, so the texture pass is off by default there; the fast model needs it */
+  let detailTouched=false; $('detail').addEventListener('change',()=>{ detailTouched=true; });
+  function syncDetail(){ if(!detailTouched) $('detail').checked=$('quality').value!=='lama'; }
+  $('quality').addEventListener('change',syncDetail); syncDetail();
   /* ---------- worker ---------- */
   let worker=null, waiting=null;
   function getWorker(){
@@ -242,7 +248,7 @@
       for(let y=0;y<N;y++) for(let x=0;x<N;x++) if(hole[y*N+x]) for(let dy=-R;dy<=R;dy++){ const yy=y+dy; if(yy<0||yy>=N) continue; for(let dx=-R;dx<=R;dx++){ if(dx*dx+dy*dy>R*R) continue; const xx=x+dx; if(xx>=0&&xx<N) grown[yy*N+xx]=1; } }
       const rgba=new Uint8ClampedArray(px.getImageData(0,0,N,N).data);
       const keep=new Uint8Array(grown);
-      const out=await ask({rgba,hole:grown},[rgba.buffer,grown.buffer]);
+      const out=await ask({rgba,hole:grown,model:$('quality').value},[rgba.buffer,grown.buffer]);
       const oc=canvas(N,N); oc.getContext('2d').putImageData(new ImageData(out,N,N),0,0);
       const gm=canvas(N,N), gx=gm.getContext('2d'), gid=gx.createImageData(N,N); for(let i=0;i<N*N;i++) gid.data[i*4+3]=keep[i]*255; gx.putImageData(gid,0,0);
       let fillC=oc;

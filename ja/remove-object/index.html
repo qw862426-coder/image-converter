@@ -74,6 +74,8 @@
     <button class="btn ghost small cmp act" id="hold" type="button" data-i18n="hold">押している間は元の写真を表示</button>
     <label class="sl act"><span data-i18n="brush">ブラシ</span><input type="range" min="1" max="20" value="5" id="brush"><output id="brushOut">5</output></label>
     <p class="hint" data-i18n="hint">消したい物を影まで含めてなぞり、「消す」を押してください。</p>
+    <div class="row act"><label class="hint" for="quality" data-i18n="qLabel">AIモデル</label>
+      <select id="quality"><option value="lama" data-i18n="qHigh">高画質(初回のみ約71MB・時間がかかります)</option><option value="migan" data-i18n="qFast">高速(約27MB・小さな物向け)</option></select></div>
     <label class="check act"><input type="checkbox" id="detail" checked><span data-i18n="detail">写真の質感で埋め直す(よりくっきり・数秒長くかかります)</span></label>
     <div class="row act">
       <button class="btn" id="erase" type="button" data-i18n="erase">消す</button>
@@ -90,7 +92,7 @@
 
   <section class="notes">
     <h2 data-i18n="noteTitle">知っておきたいこと</h2>
-    <ul><li data-i18n="note1">初めて消すときに27MBのAIモデルをダウンロードします。その後はブラウザに保存されるのですぐに始まります。できればWi-Fiでお使いください。</li><li data-i18n="note2">小さな物ほどきれいに消えます。複雑な背景の前の人物を消すときは「写真の質感で埋め直す」をオンにしてください。写真の実際の模様で埋めるので、壁や芝生、床がぼやけません。</li><li data-i18n="note3">写真が端末の外に送られることはありません。AI(Picsart AI ResearchのMI-GAN、MITライセンス)はブラウザ内で動きます。</li></ul>
+    <ul><li data-i18n="note1">初めて消すときにAIモデル(高画質は約71MB、高速は約27MB)をダウンロードします。その後はブラウザに保存されるのですぐに始まります。できればWi-Fiでお使いください。</li><li data-i18n="note2">小さな物ほどきれいに消えます。複雑な背景の前の人物を消すときは「写真の質感で埋め直す」をオンにしてください。写真の実際の模様で埋めるので、壁や芝生、床がぼやけません。</li><li data-i18n="note3">写真が端末の外に送られることはありません。AI(Picsart AI ResearchのMI-GAN、MITライセンス)はブラウザ内で動きます。</li></ul>
   </section>
   <section class="doc landing">
     <article>
@@ -99,7 +101,7 @@
 <h2>きれいに消すコツ</h2>
 <ol><li><b>物より少し広めになぞりましょう。</b>縁や影が残ると、うっすら輪郭が残る原因になります。</li><li><b>大きな物は分けて消しましょう。</b>大きな人物は半分ずつ消すと、AIが参考にできる背景が増えます。</li><li><b>切り抜いてから消しましょう。</b>大きな写真の小さな物は、先に<a href="/ja/photo-editor/">写真編集</a>で切り抜くとよりシャープに消せます。</li><li><b>比べてみましょう。</b>「押している間は元の写真を表示」で前後を比べ、気に入らなければ「元に戻す」を押します。</li></ol>
 <h2>しくみ</h2>
-<p>なぞった部分の周りを正方形に切り出して512×512ピクセルに縮小し、Picsart AI Researchがスマホ向けに作ったMI-GANというAIに渡します。AIは周りの様子から、そこにありそうな背景を描きます。なぞった部分だけを縁をなめらかにして元のサイズの写真に戻すので、それ以外は変わりません。</p>
+<p>なぞった部分の周りを正方形に切り出して512×512ピクセルに縮小し、AIに渡します。高画質ではSamsung AIの研究者が公開したBig LaMa(広い範囲の補完が得意)、高速ではPicsart AI Researchがスマホ向けに作ったMI-GANを使います。AIは周りの様子から、そこにありそうな背景を描きます。なぞった部分だけを縁をなめらかにして元のサイズの写真に戻すので、それ以外は変わりません。</p>
 <h2>よくある質問</h2>
 <h3>広く消した所がぼやけます</h3><p>AIは512ピクセルで処理するため、高解像度の写真で広い範囲を消すと周りよりぼやけて見えることがあります。小さく分けて消すと改善します。</p>
 <h3>写真はアップロードされますか?</h3><p>いいえ。AIモデルを一度ブラウザにダウンロードし、端末内で実行します。</p>
@@ -108,7 +110,7 @@
   </section>
 </main>
 
-<script src="/remove-object/i18n.js?v=60ac2db1"></script>
+<script src="/remove-object/i18n.js?v=1e152fe5"></script>
 <script>window.PAGE_LANG="ja";</script>
 <script src="/assets/site.js?v=d2f6b2d2"></script>
 <script>
@@ -198,6 +200,10 @@
   $('brush').addEventListener('input',()=>{ $('brushOut').textContent=$('brush').value; });
   $('clear').addEventListener('click',()=>{ mask=null; draw(); });
 
+  /* high quality (LaMa) already draws real structure, so the texture pass is off by default there; the fast model needs it */
+  let detailTouched=false; $('detail').addEventListener('change',()=>{ detailTouched=true; });
+  function syncDetail(){ if(!detailTouched) $('detail').checked=$('quality').value!=='lama'; }
+  $('quality').addEventListener('change',syncDetail); syncDetail();
   /* ---------- worker ---------- */
   let worker=null, waiting=null;
   function getWorker(){
@@ -242,7 +248,7 @@
       for(let y=0;y<N;y++) for(let x=0;x<N;x++) if(hole[y*N+x]) for(let dy=-R;dy<=R;dy++){ const yy=y+dy; if(yy<0||yy>=N) continue; for(let dx=-R;dx<=R;dx++){ if(dx*dx+dy*dy>R*R) continue; const xx=x+dx; if(xx>=0&&xx<N) grown[yy*N+xx]=1; } }
       const rgba=new Uint8ClampedArray(px.getImageData(0,0,N,N).data);
       const keep=new Uint8Array(grown);
-      const out=await ask({rgba,hole:grown},[rgba.buffer,grown.buffer]);
+      const out=await ask({rgba,hole:grown,model:$('quality').value},[rgba.buffer,grown.buffer]);
       const oc=canvas(N,N); oc.getContext('2d').putImageData(new ImageData(out,N,N),0,0);
       const gm=canvas(N,N), gx=gm.getContext('2d'), gid=gx.createImageData(N,N); for(let i=0;i<N*N;i++) gid.data[i*4+3]=keep[i]*255; gx.putImageData(gid,0,0);
       let fillC=oc;
