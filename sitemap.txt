@@ -38,6 +38,14 @@ https://picshifter.pages.dev/es/photo-editor/
 https://picshifter.pages.dev/pt/photo-editor/
 https://picshifter.pages.dev/fr/photo-editor/
 https://picshifter.pages.dev/de/photo-editor/
+https://picshifter.pages.dev/remove-object/
+https://picshifter.pages.dev/ko/remove-object/
+https://picshifter.pages.dev/ja/remove-object/
+https://picshifter.pages.dev/zh/remove-object/
+https://picshifter.pages.dev/es/remove-object/
+https://picshifter.pages.dev/pt/remove-object/
+https://picshifter.pages.dev/fr/remove-object/
+https://picshifter.pages.dev/de/remove-object/
 https://picshifter.pages.dev/id-photo/
 https://picshifter.pages.dev/ko/id-photo/
 https://picshifter.pages.dev/ja/id-photo/

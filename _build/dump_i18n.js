@@ -2,7 +2,7 @@
 const fs = require('fs'), vm = require('vm'), path = require('path');
 const root = path.join(__dirname, '..');
 const ctx = {}; vm.createContext(ctx);
-const files = { image: ['assets/i18n-image.js', 'I18N'], doc: ['document-to-pdf/i18n.js', 'DOC_I18N'], scan: ['scan/i18n.js', 'SCAN_I18N'], bg: ['remove-background/i18n.js', 'BG_I18N'], edit: ['photo-editor/i18n.js', 'EDIT_I18N'], idphoto: ['id-photo/i18n.js', 'ID_I18N'], merge: ['pdf-tools/i18n.js', 'PDFM_I18N'], split: ['pdf-tools/i18n.js', 'PDFS_I18N'], ocr: ['image-to-text/i18n.js', 'OCR_I18N'] };
+const files = { image: ['assets/i18n-image.js', 'I18N'], doc: ['document-to-pdf/i18n.js', 'DOC_I18N'], scan: ['scan/i18n.js', 'SCAN_I18N'], bg: ['remove-background/i18n.js', 'BG_I18N'], edit: ['photo-editor/i18n.js', 'EDIT_I18N'], erase: ['remove-object/i18n.js', 'ERASE_I18N'], idphoto: ['id-photo/i18n.js', 'ID_I18N'], merge: ['pdf-tools/i18n.js', 'PDFM_I18N'], split: ['pdf-tools/i18n.js', 'PDFS_I18N'], ocr: ['image-to-text/i18n.js', 'OCR_I18N'] };
 const out = {};
 for (const [k, [f, name]] of Object.entries(files)) {
   vm.runInContext(fs.readFileSync(path.join(root, f), 'utf8') + `\n;this.__${k} = ${name};`, ctx);

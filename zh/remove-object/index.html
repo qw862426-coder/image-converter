@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="canonical" href="https://picshifter.pages.dev/zh/remove-object/">
+<link rel="alternate" hreflang="en" href="https://picshifter.pages.dev/remove-object/">
+<link rel="alternate" hreflang="ko" href="https://picshifter.pages.dev/ko/remove-object/">
+<link rel="alternate" hreflang="ja" href="https://picshifter.pages.dev/ja/remove-object/">
+<link rel="alternate" hreflang="zh-Hans" href="https://picshifter.pages.dev/zh/remove-object/">
+<link rel="alternate" hreflang="es" href="https://picshifter.pages.dev/es/remove-object/">
+<link rel="alternate" hreflang="pt" href="https://picshifter.pages.dev/pt/remove-object/">
+<link rel="alternate" hreflang="fr" href="https://picshifter.pages.dev/fr/remove-object/">
+<link rel="alternate" hreflang="de" href="https://picshifter.pages.dev/de/remove-object/">
+<link rel="alternate" hreflang="x-default" href="https://picshifter.pages.dev/remove-object/">
+<title>去除照片中的人和物体 – 免费 AI 消除 | PicShifter</title>
+<meta id="metaDesc" name="description" content="涂抹要去掉的人、文字或物体,AI 用背景自然填补。免费,在浏览器中处理,无需上传。">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="PicShifter">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:url" content="https://picshifter.pages.dev/zh/remove-object/">
+<meta property="og:title" content="去除照片中的人和物体 – 免费 AI 消除 | PicShifter">
+<meta property="og:description" content="涂抹要去掉的人、文字或物体,AI 用背景自然填补。免费,在浏览器中处理,无需上传。">
+<meta name="twitter:card" content="summary">
+<link rel="stylesheet" href="/assets/base.css?v=d7c952cd">
+<style>
+.ed{display:flex;flex-direction:column;gap:14px}
+.stagebox{position:relative;align-self:center;max-width:100%;line-height:0;touch-action:none;user-select:none;-webkit-user-select:none;border-radius:6px;overflow:hidden;background:var(--bg)}
+#view{display:block;max-width:100%;max-height:62vh;width:auto;height:auto}
+#ov{position:absolute;inset:0;width:100%;height:100%;cursor:crosshair}
+.sl{display:grid;grid-template-columns:minmax(64px,auto) 1fr 44px;gap:10px;align-items:center}
+.sl input{min-width:0}
+.sl output{font-variant-numeric:tabular-nums;text-align:right;font-size:.85rem;color:var(--muted)}
+.small{padding:8px 12px;font-size:.9rem}
+.grow{flex:1 1 auto}
+.hint{font-size:.85rem;color:var(--muted);margin:0}
+.status{display:flex;flex-direction:column;gap:6px;font-size:.9rem;color:var(--muted)}
+.savebar{border-top:1px solid var(--line);padding-top:14px}
+.notes{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 20px}
+.notes h2{margin:0 0 8px;font-size:1rem}
+.notes ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:.9rem}
+.busy .act{opacity:.5;pointer-events:none}
+.cmp{align-self:center}
+</style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6213198663836411"
+     crossorigin="anonymous"></script>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <div>
+      <h1 data-i18n="h1">去除照片中的人和物体</h1>
+      <p data-i18n="sub">用手指涂抹要去掉的人、文字或物体,AI 会用周围的背景填补。在你的设备上处理。</p>
+    </div>
+  </header>
+
+  <section class="panel" id="pick">
+    <div class="drop" id="drop" tabindex="0" role="button" aria-label="选择照片" data-i18n-aria="dropAria">
+      <strong data-i18n="dropTitle">点击选择照片,或拖到这里</strong>
+      <span data-i18n="dropSub">JPG、PNG、WebP、HEIC</span>
+    </div>
+    <input type="file" id="file" hidden accept="image/*,.heic,.heif">
+  </section>
+
+  <section class="panel ed" id="ed" hidden>
+    <div class="row act">
+      <button class="btn ghost small" id="undo" type="button" data-i18n="undo">撤销</button>
+      <button class="btn ghost small" id="reset" type="button" data-i18n="reset">重新开始</button>
+      <button class="btn ghost small" id="other" type="button" data-i18n="other">换一张</button>
+      <span class="hint grow" id="dims" style="text-align:right"></span>
+    </div>
+    <div class="stagebox" id="stagebox"><canvas id="view"></canvas><canvas id="ov"></canvas></div>
+    <button class="btn ghost small cmp act" id="hold" type="button" data-i18n="hold">按住查看原图</button>
+    <label class="sl act"><span data-i18n="brush">画笔</span><input type="range" min="1" max="20" value="5" id="brush"><output id="brushOut">5</output></label>
+    <p class="hint" data-i18n="hint">把要去掉的东西连同影子一起涂满,然后点击“消除”。</p>
+    <label class="check act"><input type="checkbox" id="detail" checked><span data-i18n="detail">用照片中的纹理重建细节(更清晰,多花几秒)</span></label>
+    <div class="row act">
+      <button class="btn" id="erase" type="button" data-i18n="erase">消除</button>
+      <button class="btn ghost small" id="clear" type="button" data-i18n="clear">清除涂抹</button>
+    </div>
+    <div class="status" id="status" hidden><span id="statusText"></span><div class="bar"><i id="statusBar"></i></div></div>
+    <div class="row savebar act">
+      <span class="label" data-i18n="saveAs">保存格式</span>
+      <select id="fmt"><option value="image/jpeg">JPG</option><option value="image/png">PNG</option></select>
+      <button class="btn" id="save" type="button" data-i18n="save">保存</button>
+    </div>
+    <p class="hint" id="msg" aria-live="polite"></p>
+  </section>
+
+  <section class="notes">
+    <h2 data-i18n="noteTitle">须知</h2>
+    <ul><li data-i18n="note1">第一次消除时会下载 27 MB 的 AI 模型,之后浏览器会保存它,下次启动更快。建议使用 Wi-Fi。</li><li data-i18n="note2">越小的东西去除得越干净。去除复杂背景前的人物时,请保持“用照片中的纹理重建细节”开启:它会用照片里真实的纹理填补,墙面、草地和地面不会变模糊。</li><li data-i18n="note3">照片不会离开你的设备。AI(Picsart AI Research 的 MI-GAN,MIT 许可)在浏览器中运行。</li></ul>
+  </section>
+  <section class="doc landing">
+    <article>
+<h2>可以去除什么</h2>
+<ul><li>旅行照片背景里路过的行人</li><li>电线、路牌、垃圾、停着的滑板车</li><li>文字、日期、你自己加的水印、小标志</li><li>商品照片上的污点、碎屑和瑕疵</li></ul>
+<h2>去得干净的技巧</h2>
+<ol><li><b>涂得比物体稍大一点。</b>残留的边缘和影子是留下淡淡轮廓的最常见原因。</li><li><b>大的东西分几次去除。</b>大个人物先涂一半消除,再处理剩下的部分,每一步 AI 都能参考更多背景。</li><li><b>先裁剪。</b>大照片里的小物体,先用<a href="/zh/photo-editor/">照片编辑器</a>裁剪,去除效果更清晰。</li><li><b>对比一下。</b>按住“查看原图”对比前后,不满意就撤销。</li></ol>
+<h2>工作原理</h2>
+<p>页面会在涂抹区域周围裁出一个正方形,缩小到 512 × 512 像素,交给 Picsart AI Research 为手机设计的 MI-GAN 模型。模型根据周围未涂抹的像素,画出那里最可能的背景。之后只把涂抹的部分柔化边缘后贴回原尺寸照片,其他部分保持不变。</p>
+<h2>常见问题</h2>
+<h3>大面积区域看起来模糊?</h3><p>模型以 512 像素工作,高分辨率照片中的大区域需要放大贴回,可能比周围更柔和。分成小块去除会更好。</p>
+<h3>照片会上传吗?</h3><p>不会。AI 模型下载到浏览器后在本地运行。</p>
+<h2>更多免费工具</h2><ul class="related"><li><a href="/zh/heic-to-jpg/">HEIC 转 JPG</a></li><li><a href="/zh/png-to-jpg/">PNG 转 JPG</a></li><li><a href="/zh/jpg-to-png/">JPG 转 PNG</a></li><li><a href="/zh/webp-to-jpg/">WebP 转 JPG</a></li><li><a href="/zh/jpg-to-pdf/">JPG 转 PDF</a></li><li><a href="/zh/pdf-to-jpg/">PDF 转 JPG</a></li><li><a href="/zh/compress-image/">压缩图片</a></li><li><a href="/zh/png-to-ico/">PNG 转 ICO</a></li><li><a href="/zh/word-to-pdf/">Word 转 PDF</a></li><li><a href="/zh/excel-to-pdf/">Excel 转 PDF</a></li><li><a href="/zh/ppt-to-pdf/">PPT 转 PDF</a></li><li><a href="/zh/hwp-to-pdf/">HWP 转 PDF</a></li><li><a href="/zh/scan/">照片转扫描件</a></li><li><a href="/zh/remove-background/">去除背景</a></li><li><a href="/zh/photo-editor/">照片编辑器</a></li><li><a href="/zh/id-photo/">证件照·护照照片制作</a></li><li><a href="/zh/merge-pdf/">合并 PDF</a></li><li><a href="/zh/split-pdf/">拆分 PDF</a></li><li><a href="/zh/image-to-text/">图片转文字</a></li><li><a href="/zh/guide/">使用方法</a></li></ul>
+    </article>
+  </section>
+</main>
+
+<script src="/remove-object/i18n.js?v=60ac2db1"></script>
+<script>window.PAGE_LANG="zh";</script>
+<script src="/assets/site.js?v=d2f6b2d2"></script>
+<script>
+(function(){
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const view=$('view'), ov=$('ov'), vctx=view.getContext('2d'), octx=ov.getContext('2d');
+  const MAX_SRC=4000, PREV=1200, HIST=5, N=512, WORK=1024;
+  let lang='en', fname='photo', base=null, prev=null, first=null, hist=[], mask=null, painting=false, last=null, busy=false, status=null;
+
+  function t(k,v){ let s=(ERASE_I18N[lang]&&ERASE_I18N[lang][k])||ERASE_I18N.en[k]||k; if(v) s=s.replace(/\{(\w+)\}/g,(m,x)=>x in v?v[x]:m); return s; }
+  function applyLang(){
+    document.title=t('title'); $('metaDesc').setAttribute('content',t('desc'));
+    document.querySelectorAll('[data-i18n]').forEach(e=>{ e.textContent=t(e.dataset.i18n); });
+    document.querySelectorAll('[data-i18n-aria]').forEach(e=>e.setAttribute('aria-label',t(e.dataset.i18nAria)));
+    showStatus(status);
+  }
+  function msg(s){ $('msg').textContent=s||''; }
+  function canvas(w,h){ const c=document.createElement('canvas'); c.width=Math.max(1,Math.round(w)); c.height=Math.max(1,Math.round(h)); return c; }
+  function copy(src){ const c=canvas(src.width,src.height); c.getContext('2d').drawImage(src,0,0); return c; }
+  function scaled(src,max){ const k=Math.min(1,max/Math.max(src.width,src.height)); const c=canvas(src.width*k,src.height*k); const x=c.getContext('2d'); x.imageSmoothingQuality='high'; x.drawImage(src,0,0,c.width,c.height); return c; }
+  function showStatus(s){
+    status=s; $('status').hidden=!s; if(!s) return;
+    $('statusText').textContent = s.stage==='download'? t('dl',{p:Math.round(s.value*100)}) : s.stage==='prepare'? t('prep') : s.stage==='refine'? t('refine',{p:Math.round(s.value*100)}) : t('run');
+    $('statusBar').style.width=((s.stage==='download'||s.stage==='refine')? s.value*100 : 100)+'%';
+  }
+
+  /* ---------- open ---------- */
+  let heicLoad=null;
+  function loadHeic(){ if(!heicLoad) heicLoad=new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='/vendor/heic2any.min.js'; s.onload=res; s.onerror=()=>{ heicLoad=null; rej(new Error('eOpen')); }; document.head.append(s); }); return heicLoad; }
+  async function decode(blob){
+    if(window.createImageBitmap){ try{ const b=await createImageBitmap(blob,{imageOrientation:'from-image'}); const c=scaled(b,MAX_SRC); b.close&&b.close(); return c; }catch(e){} }
+    const url=URL.createObjectURL(blob);
+    try{ const im=await new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=()=>rej(new Error('eOpen')); i.src=url; }); return scaled(im,MAX_SRC); }
+    finally{ URL.revokeObjectURL(url); }
+  }
+  async function readFile(f){
+    if(/\.(heic|heif)$/i.test(f.name)||/hei[cf]/i.test(f.type)){
+      try{ return await decode(f); }catch(e){}
+      await loadHeic(); const r=await window.heic2any({blob:f,toType:'image/jpeg',quality:0.95}); return decode(Array.isArray(r)?r[0]:r);
+    }
+    return decode(f);
+  }
+  async function open(f){
+    if(!f) return; msg(t('loading'));
+    try{
+      const c=await readFile(f); fname=(f.name||'photo').replace(/\.[^.]+$/,'')||'photo';
+      first=c; hist=[]; setBase(copy(c)); $('pick').hidden=true; $('ed').hidden=false; msg('');
+      if(f.type==='image/png') $('fmt').value='image/png';
+    }catch(e){ msg(t('eOpen')); }
+  }
+  const drop=$('drop'), file=$('file');
+  drop.addEventListener('click',()=>file.click());
+  drop.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); file.click(); } });
+  ['dragenter','dragover'].forEach(n=>drop.addEventListener(n,e=>{ e.preventDefault(); drop.classList.add('over'); }));
+  ['dragleave','drop'].forEach(n=>drop.addEventListener(n,e=>{ e.preventDefault(); drop.classList.remove('over'); }));
+  drop.addEventListener('drop',e=>open(e.dataTransfer.files[0]));
+  file.addEventListener('change',()=>{ const f=file.files[0]; file.value=''; open(f); });
+  $('other').addEventListener('click',()=>file.click());
+
+  function setBase(c){
+    base=c; prev=scaled(c,PREV); view.width=ov.width=prev.width; view.height=ov.height=prev.height;
+    mask=null; $('dims').textContent=base.width+' × '+base.height+' px'; draw();
+  }
+  function draw(orig){
+    vctx.clearRect(0,0,view.width,view.height); vctx.drawImage(orig&&first?first:prev,0,0,view.width,view.height);
+    octx.clearRect(0,0,ov.width,ov.height);
+    if(mask&&!orig){ const c=canvas(mask.width,mask.height), x=c.getContext('2d'); x.drawImage(mask,0,0); x.globalCompositeOperation='source-in'; x.fillStyle='#ff2d55'; x.fillRect(0,0,c.width,c.height); octx.globalAlpha=.5; octx.drawImage(c,0,0); octx.globalAlpha=1; }
+  }
+  $('undo').addEventListener('click',()=>{ if(busy) return; const h=hist.pop(); if(h) setBase(h); });
+  $('reset').addEventListener('click',()=>{ if(busy||!first) return; hist=[]; setBase(copy(first)); });
+  const hold=$('hold');
+  ['pointerdown'].forEach(n=>hold.addEventListener(n,()=>draw(true)));
+  ['pointerup','pointerleave','pointercancel'].forEach(n=>hold.addEventListener(n,()=>draw(false)));
+
+  /* ---------- painting ---------- */
+  function pt(e){ const r=ov.getBoundingClientRect(); return {x:(e.clientX-r.left)*ov.width/r.width, y:(e.clientY-r.top)*ov.height/r.height}; }
+  function paint(a,b){
+    if(!mask) mask=canvas(ov.width,ov.height);
+    const x=mask.getContext('2d'), r=(+$('brush').value/100)*Math.max(ov.width,ov.height)/2;
+    x.strokeStyle='#000'; x.lineCap='round'; x.lineJoin='round'; x.lineWidth=r*2;
+    x.beginPath(); x.moveTo(a.x,a.y); x.lineTo(b.x+.01,b.y); x.stroke(); draw();
+  }
+  ov.addEventListener('pointerdown',e=>{ if(!base||busy) return; ov.setPointerCapture(e.pointerId); painting=true; last=pt(e); paint(last,last); });
+  ov.addEventListener('pointermove',e=>{ if(!painting) return; const p=pt(e); paint(last,p); last=p; });
+  ['pointerup','pointercancel'].forEach(n=>ov.addEventListener(n,()=>{ painting=false; }));
+  $('brush').addEventListener('input',()=>{ $('brushOut').textContent=$('brush').value; });
+  $('clear').addEventListener('click',()=>{ mask=null; draw(); });
+
+  /* ---------- worker ---------- */
+  let worker=null, waiting=null;
+  function getWorker(){
+    if(worker) return worker;
+    worker=new Worker('/remove-object/worker.js');
+    worker.onmessage=e=>{
+      const m=e.data;
+      if(m.type==='progress') showStatus({stage:m.stage,value:m.value});
+      else if(m.type==='done'&&waiting){ waiting.resolve(m.rgba||m.rgb||null); waiting=null; }
+      else if(m.type==='error'&&waiting){ waiting.reject(new Error(m.message)); waiting=null; }
+    };
+    worker.onerror=()=>{ if(waiting){ waiting.reject(new Error('eGeneric')); waiting=null; } worker=null; };
+    return worker;
+  }
+  function ask(msg,transfer){ return new Promise((resolve,reject)=>{ waiting={resolve,reject}; getWorker().postMessage(msg,transfer); }); }
+
+  function bbox(c){
+    const d=c.getContext('2d').getImageData(0,0,c.width,c.height).data; let x0=1e9,y0=1e9,x1=-1,y1=-1;
+    for(let y=0;y<c.height;y++) for(let x=0;x<c.width;x++) if(d[(y*c.width+x)*4+3]>10){ if(x<x0)x0=x; if(x>x1)x1=x; if(y<y0)y0=y; if(y>y1)y1=y; }
+    return x1<0?null:{x0,y0,x1:x1+1,y1:y1+1};
+  }
+  function softBlur(src,r){ const s=canvas(Math.max(1,src.width/r),Math.max(1,src.height/r)); s.getContext('2d').drawImage(src,0,0,s.width,s.height); const o=canvas(src.width,src.height), x=o.getContext('2d'); x.imageSmoothingQuality='high'; x.drawImage(s,0,0,o.width,o.height); return o; }
+
+  $('erase').addEventListener('click',async()=>{
+    if(busy||!base) return;
+    if(!mask){ msg(t('none')); return; }
+    const b=bbox(mask); if(!b){ msg(t('none')); return; }
+    busy=true; $('ed').classList.add('busy'); msg('');
+    try{
+      const W=base.width, H=base.height, k=W/ov.width;
+      const bx0=b.x0*k, by0=b.y0*k, bx1=b.x1*k, by1=b.y1*k, bw=bx1-bx0, bh=by1-by0;
+      const side=Math.max(Math.max(bw,bh)*2, Math.min(N,W,H));
+      const rw=Math.round(Math.min(side,W)), rh=Math.round(Math.min(side,H));
+      const rx=Math.round(Math.min(Math.max((bx0+bx1)/2-rw/2,0),W-rw)), ry=Math.round(Math.min(Math.max((by0+by1)/2-rh/2,0),H-rh));
+      // photo area and painted area, both at 512×512
+      const pc=canvas(N,N), px=pc.getContext('2d'); px.imageSmoothingQuality='high'; px.drawImage(base,rx,ry,rw,rh,0,0,N,N);
+      const mc=canvas(N,N), mx=mc.getContext('2d'); mx.drawImage(mask,rx/k,ry/k,rw/k,rh/k,0,0,N,N);
+      const md=mx.getImageData(0,0,N,N).data, hole=new Uint8Array(N*N);
+      for(let i=0;i<N*N;i++) hole[i]=md[i*4+3]>8?1:0;
+      // grow the painted area so the object's edges and halo don't bleed back in
+      const R=Math.max(4,Math.round(N*0.012)), grown=new Uint8Array(hole);
+      for(let y=0;y<N;y++) for(let x=0;x<N;x++) if(hole[y*N+x]) for(let dy=-R;dy<=R;dy++){ const yy=y+dy; if(yy<0||yy>=N) continue; for(let dx=-R;dx<=R;dx++){ if(dx*dx+dy*dy>R*R) continue; const xx=x+dx; if(xx>=0&&xx<N) grown[yy*N+xx]=1; } }
+      const rgba=new Uint8ClampedArray(px.getImageData(0,0,N,N).data);
+      const keep=new Uint8Array(grown);
+      const out=await ask({rgba,hole:grown},[rgba.buffer,grown.buffer]);
+      const oc=canvas(N,N); oc.getContext('2d').putImageData(new ImageData(out,N,N),0,0);
+      const gm=canvas(N,N), gx=gm.getContext('2d'), gid=gx.createImageData(N,N); for(let i=0;i<N*N;i++) gid.data[i*4+3]=keep[i]*255; gx.putImageData(gid,0,0);
+      let fillC=oc;
+      if($('detail').checked){
+        // texture pass: rebuild the hole from real patches of this photo, using the AI result as the guide
+        const kk=Math.min(1,WORK/Math.max(rw,rh)), ww=Math.max(16,Math.round(rw*kk)), hh=Math.max(16,Math.round(rh*kk)), n=ww*hh;
+        const wc=canvas(ww,hh), wx=wc.getContext('2d'); wx.imageSmoothingQuality='high'; wx.drawImage(base,rx,ry,rw,rh,0,0,ww,hh);
+        const ic=canvas(ww,hh), ix=ic.getContext('2d'); ix.imageSmoothingQuality='high'; ix.drawImage(oc,0,0,ww,hh);
+        const hc=canvas(ww,hh), hx=hc.getContext('2d'); hx.drawImage(gm,0,0,ww,hh);
+        const wd=wx.getImageData(0,0,ww,hh).data, id=ix.getImageData(0,0,ww,hh).data, hd=hx.getImageData(0,0,ww,hh).data;
+        const img=new Float32Array(n*3), init=new Float32Array(n*3), hw=new Uint8Array(n);
+        for(let i=0;i<n;i++){ hw[i]=hd[i*4+3]>0?1:0; for(let c=0;c<3;c++){ img[i*3+c]=wd[i*4+c]; init[i*3+c]=id[i*4+c]; } }
+        try{
+          const res=await ask({type:'refine',img,init,hole:hw,w:ww,h:hh},[img.buffer,init.buffer,hw.buffer]);
+          if(res){ const rc=canvas(ww,hh), rx2=rc.getContext('2d'), rd=rx2.createImageData(ww,hh); for(let i=0;i<n;i++){ rd.data[i*4]=res[i*3]; rd.data[i*4+1]=res[i*3+1]; rd.data[i*4+2]=res[i*3+2]; rd.data[i*4+3]=255; } rx2.putImageData(rd,0,0); fillC=rc; }
+        }catch(e){ /* fall back to the AI result */ }
+      }
+      // paste back: fully inside the grown area, with a soft edge only outside it
+      const patch=canvas(rw,rh), pp=patch.getContext('2d'); pp.imageSmoothingQuality='high'; pp.drawImage(fillC,0,0,rw,rh);
+      const hard=canvas(rw,rh); hard.getContext('2d').drawImage(gm,0,0,rw,rh);
+      const soft=softBlur(hard, Math.max(2,Math.round(R*rw/N/2)));
+      const am=canvas(rw,rh), ax=am.getContext('2d'); ax.drawImage(soft,0,0); ax.globalCompositeOperation='lighter'; ax.drawImage(soft,0,0); ax.globalCompositeOperation='source-over'; ax.drawImage(hard,0,0);
+      pp.globalCompositeOperation='destination-in'; pp.drawImage(am,0,0);
+      hist.push(base); if(hist.length>HIST) hist.shift();
+      const nb=copy(base); nb.getContext('2d').drawImage(patch,rx,ry); setBase(nb);
+      showStatus(null);
+    }catch(e){ showStatus(null); msg(t(e.message==='eModel'?'eModel':'eGeneric')); }
+    busy=false; $('ed').classList.remove('busy');
+  });
+
+  /* ---------- save ---------- */
+  $('save').addEventListener('click',async()=>{
+    if(!base||busy) return;
+    const type=$('fmt').value, blob=await new Promise(r=>base.toBlob(r,type,0.95));
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=fname+'_erased.'+(type==='image/png'?'png':'jpg'); document.body.append(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),60000);
+  });
+
+  Site.onChange(l=>{ lang=l; applyLang(); });
+})();
+</script>
+</body>
+</html>
