@@ -14,7 +14,7 @@
     fr: { ocr: 'Image en texte', mergepdf: 'Fusionner PDF', splitpdf: 'Diviser PDF', idphoto: 'Photo d\u2019identité', erase: 'Effacer des objets', edit: 'Éditeur photo', compress: 'Compresser des images', popular: 'Populaires', bg: 'Supprimer le fond', scan: 'Photo en scan', img: 'Convertir des images', doc: 'Documents en PDF', guide: 'Mode d’emploi', about: 'À propos', privacy: 'Confidentialité', contact: 'Contact', lang: 'Langue', menu: 'Menu', note: 'Les fichiers sont convertis sur votre appareil et ne sont jamais envoyés.' },
     de: { ocr: 'Bild zu Text', mergepdf: 'PDF zusammenfügen', splitpdf: 'PDF teilen', idphoto: 'Passbild', erase: 'Objekte entfernen', edit: 'Foto-Editor', compress: 'Bilder komprimieren', popular: 'Beliebt', bg: 'Hintergrund entfernen', scan: 'Foto zu Scan', img: 'Bilder umwandeln', doc: 'Dokumente zu PDF', guide: 'Anleitung', about: 'Über uns', privacy: 'Datenschutz', contact: 'Kontakt', lang: 'Sprache', menu: 'Menü', note: 'Dateien werden auf deinem Gerät umgewandelt und nie hochgeladen.' }
   };
-  var LINKS = [['img', '/'], ['edit', '/photo-editor/'], ['doc', '/document-to-pdf/'], ['scan', '/scan/'], ['bg', '/remove-background/'], ['erase', '/remove-object/'], ['guide', '/guide/']];
+  var LINKS = [['img', '/'], ['edit', '/photo-editor/'], ['doc', '/document-to-pdf/'], ['scan', '/scan/'], ['bg', '/remove-background/'], ['guide', '/guide/']];
   var FOOT = [['about', '/about/'], ['privacy', '/privacy/'], ['contact', '/contact/']];
   var POPULAR = [['HEIC → JPG', '/heic-to-jpg/'], ['PNG → JPG', '/png-to-jpg/'], ['JPG → PNG', '/jpg-to-png/'], ['WebP → JPG', '/webp-to-jpg/'],
     ['JPG → PDF', '/jpg-to-pdf/'], ['PDF → JPG', '/pdf-to-jpg/'], ['PNG → ICO', '/png-to-ico/'], ['Word → PDF', '/word-to-pdf/'],
