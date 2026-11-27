@@ -62,7 +62,7 @@
     <p class="hint" data-i18n="areaHint">一部だけ読み取るには、その部分をドラッグで囲みます。囲まなければ画像全体を読み取ります。</p>
     <div class="row">
       <label class="hint" for="script" data-i18n="scriptLabel">文字の言語</label>
-      <select id="script"><option value="" data-i18n="scrKo">韓国語・英語・ヨーロッパ言語</option><option value="ja">日本語</option><option value="zh">中文(简体)</option></select>
+      <select id="script"><option value="" data-i18n="scrKo">韓国語・英語・ヨーロッパ言語</option><option value="ja">日本語</option><option value="zh">中文(简体)</option><option value="ru">Русский</option></select>
     </div>
     <div class="row">
       <button class="btn" id="go" type="button" data-i18n="go">文字を読み取る</button>
@@ -80,12 +80,12 @@
 
   <section class="notes">
     <h2 data-i18n="noteTitle">知っておきたいこと</h2>
-    <ul><li data-i18n="note1">日本語(ひらがな・カタカナ・常用漢字など約2,965字)、英字、数字、記号を読み取ります。韓国語・ヨーロッパ言語、中国語(簡体字)は「文字の言語」で切り替えられます。手書きにはまだ対応していません。</li><li data-i18n="note2">結果は必ず確認してから使ってください。小さい文字やぼやけた文字、装飾フォント、斜めから撮った写真は誤りが増えます。</li><li data-i18n="note3">画像が端末の外に送られることはありません。この文字認識はPicShifterが独自に作り、ブラウザ内だけで動きます。</li></ul>
+    <ul><li data-i18n="note1">日本語(ひらがな・カタカナ・常用漢字など約2,965字)、英字、数字、記号を読み取ります。韓国語・ヨーロッパ言語、中国語(簡体字)、ロシア語は「文字の言語」で切り替えられます。手書きにはまだ対応していません。</li><li data-i18n="note2">結果は必ず確認してから使ってください。小さい文字やぼやけた文字、装飾フォント、斜めから撮った写真は誤りが増えます。</li><li data-i18n="note3">画像が端末の外に送られることはありません。この文字認識はPicShifterが独自に作り、ブラウザ内だけで動きます。</li></ul>
   </section>
   <section class="doc landing">
     <article>
 <h2>読み取れる文字</h2>
-<ul><li>韓国語:よく使うハングル2,350字(KS X 1001)と、ㅋㅋのような単独の子音・母音</li><li>英字と、ドイツ語・フランス語・スペイン語・ポルトガル語・イタリア語・トルコ語・ポーランド語・ベトナム語のアクセント付き文字(é, ü, ñ, ç, ß, ế など)、数字、よく使う記号(. , ! ? ( ) / % € など)</li><li>スクリーンショット、スキャンした書類、レシート、正面から撮った案内文などの印刷文字</li><li>日本語:よく使う漢字2,965字とひらがな・カタカナ(「文字の言語」で日本語を選びます)。中国語(簡体字)にも切り替えられます</li></ul>
+<ul><li>韓国語:よく使うハングル2,350字(KS X 1001)と、ㅋㅋのような単独の子音・母音</li><li>英字と、ドイツ語・フランス語・スペイン語・ポルトガル語・イタリア語・トルコ語・ポーランド語・ベトナム語のアクセント付き文字(é, ü, ñ, ç, ß, ế など)、数字、よく使う記号(. , ! ? ( ) / % € など)</li><li>スクリーンショット、スキャンした書類、レシート、正面から撮った案内文などの印刷文字</li><li>日本語:よく使う漢字2,965字とひらがな・カタカナ(「文字の言語」で日本語を選びます)。中国語(簡体字)にも切り替えられます</li><li>ロシア語:「文字の言語」で Русский を選びます</li></ul>
 <h2>うまく読み取るコツ</h2>
 <ol><li>できればスクリーンショットかスキャンを使いましょう。写真よりずっと鮮明です。</li><li>写真なら明るい場所で正面から撮り、枠で文字の部分だけを選びます。</li><li>小さい文字は自動で拡大しますが、高さ12ピクセル未満の文字は誤りやすくなります。</li></ol>
 <h2>しくみ</h2>
@@ -95,7 +95,7 @@
   </section>
 </main>
 
-<script src="/image-to-text/i18n.js?v=79b471b3"></script>
+<script src="/image-to-text/i18n.js?v=e69c0356"></script>
 <script>window.PAGE_LANG="ja";</script>
 <script src="/assets/site.js?v=d2f6b2d2"></script>
 <script>

@@ -1,5 +1,5 @@
 /* Text recognition worker: loads PicShifter's own OCR models and reads text from images.
-   Three model sets: Korean + Latin letters (default), Japanese ('ja') and Chinese ('zh'). Only the chosen one is downloaded. */
+   Model sets: Korean + Latin letters (default), Japanese ('ja'), Chinese ('zh') and Russian ('ru'). Only the chosen one is downloaded. */
 importScripts('/image-to-text/engine.js');
 var cache = {}, current = null;
 function get(url, type, optional) {
@@ -11,14 +11,17 @@ function get(url, type, optional) {
 function files(lang) {
   if (!cache[lang]) {
     var sfx = lang ? '-' + lang : '', b = '/image-to-text/';
-    cache[lang] = Promise.all([
-      get(b + 'ocr-model' + sfx + '.bin', 'bin'),
-      get(b + 'ocr-meta' + sfx + '.json', 'json'),
-      /* neural network + character counts: optional extras; reading still works without them */
-      get(b + 'ocr-net' + sfx + '.bin', 'bin', true),
-      get(b + 'ocr-net' + sfx + '.json', 'json', true),
-      get(b + 'ocr-lm' + sfx + '.json', 'json', true)
-    ]);
+    cache[lang] = get(b + 'ocr-meta' + sfx + '.json', 'json').then(function (meta) {
+      var plain = meta.extras === false; /* Russian: shape matching only, no network or character counts */
+      return Promise.all([
+        get(b + 'ocr-model' + sfx + '.bin', 'bin'),
+        meta,
+        /* neural network + character counts: optional extras; reading still works without them */
+        plain ? null : get(b + 'ocr-net' + sfx + '.bin', 'bin', true),
+        plain ? null : get(b + 'ocr-net' + sfx + '.json', 'json', true),
+        plain ? null : get(b + 'ocr-lm' + sfx + '.json', 'json', true)
+      ]);
+    });
     cache[lang].catch(function () { delete cache[lang]; });
   }
   return cache[lang];
@@ -34,7 +37,7 @@ function use(lang) {
   });
 }
 onmessage = async function (e) {
-  var m = e.data, lang = (m.lang === 'ja' || m.lang === 'zh') ? m.lang : '';
+  var m = e.data, lang = (m.lang === 'ja' || m.lang === 'zh' || m.lang === 'ru') ? m.lang : '';
   try {
     await use(lang);
     postMessage({ type: 'progress', value: 0 });

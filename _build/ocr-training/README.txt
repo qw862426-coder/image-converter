@@ -55,3 +55,12 @@ Engine: no spaces next to Japanese/Chinese characters; half-width , : ( ) ! ? ne
   a lone Latin letter between them is replaced by the best Japanese/Chinese character when nearly as likely.
 Test errors per 100 characters (mktest_cjk.py, own sentences, incl. held-out fonts, small and photo-like text):
   ja: prototypes only 7.7 -> deployed 4.8      zh: prototypes only 5.2 -> deployed 3.5
+
+--- 2026-11-27 (deployed): Russian, the first method only (prototype reader, no network, no character counts) ---
+Characters: 66 Russian letters + ASCII + « » — – № etc. (175). Fonts: DejaVu, Free*, Carlito, Noto CJK, WQY,
+Pretendard, Spoqa, D2Coding; held out: Inter. Steps: gen_cjk.py ru lda train|hold ; lda_cjk.py ru ;
+meta: extras=false (the worker skips network/count files), latLambda -0.3.
+Engine for Russian: line height from the tops of clearly taller letters (capitals, б, ф), because lower-case
+Russian letters are short copies of capitals; look-alike Latin/Russian letters follow the word's alphabet;
+3/0 inside Russian words become з/о, round letters inside numbers become 0; ь + I becomes ы.
+Test errors per 100 characters (own sentences, Inter held out + DejaVu): 34.9 at first -> 6.3 (serif 16 px: 21).

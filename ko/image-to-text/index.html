@@ -62,7 +62,7 @@
     <p class="hint" data-i18n="areaHint">일부분만 읽으려면 그 부분을 끌어서 상자로 고르세요. 고르지 않으면 이미지 전체를 읽어요.</p>
     <div class="row">
       <label class="hint" for="script" data-i18n="scriptLabel">글자 종류</label>
-      <select id="script"><option value="" data-i18n="scrKo">한국어·영어·유럽 언어</option><option value="ja">日本語</option><option value="zh">中文(简体)</option></select>
+      <select id="script"><option value="" data-i18n="scrKo">한국어·영어·유럽 언어</option><option value="ja">日本語</option><option value="zh">中文(简体)</option><option value="ru">Русский</option></select>
     </div>
     <div class="row">
       <button class="btn" id="go" type="button" data-i18n="go">글자 읽기</button>
@@ -80,12 +80,12 @@
 
   <section class="notes">
     <h2 data-i18n="noteTitle">알아두세요</h2>
-    <ul><li data-i18n="note1">인쇄된 한글, 영어와 유럽 언어·베트남어 악센트 글자, 숫자, 기호를 읽어요. 일본어나 중국어(간체)는 ‘글자 종류’에서 골라 주세요. 선명한 캡처 화면과 스캔이 가장 잘 돼요. 손글씨는 아직 읽지 못해요.</li><li data-i18n="note2">결과는 꼭 확인하고 쓰세요. 아주 작거나 흐린 글자, 꾸민 글꼴, 비스듬히 찍은 사진은 틀리는 글자가 많아져요.</li><li data-i18n="note3">이미지는 내 기기 밖으로 나가지 않아요. 이 글자 인식은 PicShifter가 직접 만들었고, 브라우저 안에서만 작동해요.</li></ul>
+    <ul><li data-i18n="note1">인쇄된 한글, 영어와 유럽 언어·베트남어 악센트 글자, 숫자, 기호를 읽어요. 일본어, 중국어(간체), 러시아어는 ‘글자 종류’에서 골라 주세요. 선명한 캡처 화면과 스캔이 가장 잘 돼요. 손글씨는 아직 읽지 못해요.</li><li data-i18n="note2">결과는 꼭 확인하고 쓰세요. 아주 작거나 흐린 글자, 꾸민 글꼴, 비스듬히 찍은 사진은 틀리는 글자가 많아져요.</li><li data-i18n="note3">이미지는 내 기기 밖으로 나가지 않아요. 이 글자 인식은 PicShifter가 직접 만들었고, 브라우저 안에서만 작동해요.</li></ul>
   </section>
   <section class="doc landing">
     <article>
 <h2>읽을 수 있는 글자</h2>
-<ul><li>한글: 자주 쓰는 완성형 글자 2,350자(KS X 1001)와 ㅋㅋ 같은 낱자</li><li>영어 알파벳과 유럽 언어·베트남어의 악센트 글자(é, ü, ñ, ç, ß, ế 등), 숫자, 자주 쓰는 기호(. , ! ? ( ) / % ₩ € 등)</li><li>캡처 화면, 스캔한 서류, 영수증, 정면에서 찍은 안내문 같은 인쇄된 글자</li><li>일본어·중국어(간체): 화면의 ‘글자 종류’에서 고르면 일본어(자주 쓰는 한자 2,965자 + 히라가나·가타카나)와 중국어(자주 쓰는 간체자 3,755자)를 읽어요. 고른 언어의 모델만 내려받아요.</li></ul>
+<ul><li>한글: 자주 쓰는 완성형 글자 2,350자(KS X 1001)와 ㅋㅋ 같은 낱자</li><li>영어 알파벳과 유럽 언어·베트남어의 악센트 글자(é, ü, ñ, ç, ß, ế 등), 숫자, 자주 쓰는 기호(. , ! ? ( ) / % ₩ € 등)</li><li>캡처 화면, 스캔한 서류, 영수증, 정면에서 찍은 안내문 같은 인쇄된 글자</li><li>일본어·중국어(간체): 화면의 ‘글자 종류’에서 고르면 일본어(자주 쓰는 한자 2,965자 + 히라가나·가타카나)와 중국어(자주 쓰는 간체자 3,755자)를 읽어요. 고른 언어의 모델만 내려받아요.</li><li>러시아어: ‘글자 종류’에서 Русский를 고르면 러시아 글자 66자와 숫자, 기호를 읽어요.</li></ul>
 <h2>잘 읽히게 하는 요령</h2>
 <ol><li>가능하면 캡처 화면이나 스캔을 쓰세요. 사진보다 훨씬 선명해요.</li><li>사진이라면 밝은 곳에서 정면으로 찍고, 상자로 글자 부분만 골라 주세요.</li><li>작은 글자는 자동으로 크게 키워서 읽지만, 높이가 12픽셀보다 작은 글자는 틀릴 수 있어요.</li></ol>
 <h2>이렇게 작동해요</h2>
@@ -98,7 +98,7 @@
   </section>
 </main>
 
-<script src="/image-to-text/i18n.js?v=79b471b3"></script>
+<script src="/image-to-text/i18n.js?v=e69c0356"></script>
 <script>window.PAGE_LANG="ko";</script>
 <script src="/assets/site.js?v=d2f6b2d2"></script>
 <script>

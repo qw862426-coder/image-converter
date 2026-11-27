@@ -14,6 +14,12 @@ def _euc(enc,rows):
             except Exception: pass
     return out
 def charset(lang):
+    if lang=='ru':
+        cyr=[chr(c) for c in range(0x410,0x450)]+['Ё','ё']
+        out=[]
+        for c in cyr+ASCII+list('«»—–№…„“”‘’•°€₽'):
+            if c not in out: out.append(c)
+        return out
     if lang=='ja':
         kana=[chr(c) for c in range(0x3041,0x3097)]+[chr(c) for c in range(0x30A1,0x30FB)]+['ー']
         kanji=_euc('euc_jp',range(0xB0,0xD0))            # JIS X 0208 level 1: 2,965 common kanji
@@ -27,6 +33,14 @@ def charset(lang):
         if c not in seen: seen.add(c); out.append(c)
     return out
 def fonts(lang):
+    if lang=='ru':
+        from fonts import NOTO, WQY, PRET, SPOQA, D2
+        D_='/usr/share/fonts/truetype/'
+        train=[(D_+'dejavu/DejaVuSans.ttf',0),(D_+'dejavu/DejaVuSans-Bold.ttf',0),(D_+'dejavu/DejaVuSerif.ttf',0),(D_+'dejavu/DejaVuSansMono.ttf',0),
+               (D_+'freefont/FreeSans.ttf',0),(D_+'freefont/FreeSansBold.ttf',0),(D_+'freefont/FreeSerif.ttf',0),(D_+'freefont/FreeMono.ttf',0),
+               (D_+'crosextra/Carlito-Regular.ttf',0),(D_+'crosextra/Carlito-Bold.ttf',0)]+NOTO+WQY+PRET+SPOQA+D2
+        hold=[('/usr/share/fonts/opentype/inter/Inter-Regular.otf',0),('/usr/share/fonts/opentype/inter/Inter-Bold.otf',0)]
+        return train,hold
     if lang=='ja':
         train=[(N+'NotoSansCJK-%s.ttc'%w,0) for w in SANS]+[(N+'NotoSerifCJK-%s.ttc'%w,0) for w in SERIF]+\
               [(F+'/x_plexjp/ibm-plex-sans-jp/fonts/complete/ttf/unhinted/IBMPlexSansJP-%s.ttf'%w,0) for w in ['Light','Regular','Medium','SemiBold','Bold']]+\
@@ -38,7 +52,7 @@ def fonts(lang):
               [(F+'/x_wenkai/lxgw-wenkai-v1.330/LXGWWenKai-Regular.ttf',0)]
         hold=[(F+'/neoxihei.ttf',0)]
     return train,hold
-REFS={'ja':['日本語の文字','ABHEkdlhb','日本ABk語hd'],'zh':['中文汉字测试','ABHEkdlhb','中文ABk汉hd']}
+REFS={'ru':['БВГЖЗИКЛбв','ABHEkdlhb','БЖAkбh'],'ja':['日本語の文字','ABHEkdlhb','日本ABk語hd'],'zh':['中文汉字测试','ABHEkdlhb','中文ABk汉hd']}
 if __name__=='__main__':
     from fonts import covers
     for lang in ['ja','zh']:

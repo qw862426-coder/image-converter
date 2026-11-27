@@ -15,13 +15,14 @@ function load(buf, meta) {
   var q = new Int8Array(buf.slice(o, o + C * D)); o += C * D;
   var P = new Float32Array(C * D), PP = new Float32Array(C);
   for (var c = 0; c < C; c++) { var s = 0; for (var d = 0; d < D; d++) { var v = q[c * D + d] * sc[d]; P[c * D + d] = v; s += v * v; } PP[c] = s; }
-  M = { dim: dim, D: D, C: C, mu: mu, W: W, P: P, PP: PP, chars: Array.from(meta.chars), med: meta.medDist, lang: meta.lang || '', gamma: meta.gamma, netT: meta.netT };
+  M = { dim: dim, D: D, C: C, mu: mu, W: W, P: P, PP: PP, chars: Array.from(meta.chars), med: meta.medDist, lang: meta.lang || '', gamma: meta.gamma, netT: meta.netT, latLambda: meta.latLambda };
   M.skip = M.chars.map(function (ch) { return '■●▲★'.indexOf(ch) >= 0; });
   /* which numbers are Korean letters (syllables or single jamo) and which are Latin letters */
   M.isKo = M.chars.map(function (ch) { var u = ch.charCodeAt(0); return (u >= 0xAC00 && u <= 0xD7A3) || (u >= 0x3131 && u <= 0x318E) || (u >= 0x3041 && u <= 0x30FF) || (u >= 0x4E00 && u <= 0x9FFF); });
   /* Chinese characters and Japanese kana: no spaces between them */
   M.isCJK = M.chars.map(function (ch) { var u = ch.charCodeAt(0); return u >= 0x3000 && u < 0xAC00 && !(u >= 0x3131 && u <= 0x318E) || u >= 0xFF00; });
-  M.isLat = M.chars.map(function (ch) { return /[A-Za-z\u00C0-\u024F\u1E00-\u1EFF]/.test(ch); });
+  M.isLat = M.chars.map(function (ch) { return /[A-Za-z\u00C0-\u024F\u1E00-\u1EFF\u0400-\u04FF]/.test(ch); });
+  M.isCyr = M.chars.map(function (ch) { return /[\u0400-\u04FF]/.test(ch); });
 }
 
 /* ---------- glyph features (must match feat.py) ---------- */
@@ -309,7 +310,7 @@ function readLine(line, lab, w) {
     if (N && NETDP) { var t = netClassify(normalize(ink, gw, gh), r.geo); r.nc = t.c; r.nll = t.nll; }
     cache[key] = r; return r;
   }
-  var LATLAMBDA = (root.PicOCR && root.PicOCR.latLambda != null) ? root.PicOCR.latLambda : -2;
+  var LATLAMBDA = (root.PicOCR && root.PicOCR.latLambda != null) ? root.PicOCR.latLambda : (M.latLambda != null ? M.latLambda : -2);
   var LAMBDA = (root.PicOCR && root.PicOCR.lambda) || 0.4, CUT = (root.PicOCR && root.PicOCR.cut != null) ? root.PicOCR.cut : 0.6;
   function runDP() {
     var best = new Float64Array(n + 1).fill(1e30), from = new Int32Array(n + 1).fill(-1); best[0] = 0;
@@ -345,6 +346,12 @@ function readLine(line, lab, w) {
     if (big.length >= 3) {
       var tops = big.map(function (p) { return p.y0; }).sort(function (a, b) { return a - b; });
       var B1 = median(big.map(function (p) { return p.y1; })), T1 = tops[Math.floor(0.2 * tops.length)];
+      if (M.lang === 'ru') {
+        /* Russian lower-case letters are short copies of capitals (о/О, н/Н), and few letters rise above the
+           short ones, so take the tops of the letters that clearly do (capitals, б, ф…) */
+        var mt = median(tops), xh = B1 - mt, tall = tops.filter(function (t) { return t < mt - 0.2 * xh; });
+        T1 = tall.length >= 2 ? median(tall) : B1 - xh / 0.72;
+      }
       if (B1 - T1 >= 4) { T0 = T1; H0 = B1 - T1; }
     }
     segs = runDP();
@@ -395,6 +402,37 @@ function readLine(line, lab, w) {
     var at = 0; for (var q = 1; q < prevV.length; q++) if (prevV[q] > prevV[at]) at = q;
     for (var k2 = segs.length - 1; k2 >= 0; k2--) { segs[k2].c = back[k2].c[at]; at = back[k2].b[at]; }
   }
+  /* Russian: Latin and Russian letters can look exactly alike (A/А, o/о, p/р). Inside a word, use the alphabet
+     that most of its letters are in */
+  if (M.lang === 'ru' && segs.length) {
+    if (!M.twin) {
+      M.twin = {}; var LT = 'ABCEHKMOPTXaceopxy', CY = 'АВСЕНКМОРТХасеорху';
+      for (var q = 0; q < LT.length; q++) { var a = M.chars.indexOf(LT[q]), b2 = M.chars.indexOf(CY[q]); if (a >= 0 && b2 >= 0) { M.twin[a] = b2; M.twin[b2] = a; } }
+    }
+    var w0 = 0;
+    for (var k3 = 0; k3 <= segs.length; k3++) {
+      if (k3 === segs.length || (k3 && segs[k3].x0 - segs[k3 - 1].x1 > spaceAt)) {
+        var cy = 0, la = 0, t;
+        for (t = w0; t < k3; t++) if (M.twin[segs[t].c] == null) { if (M.isCyr[segs[t].c]) cy++; else if (M.isLat[segs[t].c]) la++; }
+        var digits = 0, letters = 0; for (t = w0; t < k3; t++) { if (/[0-9]/.test(M.chars[segs[t].c])) digits++; else if (M.isLat[segs[t].c]) letters++; }
+        /* a number: round letters in it are zeros */
+        if (digits && digits > letters) { for (t = w0; t < k3; t++) if (/[oOоО]/.test(M.chars[segs[t].c])) segs[t].c = M.chars.indexOf('0'); w0 = k3; continue; }
+        var wantCyr = cy > la || (cy === la && cy + la === 0);
+        for (t = w0; t < k3; t++) { var c3 = segs[t].c; if (M.twin[c3] != null && M.isCyr[c3] !== wantCyr) segs[t].c = M.twin[c3]; }
+        if (wantCyr && cy) for (t = w0; t < k3; t++) {
+          var ch3 = M.chars[segs[t].c];
+          /* Latin letters that only look like Russian ones in some fonts */
+          var one = { n: 'п', u: 'и', r: 'г' }[ch3]; if (one) segs[t].c = M.chars.indexOf(one);
+          /* 3 and 0 inside a Russian word are з and о */
+          if (ch3 === '3' || ch3 === '0') { var hasNum = false; for (var u3 = w0; u3 < k3; u3++) if (u3 !== t && /[0-9]/.test(M.chars[segs[u3].c])) hasNum = true;
+            if (!hasNum) segs[t].c = M.chars.indexOf(ch3 === '3' ? 'з' : 'о'); }
+          /* ы and Ы are two pieces (ь + I) */
+          if ((ch3 === 'ь' || ch3 === 'Ь') && t + 1 < k3 && /[Il|1]/.test(M.chars[segs[t + 1].c])) { segs[t].c = M.chars.indexOf(ch3 === 'ь' ? 'ы' : 'Ы'); segs[t + 1].drop = true; }
+        }
+        w0 = k3;
+      }
+    }
+  }
   /* Japanese/Chinese: a lone Latin letter or half-width mark between their own characters is usually a misread
      character (。 read as o); take the best Japanese/Chinese character instead when it is nearly as likely */
   if ((M.lang === 'ja' || M.lang === 'zh') && (N || L)) {
@@ -421,6 +459,7 @@ function readLine(line, lab, w) {
   }
   var out = '';
   if (root.PicOCR && root.PicOCR.onSeg) segs.forEach(function (sg) { root.PicOCR.onSeg(sg, M.chars[sg.c], SCALE); });
+  segs = segs.filter(function (sg) { if (sg.drop) { sg.drop = false; return false; } return true; });
   segs.forEach(function (sgm, k) {
     var gap = k ? sgm.x0 - segs[k - 1].x1 : 0, cjkLine = M.lang === 'ja' || M.lang === 'zh';
     /* Japanese and Chinese: no spaces next to their own characters, and only clear gaps between Latin words */
