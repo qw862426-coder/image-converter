@@ -3,8 +3,9 @@ importScripts('/vendor/ort/ort-wasm.js', '/vendor/ort/mini-ort.js');
 
 var MDIR = ['', 'models', ''].join('/'); /* built in pieces: not a page for search robots */
 var MODELS = {
-  hq: { parts: [MDIR + 'silueta.onnx.part0', MDIR + 'silueta.onnx.part1', MDIR + 'silueta.onnx.part2'], size: 44173029 },
-  fast: { parts: [MDIR + 'u2netp.onnx'], size: 4574861 }
+  /* ISNet (DIS, general use) at 1024 x 1024: sharp edges, keeps whole objects */
+  hq: { parts: [MDIR + 'isnet.onnx.part0', MDIR + 'isnet.onnx.part1', MDIR + 'isnet.onnx.part2'], size: 48396208, side: 1024 },
+  fast: { parts: [MDIR + 'u2netp.onnx'], size: 4574861, side: 320 }
 };
 var ortPromise = null, sessions = {}, S = 320;
 
@@ -75,7 +76,7 @@ function cleanMask(o) {
     var big = Math.max.apply(null, sizes), keep = new Uint8Array(n);
     for (i = 0; i < n; i++) if (lab[i] >= 0 && sizes[lab[i]] >= big * 0.12) keep[i] = 1;
     /* grow the kept area a little so soft edges around the subject survive */
-    var r = 6, grown = new Uint8Array(n);
+    var r = Math.round(6 * S / 320), grown = new Uint8Array(n);
     for (var y2 = 0; y2 < S; y2++) for (var x2 = 0; x2 < S; x2++) {
       if (!keep[y2 * S + x2]) continue;
       for (var dy = -r; dy <= r; dy++) { var yy = y2 + dy; if (yy < 0 || yy >= S) continue;
@@ -93,6 +94,7 @@ onmessage = async function (e) {
     if (msg.type === 'load') { await getSession(msg.model); postMessage({ type: 'ready', model: msg.model }); return; }
     if (msg.type === 'run') {
       var s = await getSession(msg.model);
+      S = MODELS[msg.model].side;
       postMessage({ type: 'progress', stage: 'run', value: 0, id: msg.id });
       var out = s.run({ [s.inputNames[0]]: { data: msg.input, dims: [1, 3, S, S] } });
       var mask = cleanMask(out[s.outputNames[0]].data);
