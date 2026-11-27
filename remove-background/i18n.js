@@ -1,6 +1,7 @@
 /* Text for the Remove background page in 8 languages. */
 const BG_I18N = {
 en: {
+  fix: 'Fix', brErase: 'Erase brush', brKeep: 'Restore brush', brSize: 'Brush size', undo: 'Undo', cancel: 'Cancel', doneFix: 'Done', fixHint: 'Paint leftover background with the erase brush, and cut-off parts with the restore brush. Removed areas show faintly.',
   title: 'Remove Background from Image – Free, No Upload | PicShifter',
   desc: 'Remove the background from photos of people, pets and products for free. Get a transparent PNG or a white background. Runs in your browser, no upload.',
   h1: 'Remove background', sub: 'Cut out people, pets and products from a photo and get a transparent PNG. The AI runs on your device.',
@@ -18,6 +19,7 @@ en: {
   eGeneric: 'Something went wrong. Try a smaller photo or the Fast option.', eLib: 'Couldn’t load the HEIC reader. Check your internet connection.'
 },
 ko: {
+  fix: '고치기', brErase: '지우기 붓', brKeep: '살리기 붓', brSize: '붓 크기', undo: '되돌리기', cancel: '취소', doneFix: '완료', fixHint: '남은 배경은 지우기 붓으로, 잘려 나간 부분은 살리기 붓으로 칠하세요. 지워진 곳은 흐리게 보여요.',
   title: '사진 배경 지우기 | PicShifter',
   desc: '사람·반려동물·상품 사진의 배경을 무료로 지우세요. 투명 PNG나 흰 배경으로 저장. 브라우저에서 처리되어 업로드되지 않습니다.',
   h1: '배경 지우기', sub: '사진에서 사람, 반려동물, 상품만 남기고 배경을 지워 투명 PNG로 만들어요. 인공지능이 내 기기에서 작동해요.',
@@ -35,6 +37,7 @@ ko: {
   eGeneric: '문제가 생겼어요. 더 작은 사진이나 "빠르게" 옵션으로 다시 시도해 주세요.', eLib: 'HEIC 읽기 도구를 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'
 },
 ja: {
+  fix: '修正', brErase: '消すブラシ', brKeep: '戻すブラシ', brSize: 'ブラシの大きさ', undo: '元に戻す', cancel: 'キャンセル', doneFix: '完了', fixHint: '残った背景は「消すブラシ」で、欠けた部分は「戻すブラシ」でなぞってください。消えた部分は薄く表示されます。',
   title: '画像の背景を削除 – 無料・アップロード不要 | PicShifter',
   desc: '人物・ペット・商品の写真の背景を無料で削除。透過PNGや白背景で保存できます。ブラウザ内で処理され、アップロードされません。',
   h1: '背景を削除', sub: '写真から人物・ペット・商品だけを切り抜いて、透過PNGにします。AIはお使いの端末内で動きます。',
@@ -52,6 +55,7 @@ ja: {
   eGeneric: '問題が発生しました。小さめの写真か「高速」でお試しください。', eLib: 'HEIC読み込みツールを読み込めませんでした。インターネット接続を確認してください。'
 },
 zh: {
+  fix: '修正', brErase: '擦除画笔', brKeep: '恢复画笔', brSize: '画笔大小', undo: '撤销', cancel: '取消', doneFix: '完成', fixHint: '用擦除画笔涂掉残留的背景，用恢复画笔涂回被误删的部分。已删除的区域会淡淡显示。',
   title: '图片去背景 – 免费，无需上传 | PicShifter',
   desc: '免费去除人物、宠物和商品照片的背景，保存为透明 PNG 或白色背景。在浏览器中处理，不会上传。',
   h1: '去除背景', sub: '从照片中抠出人物、宠物或商品，得到透明 PNG。AI 在你的设备上运行。',
@@ -69,6 +73,7 @@ zh: {
   eGeneric: '出现问题。请尝试更小的照片或“快速”选项。', eLib: '无法加载 HEIC 读取工具，请检查网络连接。'
 },
 es: {
+  fix: 'Retocar', brErase: 'Pincel borrar', brKeep: 'Pincel recuperar', brSize: 'Tamaño del pincel', undo: 'Deshacer', cancel: 'Cancelar', doneFix: 'Listo', fixHint: 'Pinta con el pincel borrar el fondo que quedó y con el pincel recuperar las partes cortadas. Lo eliminado se ve tenue.',
   title: 'Quitar fondo de imagen – Gratis, sin subir archivos | PicShifter',
   desc: 'Quita el fondo de fotos de personas, mascotas y productos gratis. Obtén un PNG transparente o fondo blanco. Funciona en tu navegador, sin subir nada.',
   h1: 'Quitar fondo', sub: 'Recorta personas, mascotas y productos de una foto y obtén un PNG transparente. La IA funciona en tu dispositivo.',
@@ -86,6 +91,7 @@ es: {
   eGeneric: 'Algo salió mal. Prueba con una foto más pequeña o con la opción Rápido.', eLib: 'No se pudo cargar el lector de HEIC. Revisa tu conexión a internet.'
 },
 pt: {
+  fix: 'Retocar', brErase: 'Pincel apagar', brKeep: 'Pincel recuperar', brSize: 'Tamanho do pincel', undo: 'Desfazer', cancel: 'Cancelar', doneFix: 'Concluir', fixHint: 'Pinte com o pincel apagar o fundo que sobrou e com o pincel recuperar as partes cortadas. O que foi removido aparece esmaecido.',
   title: 'Remover fundo de imagem – Grátis, sem envio | PicShifter',
   desc: 'Remova o fundo de fotos de pessoas, pets e produtos de graça. Salve como PNG transparente ou com fundo branco. Funciona no navegador, sem envio.',
   h1: 'Remover fundo', sub: 'Recorte pessoas, pets e produtos de uma foto e obtenha um PNG transparente. A IA roda no seu dispositivo.',
@@ -103,6 +109,7 @@ pt: {
   eGeneric: 'Algo deu errado. Tente uma foto menor ou a opção Rápido.', eLib: 'Não foi possível carregar o leitor de HEIC. Verifique sua conexão com a internet.'
 },
 fr: {
+  fix: 'Retoucher', brErase: 'Pinceau effacer', brKeep: 'Pinceau restaurer', brSize: 'Taille du pinceau', undo: 'Annuler l’action', cancel: 'Annuler', doneFix: 'Terminé', fixHint: 'Peignez le fond restant avec le pinceau effacer, et les parties coupées avec le pinceau restaurer. Les zones retirées restent visibles en transparence.',
   title: 'Supprimer l’arrière-plan d’une image – Gratuit, sans envoi | PicShifter',
   desc: 'Supprimez gratuitement l’arrière-plan de photos de personnes, d’animaux et de produits. PNG transparent ou fond blanc. Fonctionne dans le navigateur, sans envoi.',
   h1: 'Supprimer l’arrière-plan', sub: 'Détourez une personne, un animal ou un produit et obtenez un PNG transparent. L’IA fonctionne sur votre appareil.',
@@ -120,6 +127,7 @@ fr: {
   eGeneric: 'Un problème est survenu. Essayez une photo plus petite ou l’option Rapide.', eLib: 'Impossible de charger le lecteur HEIC. Vérifiez votre connexion internet.'
 },
 de: {
+  fix: 'Nachbessern', brErase: 'Radierpinsel', brKeep: 'Wiederherstellen', brSize: 'Pinselgröße', undo: 'Rückgängig', cancel: 'Abbrechen', doneFix: 'Fertig', fixHint: 'Übrigen Hintergrund mit dem Radierpinsel übermalen, abgeschnittene Teile mit „Wiederherstellen“. Entfernte Bereiche sind blass zu sehen.',
   title: 'Hintergrund aus Bild entfernen – kostenlos, ohne Upload | PicShifter',
   desc: 'Entferne kostenlos den Hintergrund aus Fotos von Personen, Haustieren und Produkten. Als transparentes PNG oder mit weißem Hintergrund. Läuft im Browser, ohne Upload.',
   h1: 'Hintergrund entfernen', sub: 'Stell Personen, Haustiere und Produkte frei und erhalte ein transparentes PNG. Die KI läuft auf deinem Gerät.',

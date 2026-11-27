@@ -44,6 +44,17 @@
 .card .err{font-size:.8rem;color:var(--err)}
 .card .tools{display:flex;gap:6px;flex-wrap:wrap}
 .card .tools>*{flex:1 1 auto;text-align:center}
+.fixer{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.72);display:flex;flex-direction:column;padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));gap:10px}
+.fixer[hidden]{display:none}
+.fixer .fxbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--panel);color:var(--fg);border-radius:10px;padding:8px 10px;flex:0 0 auto}
+.fixer .fxbar label{font-size:.85rem;color:var(--muted);display:flex;align-items:center;gap:6px}
+.fixer .fxbar input[type=range]{width:120px}
+.fixer .stage{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.fixer canvas{display:block;touch-action:none;cursor:crosshair;border-radius:6px;
+  background-color:#fff;background-image:linear-gradient(45deg,#d9dde2 25%,transparent 25%),linear-gradient(-45deg,#d9dde2 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#d9dde2 75%),linear-gradient(-45deg,transparent 75%,#d9dde2 75%);
+  background-size:20px 20px;background-position:0 0,0 10px,10px -10px,-10px 0}
+.fixer .hint{color:#fff;font-size:.85rem;text-align:center;flex:0 0 auto}
+.fixer .end{margin-left:auto;display:flex;gap:8px}
 .notes{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 20px}
 .notes h2{margin:0 0 8px;font-size:1rem}
 .notes ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:.9rem}
@@ -96,6 +107,16 @@
     <h2 data-i18n="noteTitle">Bon à savoir</h2>
     <ul><li data-i18n="note1">Fonctionne au mieux quand un seul sujet se détache nettement du fond : une personne, un animal ou un produit.</li><li data-i18n="note2">Les scènes chargées, les cheveux fins et les objets transparents peuvent demander une photo plus nette.</li><li data-i18n="note3">Le modèle d’IA est téléchargé une fois et conservé par votre navigateur : les visites suivantes démarrent plus vite. Vos photos ne quittent jamais votre appareil.</li></ul>
   </section>
+<div class="fixer" id="fixer" hidden role="dialog" aria-modal="true" aria-label="Fix">
+  <div class="fxbar">
+    <div class="seg" id="brush"><button type="button" data-v="erase" aria-pressed="true" data-i18n="brErase">Pinceau effacer</button><button type="button" data-v="keep" aria-pressed="false" data-i18n="brKeep">Pinceau restaurer</button></div>
+    <label><span data-i18n="brSize">Taille du pinceau</span><input type="range" id="brSize" min="4" max="120" value="28"></label>
+    <button type="button" class="btn ghost" id="fxUndo" data-i18n="undo">Annuler l’action</button>
+    <div class="end"><button type="button" class="btn ghost" id="fxCancel" data-i18n="cancel">Annuler</button><button type="button" class="btn" id="fxDone" data-i18n="doneFix">Terminé</button></div>
+  </div>
+  <div class="hint" data-i18n="fixHint">Peignez le fond restant avec le pinceau effacer, et les parties coupées avec le pinceau restaurer. Les zones retirées restent visibles en transparence.</div>
+  <div class="stage"><canvas id="fxCanvas"></canvas></div>
+</div>
   <section class="doc landing">
     <article>
 <h2>À quoi ça sert</h2>
@@ -129,7 +150,7 @@
   </section>
 </main>
 
-<script src="/remove-background/i18n.js?v=43ff16d6"></script>
+<script src="/remove-background/i18n.js?v=b86d1218"></script>
 <script>window.PAGE_LANG="fr";</script>
 <script src="/assets/site.js?v=d2f6b2d2"></script>
 <script>
@@ -237,6 +258,67 @@
     return out;
   }
 
+  /* The mask at the photo's size (up to 2,048 px), with firmer edges: half-see-through smears along the outline
+     become either kept or removed, then a very light blur keeps the edge from looking jagged. */
+  function finishMask(m, src){
+    const k=Math.min(1,2048/Math.max(src.width,src.height)), w=Math.round(src.width*k), h=Math.round(src.height*k);
+    const c=document.createElement('canvas'); c.width=w; c.height=h; const x=c.getContext('2d'); x.imageSmoothingQuality='high'; x.drawImage(m,0,0,w,h);
+    const d=x.getImageData(0,0,w,h);
+    for(let i=3;i<d.data.length;i+=4){ const v=(d.data[i]/255-0.3)/0.45; d.data[i]=v<=0?0:v>=1?255:Math.round(v*255); }
+    x.putImageData(d,0,0);
+    if('filter' in x){ const c2=document.createElement('canvas'); c2.width=w; c2.height=h; const x2=c2.getContext('2d'); x2.filter='blur(0.7px)'; x2.drawImage(c,0,0); return c2; }
+    return c;
+  }
+
+  /* ---------- touch-up brushes ---------- */
+  const fixer=$('fixer'), fxC=$('fxCanvas'), fxX=fxC.getContext('2d');
+  let fx=null, brushMode='erase';
+  function openFixer(it){
+    const m=document.createElement('canvas'); m.width=it.maskC.width; m.height=it.maskC.height; m.getContext('2d').drawImage(it.maskC,0,0);
+    /* open zoomed in on the subject (its outline plus a margin), so small subjects are easy to touch up */
+    const md=m.getContext('2d').getImageData(0,0,m.width,m.height).data; let x0=m.width,y0=m.height,x1=-1,y1=-1;
+    for(let y=0;y<m.height;y+=2) for(let x=0;x<m.width;x+=2) if(md[(y*m.width+x)*4+3]>25){ if(x<x0)x0=x; if(x>x1)x1=x; if(y<y0)y0=y; if(y>y1)y1=y; }
+    let R={x:0,y:0,w:m.width,h:m.height};
+    if(x1>=0){ const pad=Math.max(x1-x0,y1-y0)*0.25+20; const rx=Math.max(0,x0-pad), ry=Math.max(0,y0-pad); R={x:rx,y:ry,w:Math.min(m.width,x1+pad)-rx,h:Math.min(m.height,y1+pad)-ry}; }
+    const k=Math.min(1600/Math.max(R.w,R.h), 3), view=document.createElement('canvas'); view.width=Math.round(R.w*k); view.height=Math.round(R.h*k);
+    const sx=it.src.width/m.width; view.getContext('2d').drawImage(it.src,R.x*sx,R.y*sx,R.w*sx,R.h*sx,0,0,view.width,view.height);
+    fx={it, mask:m, view, R, undo:[], drawing:false, last:null};
+    fxC.width=view.width; fxC.height=view.height; fixer.hidden=false; document.body.style.overflow='hidden'; fitFixer(); drawFixer();
+  }
+  /* show the whole photo inside the free space, whatever the screen size */
+  function fitFixer(){
+    if(!fx) return; const st=fxC.parentElement, k=Math.min(st.clientWidth/fxC.width, st.clientHeight/fxC.height);
+    fxC.style.width=Math.floor(fxC.width*k)+'px'; fxC.style.height=Math.floor(fxC.height*k)+'px';
+  }
+  window.addEventListener('resize',fitFixer);
+  function drawFixer(){
+    const {mask,view}=fx, w=fxC.width, h=fxC.height;
+    fxX.clearRect(0,0,w,h);
+    fxX.globalAlpha=0.28; fxX.drawImage(view,0,0); fxX.globalAlpha=1;          // removed parts, faint
+    const t=document.createElement('canvas'); t.width=w; t.height=h; const tx=t.getContext('2d');
+    const R=fx.R; tx.drawImage(view,0,0); tx.globalCompositeOperation='destination-in'; tx.drawImage(mask,R.x,R.y,R.w,R.h,0,0,w,h);
+    fxX.fillStyle='rgba(255,255,255,.55)'; fxX.globalCompositeOperation='source-over';
+    fxX.save(); fxX.globalCompositeOperation='destination-out'; fxX.drawImage(mask,R.x,R.y,R.w,R.h,0,0,w,h); fxX.restore();
+    fxX.drawImage(t,0,0);
+  }
+  function stroke(from,to){
+    const mx=fx.mask.getContext('2d'), R=fx.R, sc=R.w/fxC.width, b=fxC.getBoundingClientRect(), r=(+$('brSize').value)*(fxC.width/b.width)*sc/2;
+    mx.save(); mx.globalCompositeOperation= brushMode==='erase' ? 'destination-out' : 'source-over';
+    mx.strokeStyle='#fff'; mx.lineCap='round'; mx.lineJoin='round'; mx.lineWidth=r*2;
+    mx.beginPath(); mx.moveTo(R.x+from.x*sc,R.y+from.y*sc); mx.lineTo(R.x+to.x*sc+0.01,R.y+to.y*sc); mx.stroke(); mx.restore();
+  }
+  function pos(e){ const b=fxC.getBoundingClientRect(); return {x:(e.clientX-b.left)*fxC.width/b.width, y:(e.clientY-b.top)*fxC.height/b.height}; }
+  fxC.addEventListener('pointerdown',e=>{ if(!fx) return; e.preventDefault(); fxC.setPointerCapture(e.pointerId);
+    const u=document.createElement('canvas'); u.width=fx.mask.width; u.height=fx.mask.height; u.getContext('2d').drawImage(fx.mask,0,0); fx.undo.push(u); if(fx.undo.length>20) fx.undo.shift();
+    fx.drawing=true; fx.last=pos(e); stroke(fx.last,fx.last); drawFixer(); });
+  fxC.addEventListener('pointermove',e=>{ if(!fx||!fx.drawing) return; const p=pos(e); stroke(fx.last,p); fx.last=p; drawFixer(); });
+  ['pointerup','pointercancel'].forEach(n=>fxC.addEventListener(n,()=>{ if(fx) fx.drawing=false; }));
+  $('fxUndo').addEventListener('click',()=>{ if(!fx||!fx.undo.length) return; const u=fx.undo.pop(), mx=fx.mask.getContext('2d'); mx.clearRect(0,0,u.width,u.height); mx.drawImage(u,0,0); drawFixer(); });
+  function closeFixer(){ fixer.hidden=true; document.body.style.overflow=''; fx=null; }
+  $('fxCancel').addEventListener('click',closeFixer);
+  $('fxDone').addEventListener('click',()=>{ const it=fx.it; it.maskC=fx.mask; closeFixer(); refreshPreview(it); render(); });
+  document.addEventListener('keydown',e=>{ if(fx&&e.key==='Escape') closeFixer(); });
+
   /* ---------- queue ---------- */
   async function pump(){
     if(running) return; running=true;
@@ -251,7 +333,7 @@
           showStatus(status && status.stage==='download' ? status : {stage:'run',n:done+1,total});
           const mask=await runModel(toInput(it.src), it.id);
           showStatus({stage:'run',n:done+1,total});
-          it.maskC=(await zoomPass(it.src, mask, it.id)) || maskCanvas(mask); refreshPreview(it); it.state='done';
+          it.maskC=finishMask((await zoomPass(it.src, mask, it.id)) || maskCanvas(mask), it.src); refreshPreview(it); it.state='done';
         }catch(e){ it.state='error'; it.error=['eOpen','eModel','eLib'].includes(e.message)?e.message:'eGeneric'; console.error(e); }
         render();
       }
@@ -281,6 +363,7 @@
       if(it.state==='done'){
         const s=document.createElement('button'); s.className='btn'; s.textContent=t('save'); s.onclick=()=>download(compose(it),outName(it)); tools.append(s);
         const o=document.createElement('button'); o.className='btn ghost'; o.textContent=it.showOrig?t('showResult'):t('showOrig'); o.onclick=()=>{ it.showOrig=!it.showOrig; render(); }; tools.append(o);
+        const f=document.createElement('button'); f.className='btn ghost'; f.textContent=t('fix'); f.onclick=()=>openFixer(it); tools.append(f);
       }
       if(it.state!=='working'){ const r=document.createElement('button'); r.className='btn ghost'; r.textContent=t('remove'); r.onclick=()=>{ items.splice(idx,1); render(); }; tools.append(r); }
       li.append(tools); grid.append(li);
@@ -296,6 +379,7 @@
   file.addEventListener('change',()=>{ const f=[...file.files]; file.value=''; add(f); });
   function seg(id,fn){ document.querySelectorAll('#'+id+' button').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('#'+id+' button').forEach(x=>x.setAttribute('aria-pressed',String(x===b))); fn(b.dataset.v); })); }
   seg('model',v=>{ model=v; });
+  seg('brush',v=>{ brushMode=v; });
   seg('bg',v=>{ bg=v; color.hidden=v!=='color'; items.forEach(refreshPreview); render(); });
   color.addEventListener('input',()=>{ items.forEach(refreshPreview); render(); });
   allBtn.addEventListener('click',async()=>{ for(const it of items){ if(it.state!=='done') continue; download(compose(it),outName(it)); await new Promise(r=>setTimeout(r,400)); } });
